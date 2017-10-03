@@ -38,8 +38,6 @@ namespace MvcApplication1.Models
 
         public int AttachmentCount { get; set; }
 
-        public int AttachmentCount2 { get; set; }
-
         [DataMember]
         public string ToName { get; set; }
 

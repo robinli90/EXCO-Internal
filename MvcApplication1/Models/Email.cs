@@ -16,6 +16,8 @@ namespace MvcApplication1.Models
     public class Email
     {
 
+        // Test Comment settings
+        
         // General settings
         public string UID { get; set; }
 

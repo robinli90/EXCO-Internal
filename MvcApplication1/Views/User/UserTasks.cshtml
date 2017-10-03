@@ -1,0 +1,83 @@
+﻿@using MvcApplication1
+@using MvcApplication1.Models
+@{
+    ViewBag.Title = "UserTasks";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Main content -->
+<body>
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">User Tasks</h3>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <table id="example2" class="table table-bordered table-hover">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th style='text-align:center'>Last Update Time</th>
+                            <th style='text-align:center'>Email Count</th>
+                            <th style='text-align:center'>Sync Email</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @{
+                            foreach (User user in Global.UserList.Where(x => x.InternalID > 0))
+                            {
+                                <tr>
+                                    <td>@user.Name</td>
+                                    <td>@user.Email</td>
+                                    <td style='text-align: center'>@user.LastUpdateTime</td>
+                                    <td style='text-align: center'>@user.InternalEmailCount</td>
+                                    <td style='text-align: center'>@(user.SyncEmails ? "Yes" : "No")</td>
+                                    <td style='text-align: center'>
+                                        <a href="@Url.Action("UserResetUpdateTime", "User", new {userInternalID = user.InternalID}, null)"><i class="actionConfirmation fa fa-recycle" title="Reset Update Time"></i></a>
+                                        <a href="@Url.Action("UserForceSync", "User", new {userInternalID = user.InternalID}, null)"><i class="actionConfirmation fa fa-cloud-upload" title="Force Email Sync"></i></a>
+                                        <a href="@Url.Action("UserPurgeEmail", "User", new {userInternalID = user.InternalID}, null)"><i class="actionConfirmation fa fa-remove" title="Purge User Emails"></i></a>  
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <th style="text-align:center">Total Email Cached</th>
+                            <th style="text-align:center" >@Global.EmailList.Count</th>
+                            <td></td>
+                            <td></td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+
+        </div>
+        <!-- /.col -->
+    </div>
+    <!-- /.row -->
+</section>
+<!-- /.content -->
+</body>
+
+
+@Scripts.Render("~/bundles/jqueryval")
+
+@section Scripts
+{
+    <script type="text/javascript">
+        $('.actionConfirmation').on('click',
+            function() {
+                return confirm('Are you sure you wish to proceed with this action?');
+            });
+    </script>
+}

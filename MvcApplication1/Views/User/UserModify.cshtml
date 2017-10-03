@@ -1,0 +1,108 @@
+﻿@using MvcApplication1
+@using MvcApplication1.Models
+@model User
+@{
+    ViewBag.Title = "UserModify";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<script type="text/javascript" src="jquery-min.js"></script>
+<script type="text/javascript" src="crosscut.js"></script>
+<script src="jquery-ui.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="mod-min.js"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+<!-- Horizontal Form -->
+<div class="box box-info">
+    <div class="box-header with-border">
+        <h3 class="box-title">@(Model != null && Model.Email != null ? "Modify user" : "Create a new user")</h3>
+    </div>
+    <!-- /.box-header -->
+    <!-- form start -->
+    @using (@Html.BeginForm("UserChangeAdd", "User", FormMethod.Post, new { @class = "form-horizontal" }))
+    {
+        <!--retain the following information throughout the model-->
+        @Html.HiddenFor(m => m.LastUpdateTime);
+        @Html.HiddenFor(m => m.InternalID);
+        @Html.HiddenFor(m => m.Privilege);
+        @Html.HiddenFor(m => m.UserID);
+
+        <div class="box-body">
+            <div class="form-group">
+                <label for="inputEmail3" class="col-xs-3 control-label">Name</label>
+
+                <div class="col-xs-4">
+                    @Html.TextBoxFor(m => m.Name, new { @class = "form-control", @placeholder = "Name", @value = Model.Name })
+                    @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputPassword3" class="col-xs-3 control-label">Login Password</label>
+                <div class="col-xs-4">
+                    @Html.PasswordFor(m => m.LoginPassword, new { @class = "form-control", @placeholder = "Login Password", @value = Model.LoginPassword })
+                    @Html.ValidationMessageFor(m => m.LoginPassword, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail3" class="col-xs-3 control-label">Department</label>
+                <div class="col-xs-4">
+                    @Html.DropDownListFor(m => m.Department, new SelectList(Model.AllItems, "Value", "Text", Model.GetDropDownId()), new {@class = "form-control"})
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail3" class="col-xs-3 control-label">Email</label>
+                <div class="col-xs-4">
+                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @placeholder = "Email", @value = Model.Email })
+                    @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputPassword3" class="col-xs-3 control-label">Email Password</label>
+                <div class="col-xs-4">
+                    @Html.PasswordFor(m => m.Password, new { @class = "form-control", @placeholder = "Email Password", @value = Model.Password })
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail3" class="col-xs-3 control-label">Receiving Protocol</label>
+                <div class="col-xs-4">
+                    @Html.TextBoxFor(m => m.ReceivingProtocol, new { @class = "form-control", @placeholder = "imap.pathcom.com", @value = Model.ReceivingProtocol })
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail3" class="col-xs-3 control-label">Receiving Port</label>
+                <div class="col-xs-4">
+                    @Html.TextBoxFor(m => m.ReceivingPort, new { @class = "form-control", @placeholder = "993", @value = Model.ReceivingPort })
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail3" class="col-xs-3 control-label">Sync Emails</label>
+                <div class="col-xs-4">
+                    <div class="checkbox">
+                        <label>
+                            @Html.CheckBoxFor(m => m.SyncEmails)
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.box-body -->
+        <div class="box-footer">
+            <button type="submit" value="Submit" class="btn btn-default">@(Model != null && Model.Email != null ? "Save" : "Create User")</button>
+        </div>
+    }
+    <!-- /.box-footer -->
+</div>
+
+
+@Scripts.Render("~/bundles/jqueryval")
+
+@section Scripts
+{
+    <script type="text/javascript">
+        $('.actionConfirmation').on('click',
+            function() {
+                return confirm('Are you sure you wish to proceed with this action?');
+            });
+    </script>
+}

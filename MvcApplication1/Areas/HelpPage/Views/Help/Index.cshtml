@@ -1,0 +1,66 @@
+@using System.Web.Http
+@using System.Collections.ObjectModel
+@using System.Web.Http.Description
+@using MvcApplication1.Areas.HelpPage.Models
+@model Collection<ApiDescription>
+
+@{
+    ViewBag.Title = "Email API";
+
+    // Group APIs by controller
+    ILookup<string, ApiDescription> apiGroups = Model.ToLookup(api => api.ActionDescriptor.ControllerDescriptor.ControllerName);
+}
+
+<header>
+    <div class="content-wrapper">   
+        <div class="float-left">
+            <h1>@ViewBag.Title</h1>
+        </div>
+    </div>
+</header>
+
+<div id="body">9
+    <ul id="emails"></ul>
+</div>
+
+<form id="saveContactForm" method="post">
+    <h3>Create a new Contact</h3>
+    <p>                             
+        <label for="contactId">Contact Id:</label>
+          <input type="text" name="Id" length="5"/>
+    </p>
+    <p>
+        <label for="contactName">Email From:</label>
+        <input type="text" name="From" />
+    </p>
+    <input type="button" id="saveContact" value="Save" />
+</form>
+
+@section scripts{
+<script type="text/javascript">
+$(function()
+{
+    $.getJSON('/api/email', function(emailsJsonPayload)
+        {
+            $(emailsJsonPayload).each(function(i, item)
+            {
+                $('#emails').append('<li>' + item.From + '</li>');
+            });
+        });
+});
+
+
+$('#saveContact').click(function () {
+    $.post("api/contact",
+          $("#saveContactForm").serialize(),
+          function (value) {
+              $('#emails').append('<li>' + value.From + '</li>');
+          },
+          "json"
+    );
+});
+
+</script>
+
+}
+

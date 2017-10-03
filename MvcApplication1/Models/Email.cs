@@ -15,8 +15,6 @@ namespace MvcApplication1.Models
     [DataContract]
     public class Email
     {
-
-        // Test Comment settings
         
         // General settings
         public string UID { get; set; }

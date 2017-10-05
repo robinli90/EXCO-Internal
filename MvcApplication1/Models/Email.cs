@@ -16,7 +16,6 @@ namespace MvcApplication1.Models
     public class Email
     {
         
-        // General settings
         public string UID { get; set; }
 
         [DataMember]

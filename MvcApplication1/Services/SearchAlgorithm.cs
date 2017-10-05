@@ -124,6 +124,7 @@ namespace MvcApplication1.Services
         // Faster performance than LINQ.Where
         public static List<Email> FilterEmailsByReceiver(List<Email> refList, string filterWord)
         {
+            StripSymbols(ref filterWord);
             List<Email> returnList = new List<Email>();
             foreach (var email in refList)
             {
@@ -137,6 +138,7 @@ namespace MvcApplication1.Services
 
         public static List<Email> FilterEmailsBySender(List<Email> refList, string filterWord)
         {
+            StripSymbols(ref filterWord);
             List<Email> returnList = new List<Email>();
             foreach (var email in refList)
             {
@@ -150,6 +152,7 @@ namespace MvcApplication1.Services
 
         public static List<Email> FilterEmailsBySubject(List<Email> refList, string filterWord)
         {
+            StripSymbols(ref filterWord);
             List<Email> returnList = new List<Email>();
             foreach (var email in refList)
             {
@@ -163,6 +166,7 @@ namespace MvcApplication1.Services
 
         public static List<Email> FilterEmailsByMessage(List<Email> refList, string filterWord)
         {
+            StripSymbols(ref filterWord);
             List<Email> returnList = new List<Email>();
             foreach (var email in refList)
             {
@@ -176,6 +180,7 @@ namespace MvcApplication1.Services
 
         public static List<Email> FilterEmailsByAll(List<Email> refList, string filterWord)
         {
+            StripSymbols(ref filterWord);
             List<Email> returnList = new List<Email>();
             foreach (var email in refList)
             {
@@ -192,8 +197,8 @@ namespace MvcApplication1.Services
 
         public static List<Email> SearchDieNumber(string filterWord)
         {
+            StripSymbols(ref filterWord);
             filterWord = filterWord.ToLower();
-
             List<Email> returnList = new List<Email>();
 
             for (int i = 0; i < filterWord.Length; i++)
@@ -206,6 +211,19 @@ namespace MvcApplication1.Services
 
             Log.Append(String.Format("GET command completed. Returned {0} results", returnList.Count));
             return returnList.Distinct().ToList();
+        }
+
+        public static void StripSymbols(ref string refString)
+        {
+            string returnStr = "";
+            foreach (var ch in refString)
+            {
+                if (char.IsSymbol(ch) && ch != '-')
+                {
+                    returnStr += ch;
+                }
+            }
+            refString = returnStr;
         }
     }
 }

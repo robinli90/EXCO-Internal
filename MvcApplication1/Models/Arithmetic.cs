@@ -29,5 +29,18 @@ namespace MvcApplication1.Models
             return String.Format("{0} seconds", seconds);
 
         }
+
+        public static string ParseEmailBrackets(string input)
+        {
+            if (input.Contains("<"))
+            {
+                int firstCaratIndex = input.IndexOf("<");
+                input = input.Substring(firstCaratIndex + 1, input.Length - 2 - firstCaratIndex).Trim();
+            }
+
+            return input;
+        }
+
+
     }
 }

@@ -62,15 +62,16 @@ namespace MvcApplication1.Controllers
         [Route("Email/{paramOne}")]
         public void Get(string paramOne)
         {
-            //if (!Permissions.ValidAPIKey(APIKey)) return new Email[] {};
-            paramOne = AESGCM.SimpleDecryptWithPassword(paramOne, AESGCM.AES256Key);
-
             if (paramOne.ToLower() == "reset")
             {
                 Log.Append("GET - Reset Email Sync Parameters");
                 Global.isSyncing = false;
                 Readiness.DeleteBlockerFile();
             }
+
+            //if (!Permissions.ValidAPIKey(APIKey)) return new Email[] {};
+            paramOne = AESGCM.SimpleDecryptWithPassword(paramOne.Replace("_", "/").Replace("-", "+"), AESGCM.AES256Key);
+
             if (paramOne.ToLower() == "sync")
             {
                 Log.Append("GET - Sync PST Files");

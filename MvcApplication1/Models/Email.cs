@@ -45,9 +45,31 @@ namespace MvcApplication1.Models
             return MailDate.ToShortDateString();
         }
 
+        
+
         public void MapNameFromEmail()
         {
-            ToName = Global.UserList.First(x => x.Email == To).Name;
+            try
+            {
+                ToName = Global.UserList.First(x => x.Email.ToLower() == To.ToLower()).Name;
+            }
+            catch
+            {
+                ToName = "Unknown";
+            }
+        }
+
+        public void ParseToEmail()
+        {
+            foreach (string recipient in To.Split(new[] { "," }, StringSplitOptions.None))
+            {
+                string recipientEmail = Arithmetic.ParseEmailBrackets(recipient);
+                if (Global.UserList.Any(x => x.Email == recipientEmail))
+                {
+                    To = Arithmetic.ParseEmailBrackets(recipientEmail);
+                    break;
+                }
+            }
         }
 
         public Email()
@@ -90,6 +112,25 @@ namespace MvcApplication1.Models
                 msg.DataSource.OpenObject(stream, "_Stream");
                 msg.DataSource.Save();
                 AttachmentCount = msg.Attachments.Count;
+            }
+            catch
+            {
+            }
+
+            return msg;
+        }
+        public static CDO.Message GetEmlFromFile(String emlFileName)
+        {
+            CDO.Message msg = new CDO.Message();
+            try
+            {
+                ADODB.Stream stream = new ADODB.Stream();
+                stream.Open(Type.Missing, ADODB.ConnectModeEnum.adModeUnknown,
+                    ADODB.StreamOpenOptionsEnum.adOpenStreamUnspecified, String.Empty, String.Empty);
+                stream.LoadFromFile(emlFileName);
+                stream.Flush();
+                msg.DataSource.OpenObject(stream, "_Stream");
+                msg.DataSource.Save();
             }
             catch
             {

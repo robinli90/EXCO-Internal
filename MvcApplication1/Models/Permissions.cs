@@ -106,8 +106,6 @@ namespace MvcApplication1.Models
 
             if (exclusionList != null)
             {
-                exclusionList.ForEach(x => x.ToLower());
-
                 // Check if user's department is in exclusion list
                 if (exclusionList.Any(y => Global.UserList.First(x => x.Email.ToLower() == HttpContext.Current.Session["Email"].ToString().ToLower()).Department.ToString().Contains(y)))
                     return false;

@@ -26,27 +26,29 @@ namespace MvcApplication1
             
             AreaRegistration.RegisterAllAreas();
             
+            // Initialize background worker components
             Hangfire.GlobalConfiguration.Configuration.UseMemoryStorage();
-
             RecurringJob.AddOrUpdate(() => Readiness.MinutelyTaskChecker(), Cron.Minutely());
             RecurringJob.AddOrUpdate(() => Readiness.TerminationCheck(), Cron.Minutely());
-
             server = new BackgroundJobServer();
 
-            Log.AppendBlankLine();
-
-            Global.LoadSettings();
-            Global.SaveSettings();
-            Global.ImportEmailFile();
-
-            //PSTImporter.SyncPSTFiles();
-            //Global.GetAllEmails();
-             
             // Web API routes
             System.Web.Http.GlobalConfiguration.Configure(WebApiConfig.Register);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            if (initialized) return;
+
+            Log.AppendBlankLine();
+            Global.LoadSettings();
+            Global.ImportEmailFile();
+            
+            Readiness.DeleteBlockerFile();
+            Global.GetAllEmails();
+
+            initialized = true;
+
         }
 
         protected void Application_End()
@@ -71,6 +73,12 @@ namespace MvcApplication1
                     defaults: new { id = RouteParameter.Optional }
                 );
             }
+        }
+
+        private static bool initialized = false;
+
+        protected void Application_BeginRequest()
+        {
         }
     }
 }

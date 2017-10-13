@@ -77,6 +77,8 @@ namespace MvcApplication1.Models
                 return new List<Email>();
             }
 
+            Global.isSyncing = true;
+
             int errorLevel = 0;
 
             Log.Append(String.Format("Getting new emails (since {1}) from '{0}'...", Email, LastUpdateTime.ToShortDateString()));
@@ -85,9 +87,7 @@ namespace MvcApplication1.Models
             List<string> ExistingUID = Global.EmailList.Where(x => x.To == Email && x.MailDate >= LastUpdateTime.AddDays(-5)).Select(y => y.UID).ToList();
 
             List<Email> newEmails = new List<Email>();
-
-            Global.isSyncing = true;
-
+           
             int emailSyncCount = 0;
 
             using (var client = new MailKit.Net.Imap.ImapClient())
@@ -148,34 +148,43 @@ namespace MvcApplication1.Models
                             if (Readiness.CheckTerminationStatus(true))
                                 break;
 
-                            // Verify that this email does not exist.
-                            if (!ExistingUID.Contains(uid.ToString()))
-                            {
-                                MimeMessage message = inbox.GetMessage(uid);
+                            string workingID = Global.GetAttachmentID();
 
-                                var date = message.Date.ToString();
-
-                                Email email = new Email()
+                            try
+                            { 
+                                // Verify that this email does not exist.
+                                if (!ExistingUID.Contains(uid.ToString()))
                                 {
-                                    UID = uid.ToString(),
-                                    ID = Global.GetAttachmentID(),
-                                    MailDate = Convert.ToDateTime(date),
-                                    From = message.From.ToString(),
-                                    To = Email,
-                                    Subject = message.Subject,
-                                };
-                                emailSyncCount++;
-                                email.CreateEmailMsgFile(message);
-                                email.RetrieveMsg();
+                                    MimeMessage message = inbox.GetMessage(uid);
 
-                                newEmails.Add(email);
-                                Global.AppendEmail(email);
+                                    var date = message.Date.ToString();
+
+                                    Email email = new Email()
+                                    {
+                                        UID = uid.ToString(),
+                                        ID = workingID,
+                                        MailDate = Convert.ToDateTime(date),
+                                        From = message.From.ToString(),
+                                        To = Email,
+                                        Subject = message.Subject,
+                                    };
+                                    emailSyncCount++;
+                                    email.CreateEmailMsgFile(message);
+                                    email.RetrieveMsg();
+
+                                    newEmails.Add(email);
+                                    Global.AppendEmail(email);
+                                }
+                            }
+                            catch
+                            {
+                                Log.Append(String.Format("ERROR: Email can't be processed with ID={0}", workingID));
                             }
                         }
                         catch (Exception ex)
                         {
                             errorLevel++;
-                            Log.Append(String.Format("ERROR: {0}", ex));
+                            Log.Append(String.Format("ERROR [Inbox]: {0}", ex));
                             // Undetermined error from automated system 
                         }
                     }
@@ -246,7 +255,7 @@ namespace MvcApplication1.Models
                 catch (Exception ex)
                 {
                     errorLevel++;
-                    Log.Append(String.Format("ERROR: {0}", ex));
+                    Log.Append(String.Format("ERROR [Overall]: {0}", ex));
                 }
             }
             
@@ -258,11 +267,11 @@ namespace MvcApplication1.Models
                 LastUpdateTime = DateTime.Now;
                 Log.Append("Complete!");
             }
-
-            Global.isSyncing = false;
             GetEmailCount();
             Global.SaveSettings();
             Global.ExportEmailFile();
+
+            Global.isSyncing = false;
 
             // Sort by date
             Global.EmailList = Global.EmailList.OrderByDescending(x => x.MailDate).ToList();

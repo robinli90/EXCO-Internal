@@ -12,7 +12,7 @@ namespace MvcApplication1
 
         public static void AddTick()
         {
-            File.AppendAllText(logFilePath, ".");
+            AppendLine(".");
         }
 
         public static void Append(string logText)
@@ -20,15 +20,14 @@ namespace MvcApplication1
             logText = String.Format("[{3}-{0}:{1}:{2}] - {5} - {4}", DateTime.Now.Hour.ToString("D2"),
                 DateTime.Now.Minute.ToString("D2"),
                 DateTime.Now.Second.ToString("D2"), DateTime.Now.Date.ToShortDateString(), logText,
-                GetSessionEmail()
-                );
-                //Environment.MachineName);
+                //GetSessionEmail());
+                Environment.MachineName);
             
             while (true)
             {
                 try
                 {
-                    File.AppendAllText(logFilePath, logText + Environment.NewLine);
+                    AppendLine(logText + Environment.NewLine);
                     return;
                 }
                 catch
@@ -55,7 +54,7 @@ namespace MvcApplication1
 
         public static void AppendBlankLine()
         {
-            File.AppendAllText(logFilePath, "=======================================================================================================================" + Environment.NewLine);
+            AppendLine("=======================================================================================================================" + Environment.NewLine);
         }
 
         public static void DeleteLogFile()
@@ -67,6 +66,22 @@ namespace MvcApplication1
             catch (Exception e)
             {
                 Console.WriteLine(e);
+            }
+        }
+
+        public static void AppendLine(string line)
+        {
+            while (true)
+            {
+                try
+                {
+                    File.AppendAllText(logFilePath, line);
+                    return;
+                }
+                catch
+                {
+                    // File in use, try again
+                }
             }
         }
     }

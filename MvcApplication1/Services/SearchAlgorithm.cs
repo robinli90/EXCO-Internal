@@ -197,16 +197,40 @@ namespace MvcApplication1.Services
 
         public static List<Email> SearchDieNumber(string filterWord)
         {
+            List<Email> collectionWorking = Global.EmailList;
+
+            if (filterWord.Contains("date="))
+            {
+                DateTime refDate = new DateTime();
+                string[] dateParam = filterWord.Split(new[] { "," }, StringSplitOptions.None);
+                foreach (string parameter in dateParam)
+                {
+                    string paramValue = parameter.Split(new[] { "=" }, StringSplitOptions.None)[1].ToLower();
+                    if (parameter.Contains("date="))
+                    {
+                        refDate = new DateTime(
+                            Convert.ToInt32(paramValue.Substring(4)), //year
+                            Convert.ToInt32(paramValue.Substring(0, 2)), //month
+                            Convert.ToInt32(paramValue.Substring(2, 2)) //day
+                        );
+                    }
+
+                    collectionWorking = collectionWorking.Where(x => x.MailDate >= refDate).ToList();
+                }
+
+                filterWord = filterWord.Substring(0, filterWord.IndexOf(",date="));
+            }
+
             StripSymbols(ref filterWord);
             filterWord = filterWord.ToLower();
             List<Email> returnList = new List<Email>();
 
             for (int i = 0; i < filterWord.Length; i++)
             {
-                returnList.AddRange(FilterEmailsBySubject(Global.EmailList, filterWord.Insert(i, " ")));
-                returnList.AddRange(FilterEmailsBySubject(Global.EmailList, filterWord.Insert(i, "-")));
-                returnList.AddRange(FilterEmailsByMessage(Global.EmailList, filterWord.Insert(i, " ")));
-                returnList.AddRange(FilterEmailsByMessage(Global.EmailList, filterWord.Insert(i, "-")));
+                returnList.AddRange(FilterEmailsBySubject(collectionWorking, filterWord.Insert(i, " ")));
+                returnList.AddRange(FilterEmailsBySubject(collectionWorking, filterWord.Insert(i, "-")));
+                returnList.AddRange(FilterEmailsByMessage(collectionWorking, filterWord.Insert(i, " ")));
+                returnList.AddRange(FilterEmailsByMessage(collectionWorking, filterWord.Insert(i, "-")));
             }
 
             Log.Append(String.Format("GET command completed. Returned {0} results", returnList.Count));
@@ -220,10 +244,11 @@ namespace MvcApplication1.Services
             {
                 if (char.IsSymbol(ch) && ch != '-')
                 {
-                    returnStr += ch;
                 }
+                else
+                    returnStr += ch;
             }
-            refString = returnStr;
+            refString = returnStr.Trim();
         }
     }
 }

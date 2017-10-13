@@ -11,9 +11,6 @@ namespace MvcApplication1
             BundleTable.EnableOptimizations = false;
 
             #region IncludeDirectory bundles
-            bundles.Add(new ScriptBundle("~/admin-lte/js")
-                .IncludeDirectory("~/admin-lte/", "*.js", true));
-
             bundles.Add(new StyleBundle("~/admin-lte/css")
                 .IncludeDirectory("~/admin-lte/", "*.css", true));
 
@@ -58,13 +55,25 @@ namespace MvcApplication1
                         "~/Content/themes/base/jquery.ui.datepicker.css",
                         "~/Content/themes/base/jquery.ui.progressbar.css",
                         "~/Content/themes/base/jquery.ui.theme.css"));
-            
+
+            bundles.Add(new ScriptBundle("~/admin-lte/js")
+                .IncludeDirectory("~/admin-lte/", "*.js", true));
+
+
             bundles.Add(new ScriptBundle("~/admin-lte/js").Include(
                 "~/admin-lte/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js",
                 "~/admin-lte/js/app.js",
                 "~/admin-lte/plugins/fastclick/fastclick.js"
 
                 ));
+
+            bundles.Add(new ScriptBundle("~/bower_components/jquery").Include(
+                "~/bower_components/jquery/dist/jquery.js"
+            ));
+
+            bundles.Add(new ScriptBundle("~/bower_components/bootstrap").Include(
+                "~/bower_components/bootstrap/dist/js/bootstrap.js"
+            ));
         }
     }
 }

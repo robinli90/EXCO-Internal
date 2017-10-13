@@ -110,7 +110,7 @@ namespace MvcApplication1.Models
             var cipherText = SimpleEncryptWithPassword(plainText, password, nonSecretPayload);
             
 
-            return Convert.ToBase64String(cipherText).Replace("/", "_").Replace("+", "-"); ;
+            return Convert.ToBase64String(cipherText);//.Replace("/", "_").Replace("+", "-"); ;
         }
 
         /// <summary>
@@ -131,7 +131,7 @@ namespace MvcApplication1.Models
             int nonSecretPayloadLength = 0)
         {
             // Escape forward slash
-            encryptedMessage = encryptedMessage.Replace("_", "/").Replace("-", "+");
+            //encryptedMessage = encryptedMessage
 
             if (string.IsNullOrWhiteSpace(encryptedMessage))
                 throw new ArgumentException("Encrypted Message Required!", "encryptedMessage");

@@ -13,6 +13,8 @@ namespace MvcApplication1
 {
     public static class Global
     {
+        private static readonly int MAX_EMAIL_COUNT = 10000;
+
         public static readonly string attachmentDirectoryPath = @"\\10.0.0.8\EmailAPI\Attachments\";
         public static readonly string messagesDirectoryPath = @"\\10.0.0.8\EmailAPI\Messages\";
         public static readonly string cacheDirectoryPath = @"\\10.0.0.8\EmailAPI\Cache\";
@@ -34,6 +36,8 @@ namespace MvcApplication1
             Readiness.DeleteBlockerFile();
             #endif
 
+            Log.Append("Pulling emails from email servers...");
+
             TimeSpan startTime = DateTime.Now.TimeOfDay;
 
             List<Email> newEmails = new List<Email>();
@@ -44,7 +48,7 @@ namespace MvcApplication1
 
                 return new List<Email>();
             }
-
+            
             Readiness.CreateBlockerFile();
 
             // If force update, set last update time to new DateTime (year = 1800)
@@ -72,8 +76,6 @@ namespace MvcApplication1
 
             SaveSettings();
 
-            GetEmailCounts();
-
             return newEmails;
         }
 
@@ -98,7 +100,7 @@ namespace MvcApplication1
             {
                 Log.Append("ERROR: Collection modified while reading email messages. Process restarting...");
                 //  Restart process
-                Task.Run(() => ReadAllEmailMessages());
+                //Task.Run(() => ReadAllEmailMessages());
             }
             Log.Append(String.Format("All email messages processed. Process took {0}", 
                 Arithmetic.GetStopWatchStr((DateTime.Now.TimeOfDay - startTime).TotalMilliseconds)));
@@ -173,39 +175,53 @@ namespace MvcApplication1
         public static void ImportEmailFile()
         {
             Log.Append("Application initialized");
-
-            if (!File.Exists(cacheDirectoryPath + "emailMaster.cfg")) return;
-
+            
             TimeSpan startTime = DateTime.Now.TimeOfDay;
 
             Log.Append("Caching email list...");
 
-            var text = File.ReadAllText(cacheDirectoryPath + "emailMaster.cfg");
-            string[] lines = AESGCM.SimpleDecryptWithPassword(text, AESGCM.AES256Key).Split(new[] { Environment.NewLine }, StringSplitOptions.None);
-
-            // Load email information
-            foreach (string line in lines)
+            try
             {
-                if (line.Contains("[EM_ID_]="))
+                string[] emailFiles = Directory.GetFiles(cacheDirectoryPath, "*.cfg*");
+
+                if (emailFiles.Length <= 0)
+                    RegenerateCacheFile();
+
+                foreach (string filePath in emailFiles)
                 {
-                    Email email = new Email()
+                    var text = File.ReadAllText(filePath);
+                    string[] lines = AESGCM.SimpleDecryptWithPassword(text, AESGCM.AES256Key)
+                        .Split(new[] {Environment.NewLine}, StringSplitOptions.None);
+
+                    // Load email information
+                    foreach (string line in lines)
                     {
-                        ID = Parser.Parse(line, "EM_ID_"),
-                        UID = Parser.Parse(line, "EM_UI_"),
-                        To = Parser.Parse(line, "EM_TO_"),
-                        From = Parser.Parse(line, "EM_FR_"),
-                        Subject = Parser.Parse(line, "EM_SU_"),
-                        EmailMessage = "", // prevent nullification
-                        MailDate = Convert.ToDateTime(Parser.Parse(line, "EM_MD_"))
-                    };
+                        if (line.Contains("[EM_ID_]="))
+                        {
+                            Email email = new Email()
+                            {
+                                ID = Parser.Parse(line, "EM_ID_"),
+                                UID = Parser.Parse(line, "EM_UI_"),
+                                To = Parser.Parse(line, "EM_TO_"),
+                                From = Parser.Parse(line, "EM_FR_"),
+                                Subject = Parser.Parse(line, "EM_SU_"),
+                                EmailMessage = "", // prevent nullification
+                                MailDate = Convert.ToDateTime(Parser.Parse(line, "EM_MD_"))
+                            };
 
-                    // For testing, local does not read emails
-                    //email.RetrieveMsg();
+                            // For testing, local does not read emails
+                            //email.RetrieveMsg();
 
-                    EmailList.Add(email);
+                            EmailList.Add(email);
 
-                    email.MapNameFromEmail();
+                            email.MapNameFromEmail();
+                        }
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                RegenerateCacheFile();
             }
 
             // Retrieve all messages in background
@@ -215,10 +231,56 @@ namespace MvcApplication1
             EmailList = EmailList.OrderByDescending(x => x.MailDate).ToList();
 
             Log.Append(String.Format("Cached {1} emails! Process took {0}",
-                Arithmetic.GetStopWatchStr((DateTime.Now.TimeOfDay - startTime).TotalMilliseconds), EmailList.Count));
+            Arithmetic.GetStopWatchStr((DateTime.Now.TimeOfDay - startTime).TotalMilliseconds), EmailList.Count));
 
             GetEmailCounts();
         }
+
+        public static void RegenerateCacheFile()
+        {
+            Log.Append("ERROR: Could not parse email file. Recovering cache file...");
+
+            TimeSpan startTime = DateTime.Now.TimeOfDay;
+            
+            EmailList = new List<Email>();
+
+            string[] messageFiles = Directory.GetFiles(messagesDirectoryPath, "*.eml*");
+
+            int emailCount = 0;
+            int totalEmailCount = messageFiles.Length;
+
+            foreach (string filePath in messageFiles)
+            {
+                CDO.Message CDOMessage = Email.GetEmlFromFile(filePath);
+
+                Email email = new Email()
+                {
+                    ID = Path.GetFileName(filePath).Substring(0, 9),
+                    UID = "0",
+                    To = CDOMessage.To + (CDOMessage.CC.Length > 0 ? "," + CDOMessage.CC : ""),
+                    From = CDOMessage.From,
+                    Subject = CDOMessage.Subject,
+                    EmailMessage = "", // prevent nullification
+                    MailDate = CDOMessage.ReceivedTime
+                };
+
+                emailCount++;
+
+                email.ParseToEmail();
+                AppendEmail(email, String.Format("{0}/{1}", emailCount, totalEmailCount));
+
+                email.MapNameFromEmail();
+            }
+
+            // Save regenerated files
+            ExportEmailFile();
+
+            isSyncing = false;
+            Readiness.DeleteBlockerFile();
+
+            Log.Append(String.Format("Cache regeneration completed. Process took {0}",
+            Arithmetic.GetStopWatchStr((DateTime.Now.TimeOfDay - startTime).TotalMilliseconds)));
+        }   
 
         /// <summary>
         /// Get Attachment ID; if not exists, create a new one
@@ -238,24 +300,41 @@ namespace MvcApplication1
 
         public static void ExportEmailFile()
         {
-
+            int saveCount = 0;
 
             Log.Append("Syncing email cache to server...");
+
+            // Remove all original files
+            foreach (string path in Directory.GetFiles(cacheDirectoryPath, "*.cfg*"))
+            {
+                if (File.Exists(cacheDirectoryPath + "CacheDump/" + Path.GetFileName(path)))
+                {
+                    File.Delete(cacheDirectoryPath + "CacheDump/" + Path.GetFileName(path));
+                }
+                File.Move(path, cacheDirectoryPath + "CacheDump/" + Path.GetFileName(path));
+            }
 
             StringBuilder str = new StringBuilder();
 
             foreach (Email email in EmailList)
             {
-
                 str.Append("[EM_ID_]=" + email.ID);
                 str.Append("||[EM_UI_]=" + email.UID);
                 str.Append("||[EM_TO_]=" + email.To);
                 str.Append("||[EM_FR_]=" + email.From);
                 str.Append("||[EM_SU_]=" + email.Subject);
                 str.Append("||[EM_MD_]=" + email.MailDate + Environment.NewLine);
-            }
 
-            Saver.Save(AESGCM.SimpleEncryptWithPassword(str.ToString(), AESGCM.AES256Key), cacheDirectoryPath + "emailMaster.cfg");
+                saveCount++;
+
+                if (saveCount % MAX_EMAIL_COUNT == 0 || saveCount >= EmailList.Count)
+                {
+                    Saver.Save(AESGCM.SimpleEncryptWithPassword(str.ToString(), AESGCM.AES256Key), cacheDirectoryPath + "emailMaster_" + (saveCount/MAX_EMAIL_COUNT) + ".cfg");
+                    str = new StringBuilder();
+                }
+            }
+            
+            GetEmailCounts();
 
             Log.Append("Sync complete!");
         }
@@ -270,8 +349,6 @@ namespace MvcApplication1
                 Log.Append("ERROR: Sync in progress. Cannot validate information");
                 return;
             }
-
-            isSyncing = true;
 
             TimeSpan startTime = DateTime.Now.TimeOfDay;
 
@@ -304,11 +381,8 @@ namespace MvcApplication1
             // Save again after verification if removed anything
             if (removedMessages > 0)
                 ExportEmailFile();
-
-            isSyncing = false;
+            
             Readiness.DeleteBlockerFile();
-
-            GetEmailCounts();
         }
 
         // ==========================================================================================
@@ -393,6 +467,8 @@ namespace MvcApplication1
                     Settings.LoadSettingsStr(line);
                 }
             }
+            
+            SaveSettings();
         }
 
         public static void GetEmailCounts()

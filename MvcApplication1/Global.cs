@@ -13,7 +13,7 @@ namespace MvcApplication1
 {
     public static class Global
     {
-        private static readonly int MAX_EMAIL_COUNT = 10000;
+        private static readonly int MAX_EMAIL_COUNT = 5000;
 
         public static readonly string attachmentDirectoryPath = @"\\10.0.0.8\EmailAPI\Attachments\";
         public static readonly string messagesDirectoryPath = @"\\10.0.0.8\EmailAPI\Messages\";
@@ -301,6 +301,7 @@ namespace MvcApplication1
         public static void ExportEmailFile()
         {
             int saveCount = 0;
+            int fileCount = 0;
 
             Log.Append("Syncing email cache to server...");
 
@@ -327,13 +328,17 @@ namespace MvcApplication1
 
                 saveCount++;
 
-                if (saveCount % MAX_EMAIL_COUNT == 0 || saveCount >= EmailList.Count)
+                if (saveCount % MAX_EMAIL_COUNT == 0)
                 {
-                    Saver.Save(AESGCM.SimpleEncryptWithPassword(str.ToString(), AESGCM.AES256Key), cacheDirectoryPath + "emailMaster_" + (saveCount/MAX_EMAIL_COUNT) + ".cfg");
+                    Saver.Save(AESGCM.SimpleEncryptWithPassword(str.ToString(), AESGCM.AES256Key), cacheDirectoryPath + "emailMaster_" + (++fileCount) + ".cfg");
                     str = new StringBuilder();
                 }
             }
-            
+
+            // Get remainder
+            if (saveCount % MAX_EMAIL_COUNT != 0 && str.Length > 0)
+                Saver.Save(AESGCM.SimpleEncryptWithPassword(str.ToString(), AESGCM.AES256Key), cacheDirectoryPath + "emailMaster_" + (++fileCount) + ".cfg");
+
             GetEmailCounts();
 
             Log.Append("Sync complete!");

@@ -44,7 +44,7 @@ namespace MvcApplication1.Controllers
 
             Log.Append(String.Format("GET Email ({1}) - param: '{0}'", paramOne, paramTwo));
 
-            if (paramOne.Contains("="))
+            if (paramOne.Contains("all="))
             {
                 return emailListRepository.GetAllEmails(paramTwo, paramOne).ToArray();
             }

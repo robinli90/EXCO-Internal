@@ -62,6 +62,9 @@
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="ExcoUtility">
+      <HintPath>..\ExcoUtility\bin\Release\ExcoUtility.dll</HintPath>
+    </Reference>
     <Reference Include="Hangfire.Core, Version=1.6.16.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Hangfire.Core.1.6.16\lib\net45\Hangfire.Core.dll</HintPath>
       <Private>True</Private>
@@ -237,6 +240,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\EmailController.cs" />
     <Compile Include="Controllers\EmailRepositoryController.cs" />
+    <Compile Include="Controllers\FinancialsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ApiSettingsController.cs" />
     <Compile Include="Controllers\ManageDWGController.cs" />
@@ -252,6 +256,7 @@
     <Compile Include="Models\Email.cs" />
     <Compile Include="Models\Directories.cs" />
     <Compile Include="Models\Encryption.cs" />
+    <Compile Include="Models\FinancialControls.cs" />
     <Compile Include="Models\Permissions.cs" />
     <Compile Include="Models\PSTImporter.cs" />
     <Compile Include="Models\Readiness.cs" />
@@ -8068,9 +8073,15 @@
     <Content Include="Views\ManageDWG\ManageDWG.cshtml" />
     <Content Include="Views\EmailRepository\OrganizeEmails.cshtml" />
     <Content Include="Views\EmailRepository\SearchEmails.cshtml" />
+    <Content Include="Views\Financials\IncomeStatement.cshtml" />
+    <Content Include="Views\Financials\SalesReport.cshtml" />
+    <Content Include="Views\Financials\TrialBalance.cshtml" />
+    <Content Include="Views\Financials\YTD.cshtml" />
+    <Content Include="Views\Financials\ExchangeRates.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Financial Reports\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -8136,6 +8147,12 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IncomeStatementReport\IncomeStatementReport.csproj">
+      <Project>{4c622a39-c7b1-44a6-be1c-d2c5a4faa400}</Project>
+      <Name>IncomeStatementReport</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

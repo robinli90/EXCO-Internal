@@ -1,4 +1,5 @@
-﻿using System.Web.Http;
+﻿using System;
+using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
@@ -43,9 +44,12 @@ namespace MvcApplication1
             Log.AppendBlankLine();
             Global.LoadSettings();
             Global.ImportEmailFile();
-            
-            Readiness.DeleteBlockerFile();
-            Global.GetAllEmails();
+
+            if (!Environment.MachineName.Contains("ROBIN"))
+            {
+                Readiness.DeleteBlockerFile();
+                Global.GetAllEmails();
+            }
 
             initialized = true;
 

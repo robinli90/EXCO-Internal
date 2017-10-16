@@ -202,21 +202,16 @@ namespace MvcApplication1.Services
             if (filterWord.Contains("date="))
             {
                 DateTime refDate = new DateTime();
-                string[] dateParam = filterWord.Split(new[] { "," }, StringSplitOptions.None);
-                foreach (string parameter in dateParam)
-                {
-                    string paramValue = parameter.Split(new[] { "=" }, StringSplitOptions.None)[1].ToLower();
-                    if (parameter.Contains("date="))
-                    {
-                        refDate = new DateTime(
-                            Convert.ToInt32(paramValue.Substring(4)), //year
-                            Convert.ToInt32(paramValue.Substring(0, 2)), //month
-                            Convert.ToInt32(paramValue.Substring(2, 2)) //day
-                        );
-                    }
+                string dateParam = filterWord.Split(new[] { "," }, StringSplitOptions.None)[1];
+                string paramValue = dateParam.Split(new[] { "=" }, StringSplitOptions.None)[1].ToLower();
+                
+                refDate = new DateTime(
+                    Convert.ToInt32(paramValue.Substring(4)), //year
+                    Convert.ToInt32(paramValue.Substring(0, 2)), //month
+                    Convert.ToInt32(paramValue.Substring(2, 2)) //day
+                );
 
-                    collectionWorking = collectionWorking.Where(x => x.MailDate >= refDate).ToList();
-                }
+                collectionWorking = collectionWorking.Where(x => x.MailDate >= refDate).ToList();
 
                 filterWord = filterWord.Substring(0, filterWord.IndexOf(",date="));
             }

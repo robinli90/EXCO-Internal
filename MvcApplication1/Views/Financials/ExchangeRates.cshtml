@@ -1,0 +1,80 @@
+﻿@using ExcoUtility
+@using MvcApplication1.Models
+
+@{
+    ViewBag.Title = "ExchangeRates";
+}
+
+<!-- Main content -->
+<body>
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">User Management</h3>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <table id="example2" class="table table-bordered table-hover">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Department</th>
+                            <th>Email</th>
+                            <th>Rec. Protocol</th>
+                            <th>Port</th>
+                            <th style='text-align:center'>Sync Email</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @{
+                            foreach (CurrencyYear CY in FinancialControls.CurrencyYearList)
+                            {
+                                <tr>
+                                    <td style='text-align: center'>@CY.CurrencyType</td>
+                                    <td style='text-align: center'>@CY.Year</td>
+                                    @{
+                                        foreach (double rate in CY.ExchangeRates)
+                                        {
+                                            <td style='text-align: center'>@Math.Round(rate, 3).ToString()</td>
+                                        }
+                                    }
+                                    <td style='text-align: center'>
+                                    @{
+                                        <a href="@Url.Action("ModifyRate", "Financials", new {currYear = CY.CurrencyType + CY.Year}, null)"><i class="fa fa-edit" title="Modify User"></i></a>
+                                        <a href="@Url.Action("DeleteRate", "Financials", new {currYear = CY.CurrencyType + CY.Year}, null)"><i class="actionConfirmation fa fa-remove" title="Delete User"></i></a>
+                                    }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+
+        </div>
+        <!-- /.col -->
+    </div>
+    <!-- /.row -->
+</section>
+<!-- /.content -->
+</body>
+
+
+@Scripts.Render("~/bundles/jqueryval")
+
+@section Scripts
+{
+    <script type="text/javascript">
+        $('.actionConfirmation').on('click',
+            function() {
+                return confirm('Are you sure you wish to proceed with this action?');
+            });
+    </script>
+}
+

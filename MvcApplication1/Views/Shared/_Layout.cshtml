@@ -186,9 +186,11 @@ desired effect
                             </span>
                         </a>
                         <ul class="treeview-menu">
-                            <li>@Html.ActionLink("Income Statement", "UserManagement", "User", new { paramOne = "newUser" }, null)</li>
-                            <li>@Html.ActionLink("Sales Report", "UserManagement", "User", new { paramOne = "newUser" }, null)</li>
-                            <li>@Html.ActionLink("Trial Balance", "UserManagement", "User", new { paramOne = "newUser" }, null)</li>
+                            <li>@Html.ActionLink("Exchange Rates", "ExchangeRates", "Financials", new { paramOne = "ER" }, null)</li>
+                            <li>@Html.ActionLink("Income Statement", "IncomeStatement", "Financials", new { paramOne = "IS" }, null)</li>
+                            <li>@Html.ActionLink("Y-T-D Income Statement", "YTD", "Financials", new { paramOne = "YTD" }, null)</li>
+                            <li>@Html.ActionLink("Sales Report", "SalesReport", "Financials", new { paramOne = "SR" }, null)</li>
+                            <li>@Html.ActionLink("Trial Balance", "TrialBalance", "Financials", new { paramOne = "TB" }, null)</li>
                         </ul>
                     </li>
                 }

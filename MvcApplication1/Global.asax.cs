@@ -45,10 +45,12 @@ namespace MvcApplication1
             Global.LoadSettings();
             Global.ImportEmailFile();
 
+            Readiness.DeleteBlockerFile();
+
             if (!Environment.MachineName.Contains("ROBIN"))
             {
-                Readiness.DeleteBlockerFile();
-                Global.GetAllEmails();
+                //
+                //Global.GetAllEmails();
             }
 
             initialized = true;

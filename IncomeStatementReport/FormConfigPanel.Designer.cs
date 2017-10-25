@@ -42,6 +42,7 @@
             this.textBoxYear.Name = "textBoxYear";
             this.textBoxYear.Size = new System.Drawing.Size(48, 20);
             this.textBoxYear.TabIndex = 1;
+            this.textBoxYear.Text = "17";
             // 
             // textBoxPeriod
             // 
@@ -49,6 +50,7 @@
             this.textBoxPeriod.Name = "textBoxPeriod";
             this.textBoxPeriod.Size = new System.Drawing.Size(48, 20);
             this.textBoxPeriod.TabIndex = 2;
+            this.textBoxPeriod.Text = "01";
             // 
             // label3
             // 

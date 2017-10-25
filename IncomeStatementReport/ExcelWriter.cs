@@ -157,10 +157,16 @@ namespace IncomeStatementReport
             }
         }
 
+        public ExcelWriter()
+        {
+        }
 
         // constructor
         public ExcelWriter(Process process)
         {
+
+            Log.Append("Test");
+            
 
             this.process = process;
             this.fiscalMonth = process.fiscalMonth;
@@ -179,7 +185,7 @@ namespace IncomeStatementReport
                 colPESOSheet = workBook.Worksheets.Add();
                 colPESOSheet.Name = "Colombia at " + fiscalMonth + "-" + fiscalYear + " (PESO)";
                 //texCADSheet = workBook.Worksheets.Add();
-           } 
+            }
             else
             {
                 colCADSheet = workBook.Worksheets[3];
@@ -205,14 +211,18 @@ namespace IncomeStatementReport
             marCADSheet.Name = "Markham at " + fiscalMonth + "-" + fiscalYear + " (CAD)";
             consolidateSheet = workBook.Worksheets.Add();
             consolidateSheet.Name = "Consolidate " + fiscalMonth + "-" + fiscalYear + " (CAD)";
+
+            System.Web.HttpContext.Current.Response.Write("end ");
         }
 
         // output to an external excel file
         public void OutputToFile(string filePath)
         {
+
+            Log.Append("    Outputting Excel File...");
             workBook.SaveAs(filePath, Excel.XlFileFormat.xlOpenXMLWorkbook);
             excel.Quit();
-            
+
         }
 
         // fill sheets
@@ -225,7 +235,7 @@ namespace IncomeStatementReport
             FillTexasUSDWorkSheet();
             FillColombiaCADWorkSheet();
             FillColombiaPESOWorkSheet();
-            
+
             // new process for consolidated
             this.process = new Process(process.fiscalYear, process.fiscalMonth, true);
             FillConsolidateCADWorkSheet();
@@ -252,11 +262,10 @@ namespace IncomeStatementReport
             }
             sheet.Cells[row, 1] = "Exchange Rate:";
             // this period
-
             ExcoCalendar calendar = new ExcoCalendar(fiscalYear, fiscalMonth, true, plantID);
             sheet.Cells[row, 2] = ExcoExRate.GetToCADRate(calendar.GetNextCalendarMonth(), currency);
             //sheet.Cells[row, 6] = ExcoExRate.GetToCADRate(calendar.GetNextCalendarMonth(), currency);
-            sheet.Cells[row, 6] = (plantID == 4 ? 1/(GET_BUDGET_EXCHANGE_RATE(fiscalYear, plantID.ToString())) : GET_BUDGET_EXCHANGE_RATE(fiscalYear, plantID.ToString()));
+            sheet.Cells[row, 6] = (plantID == 4 ? 1 / (GET_BUDGET_EXCHANGE_RATE(fiscalYear, plantID.ToString())) : GET_BUDGET_EXCHANGE_RATE(fiscalYear, plantID.ToString()));
             // last period
             if (fiscalMonth > 1)
             {
@@ -307,7 +316,7 @@ namespace IncomeStatementReport
         int OtherSalesRowTotal = 0;
 
         // write a group list
-        private int WriteGroupList(Excel.Worksheet sheet, int row, int plantID, string currency, Category category, bool Native_Currency=false)
+        private int WriteGroupList(Excel.Worksheet sheet, int row, int plantID, string currency, Category category, bool Native_Currency = false)
         {
             List<Group> groupList = category.groupList;
 
@@ -379,7 +388,7 @@ namespace IncomeStatementReport
                     //string l = ExcoExRate.GetToCADRate(calendar.GetNextCalendarMonth(), "US").ToString();
                     //string k = GET_BUDGET_EXCHANGE_RATE(fiscalYear, plantID.ToString()).ToString();
                     //string p = gg + l + k;
-                    
+
                     // year to date actual
                     double ytdActual = 0.0;
                     double ytdBudget = 0.0;
@@ -387,15 +396,15 @@ namespace IncomeStatementReport
                     {
                         ytdActual += plant.actualThisYearList[i].GetAmount(currency);
                         if (true)
-                        //if (false) ;
-                        ytdBudget += plant.budgetThisYearList[i].GetAmount(currency);
+                            //if (false) ;
+                            ytdBudget += plant.budgetThisYearList[i].GetAmount(currency);
                         else
                             ytdBudget += (((plant.budgetThisYearList[i].GetAmount(currency) * switchpositivenegative) / ExcoExRate.GetToCADRate(calendar.GetNextCalendarMonth(), "US")) * GET_BUDGET_EXCHANGE_RATE(fiscalYear, plantID.ToString())) * switchpositivenegative;
                     }
-                    sheet.Cells[row, 8] = (ytdActual*switchpositivenegative).ToString("C2");
-                    sheet.Cells[row, 10] = (ytdBudget*switchpositivenegative).ToString("C2");
+                    sheet.Cells[row, 8] = (ytdActual * switchpositivenegative).ToString("C2");
+                    sheet.Cells[row, 10] = (ytdBudget * switchpositivenegative).ToString("C2");
                     // last year this period actual
-                    sheet.Cells[row, 12] = (plant.actualLastYearList[fiscalMonth].GetAmount(currency)*switchpositivenegative).ToString("C2");
+                    sheet.Cells[row, 12] = (plant.actualLastYearList[fiscalMonth].GetAmount(currency) * switchpositivenegative).ToString("C2");
                 }
                 else
                 {
@@ -413,27 +422,27 @@ namespace IncomeStatementReport
                         double f = group.plant41.actualThisYearList[fiscalMonth - 1].GetAmount("CP") + 0; //reporting error
                         double i = group.plant48.actualThisYearList[fiscalMonth - 1].GetAmount("CP") + 0;
                         double h = group.plant49.actualThisYearList[fiscalMonth - 1].GetAmount("CP") + 0;
-                        thisPeriod = new ExcoMoney(calendar.GetNextCalendarMonth(), 
+                        thisPeriod = new ExcoMoney(calendar.GetNextCalendarMonth(),
                             (
                                 group.plant04.actualThisYearList[fiscalMonth] +
                                 group.plant41.actualThisYearList[fiscalMonth] +
                                 group.plant48.actualThisYearList[fiscalMonth] +
                                 group.plant49.actualThisYearList[fiscalMonth]
-                            ).amountCP - 
+                            ).amountCP -
                             (
                                 group.plant04.actualThisYearList[fiscalMonth - 1] +
                                 group.plant41.actualThisYearList[fiscalMonth - 1] +
                                 group.plant48.actualThisYearList[fiscalMonth - 1] +
                                 group.plant49.actualThisYearList[fiscalMonth - 1]
-                            ).amountCP, 
+                            ).amountCP,
                             "CP");
-                        lastPeriod = new ExcoMoney(calendar.GetLastCalendarMonth(), 
+                        lastPeriod = new ExcoMoney(calendar.GetLastCalendarMonth(),
                             (
                                 group.plant04.actualThisYearList[fiscalMonth - 1] +
                                 group.plant41.actualThisYearList[fiscalMonth - 1] +
                                 group.plant48.actualThisYearList[fiscalMonth - 1] +
                                 group.plant49.actualThisYearList[fiscalMonth - 1]
-                            ).amountCP - 
+                            ).amountCP -
                             (
                                 group.plant04.actualThisYearList[fiscalMonth - 2] +
                                 group.plant41.actualThisYearList[fiscalMonth - 2] +
@@ -441,19 +450,19 @@ namespace IncomeStatementReport
                                 group.plant49.actualThisYearList[fiscalMonth - 2])
                             .amountCP,
                             "CP");
-                        thisPeriodLastYear = new ExcoMoney(calendar.GetCalendarMonthLastYear(), 
+                        thisPeriodLastYear = new ExcoMoney(calendar.GetCalendarMonthLastYear(),
                             (
                                 group.plant04.actualLastYearList[fiscalMonth] +
-                                group.plant41.actualLastYearList[fiscalMonth] + 
-                                group.plant48.actualLastYearList[fiscalMonth] + 
+                                group.plant41.actualLastYearList[fiscalMonth] +
+                                group.plant48.actualLastYearList[fiscalMonth] +
                                 group.plant49.actualLastYearList[fiscalMonth]
-                            ).amountCP - 
+                            ).amountCP -
                             (
                                 group.plant04.actualLastYearList[fiscalMonth - 1] +
-                                group.plant41.actualLastYearList[fiscalMonth - 1] + 
-                                group.plant48.actualLastYearList[fiscalMonth - 1] + 
+                                group.plant41.actualLastYearList[fiscalMonth - 1] +
+                                group.plant48.actualLastYearList[fiscalMonth - 1] +
                                 group.plant49.actualLastYearList[fiscalMonth - 1]
-                            ).amountCP, 
+                            ).amountCP,
                             "CP");
                     }
                     else if (fiscalMonth == 2)
@@ -473,7 +482,7 @@ namespace IncomeStatementReport
                         //lastPeriod = new ExcoMoney(calendar.GetLastCalendarMonth(), (group.plant04.actualLastYearList[12] + group.plant41.actualLastYearList[12] + group.plant48.actualLastYearList[12] + group.plant49.actualLastYearList[12]).amountCP - (group.plant04.actualLastYearList[11] + group.plant41.actualLastYearList[11] + group.plant48.actualLastYearList[11] + group.plant49.actualLastYearList[11]).amountCP, "CP"); thisPeriod = group.plant04.actualThisYearList[fiscalMonth] + group.plant41.actualThisYearList[fiscalMonth] + group.plant48.actualThisYearList[fiscalMonth] + group.plant49.actualThisYearList[fiscalMonth];
                         //thisPeriod = group.plant04.actualThisYearList[fiscalMonth] + group.plant41.actualThisYearList[fiscalMonth] + group.plant48.actualThisYearList[fiscalMonth] + group.plant49.actualThisYearList[fiscalMonth] - (group.plant04.actualLastYearList[12] + group.plant41.actualLastYearList[12] + group.plant48.actualLastYearList[12] + group.plant49.actualLastYearList[12]);
                         //thisPeriodLastYear = group.plant04.actualLastYearList[fiscalMonth] + group.plant41.actualLastYearList[fiscalMonth] + group.plant48.actualLastYearList[fiscalMonth] + group.plant49.actualLastYearList[fiscalMonth];
-                    
+
                         // tIGER original
                         thisPeriod = group.plant04.actualThisYearList[fiscalMonth] + group.plant41.actualThisYearList[fiscalMonth] + group.plant48.actualThisYearList[fiscalMonth] + group.plant49.actualThisYearList[fiscalMonth];
                         //thisPeriod = group.plant04.actualThisYearList[fiscalMonth] + group.plant41.actualThisYearList[fiscalMonth] + group.plant48.actualThisYearList[fiscalMonth] + group.plant49.actualThisYearList[fiscalMonth] - (group.plant04.actualLastYearList[12] + group.plant41.actualLastYearList[12] + group.plant48.actualLastYearList[12] + group.plant49.actualLastYearList[12]); //robin add
@@ -489,9 +498,9 @@ namespace IncomeStatementReport
                     sheet.Cells[row, 4] = g;
                     // budget this period
                     if (_Native_Currency)
-                        sheet.Cells[row, 6] = ((group.plant04.budgetThisYearList[fiscalMonth].GetAmount(currency) + group.plant41.budgetThisYearList[fiscalMonth].GetAmount(currency) + group.plant48.budgetThisYearList[fiscalMonth].GetAmount(currency) + group.plant49.budgetThisYearList[fiscalMonth].GetAmount(currency))*switchpositivenegative).ToString("C2");
+                        sheet.Cells[row, 6] = ((group.plant04.budgetThisYearList[fiscalMonth].GetAmount(currency) + group.plant41.budgetThisYearList[fiscalMonth].GetAmount(currency) + group.plant48.budgetThisYearList[fiscalMonth].GetAmount(currency) + group.plant49.budgetThisYearList[fiscalMonth].GetAmount(currency)) * switchpositivenegative).ToString("C2");
                     else
-                        sheet.Cells[row, 6] = ((((group.plant04.budgetThisYearList[fiscalMonth].GetAmount(currency) + group.plant41.budgetThisYearList[fiscalMonth].GetAmount(currency) + group.plant48.budgetThisYearList[fiscalMonth].GetAmount(currency) + group.plant49.budgetThisYearList[fiscalMonth].GetAmount(currency))*switchpositivenegative) / ExcoExRate.GetToCADRate(calendar.GetNextCalendarMonth(), "CP")) / GET_BUDGET_EXCHANGE_RATE(fiscalYear, plantID.ToString())).ToString("C2");
+                        sheet.Cells[row, 6] = ((((group.plant04.budgetThisYearList[fiscalMonth].GetAmount(currency) + group.plant41.budgetThisYearList[fiscalMonth].GetAmount(currency) + group.plant48.budgetThisYearList[fiscalMonth].GetAmount(currency) + group.plant49.budgetThisYearList[fiscalMonth].GetAmount(currency)) * switchpositivenegative) / ExcoExRate.GetToCADRate(calendar.GetNextCalendarMonth(), "CP")) / GET_BUDGET_EXCHANGE_RATE(fiscalYear, plantID.ToString())).ToString("C2");
                     //string gg = ((group.plant04.budgetThisYearList[fiscalMonth].GetAmount(currency) + group.plant41.budgetThisYearList[fiscalMonth].GetAmount(currency) + group.plant48.budgetThisYearList[fiscalMonth].GetAmount(currency) + group.plant49.budgetThisYearList[fiscalMonth].GetAmount(currency)) * switchpositivenegative).ToString();
                     //string l = ExcoExRate.GetToCADRate(calendar.GetNextCalendarMonth(), "CP").ToString();
                     //string k = GET_BUDGET_EXCHANGE_RATE(fiscalYear, plantID.ToString()).ToString();
@@ -564,9 +573,9 @@ namespace IncomeStatementReport
                     //ytdActual = aa + bb + cc + dd + tempd - tempd;
                     //sheet.Cells[row, 8] = ((group.plant04.actualThisYearList[fiscalMonth] + group.plant41.actualThisYearList[fiscalMonth] + group.plant48.actualThisYearList[fiscalMonth] + group.plant49.actualThisYearList[fiscalMonth]).GetAmount(currency)*switchpositivenegative).ToString("C2");
                     sheet.Cells[row, 8] = (ytdActual * switchpositivenegative).ToString("C2");
-                    sheet.Cells[row, 10] =  (ytdBudget*switchpositivenegative).ToString("C2");
+                    sheet.Cells[row, 10] = (ytdBudget * switchpositivenegative).ToString("C2");
                     // last year this period actual
-                    sheet.Cells[row, 12] = (thisPeriodLastYear.GetAmount(currency)*switchpositivenegative).ToString("C2");
+                    sheet.Cells[row, 12] = (thisPeriodLastYear.GetAmount(currency) * switchpositivenegative).ToString("C2");
                 }
                 row++;
                 int surcharge_total_row = 0;
@@ -599,7 +608,7 @@ namespace IncomeStatementReport
                     for (int i = 2; i <= 13; i++)
                     {
                         string colCode = Convert.ToChar((Convert.ToInt32('A') + i - 1)).ToString();
-                        sheet.Cells[row, i].Formula = "=SUM(" + colCode + (SteelSurchargeRow+ 1).ToString() + ":" + colCode + (row - 1).ToString() + ")";
+                        sheet.Cells[row, i].Formula = "=SUM(" + colCode + (SteelSurchargeRow + 1).ToString() + ":" + colCode + (row - 1).ToString() + ")";
                     }
 
                     StyleOfSummary(sheet, row);
@@ -721,7 +730,7 @@ namespace IncomeStatementReport
 
 
         // write category
-        private int WriteCategory(Excel.Worksheet sheet, int row, int plantID, string currency, Category category, bool Native_Currency=false)
+        private int WriteCategory(Excel.Worksheet sheet, int row, int plantID, string currency, Category category, bool Native_Currency = false)
         {
 
             if (!(category.name == ""))
@@ -857,10 +866,10 @@ namespace IncomeStatementReport
                 string colCode = Convert.ToChar((Convert.ToInt32('A') + i - 1)).ToString();
                 marCADSheet.Cells[row, i].Formula = "=" + colCode + (row - 4).ToString() + "+" + colCode + (row - 2).ToString();
                 //marCADSheet.Cells[row, i].Formula = "=" + colCode + totalSSRow.ToString() + "+" + colCode + totalDSRow.ToString() + "+" + colCode + totalGARow.ToString() + "+" + colCode + totalOERow.ToString() + "+" + colCode + totalCSRow.ToString() + "+" + colCode + totalDLRow.ToString() + "+" + colCode + totalFORow.ToString();
-                
+
                 for (int j = 2; j <= 7; j++)
                 {
-                    colCode = Convert.ToChar((Convert.ToInt32('A') + (j-1) * 2 - 1)).ToString();
+                    colCode = Convert.ToChar((Convert.ToInt32('A') + (j - 1) * 2 - 1)).ToString();
                     marCADSheet.Cells[row, j * 2 - 1].NumberFormat = "0.00%";
                     marCADSheet.Cells[row, j * 2 - 1].Formula = "=" + colCode + row.ToString() + "/" + colCode + totalSSRow.ToString();
                 }
@@ -871,13 +880,13 @@ namespace IncomeStatementReport
 
 
             // write before income tax
-            row-=4;
+            row -= 4;
             marCADSheet.Cells[row, 1] = "NET INCOME  BEFORE PROVISIONAL TAX";
             for (int i = 2; i <= 13; i++)
             {
-                string colCode = Convert.ToChar((Convert.ToInt32('A') + i - 1)).ToString(); 
+                string colCode = Convert.ToChar((Convert.ToInt32('A') + i - 1)).ToString();
                 marCADSheet.Cells[row, i].Formula = "=" + colCode + totalSSRow.ToString() + "+" + colCode + totalDSRow.ToString() + "+" + colCode + totalGARow.ToString() + "+" + colCode + totalOERow.ToString() + "+" + colCode + totalCSRow.ToString() + "+" + colCode + totalDLRow.ToString() + "+" + colCode + totalFORow.ToString();
-            
+
                 //marCADSheet.Cells[row, i].Formula = "=" + colCode + (row + 4).ToString() + "-" + colCode + (row + 2).ToString();
             }
             StyleOfSummary(marCADSheet, row);
@@ -885,7 +894,7 @@ namespace IncomeStatementReport
             AdjustSheetStyle(marCADSheet, row);
 
 
-            AdjustSheetStyle(marCADSheet, row+4);
+            AdjustSheetStyle(marCADSheet, row + 4);
         }
 
         private void FillMichiganCADWorkSheet()
@@ -952,7 +961,7 @@ namespace IncomeStatementReport
             row++;
 
             // write provisional tax
-            row+=3;
+            row += 3;
             for (int j = 2; j <= 7; j++)
             {
                 string colCode = Convert.ToChar((Convert.ToInt32('A') + (j - 1) * 2 - 1)).ToString();
@@ -1576,7 +1585,7 @@ namespace IncomeStatementReport
             consolidateSheet.Cells[row, 1] = category.name;
             consolidateSheet.Cells.get_Range("A" + row.ToString()).Interior.ColorIndex = 27;
             row++;
-            
+
             int startRow = row;
             foreach (Group group in category.groupList)
             {
@@ -1765,12 +1774,12 @@ namespace IncomeStatementReport
                     hasProductionSales = true;
                 }
                 consolidateSheet.Cells[row, 1] = group.name;
-                consolidateSheet.Cells[row, 2] = (group.plant01.actualThisYearList[fiscalMonth].GetAmount("CA")*switchpositivenegative).ToString("C2");
-                consolidateSheet.Cells[row, 4] = (group.plant03.actualThisYearList[fiscalMonth].GetAmount("CA")*switchpositivenegative).ToString("C2");
-                consolidateSheet.Cells[row, 6] = (group.plant05.actualThisYearList[fiscalMonth].GetAmount("CA")*switchpositivenegative).ToString("C2");
+                consolidateSheet.Cells[row, 2] = (group.plant01.actualThisYearList[fiscalMonth].GetAmount("CA") * switchpositivenegative).ToString("C2");
+                consolidateSheet.Cells[row, 4] = (group.plant03.actualThisYearList[fiscalMonth].GetAmount("CA") * switchpositivenegative).ToString("C2");
+                consolidateSheet.Cells[row, 6] = (group.plant05.actualThisYearList[fiscalMonth].GetAmount("CA") * switchpositivenegative).ToString("C2");
                 if (fiscalMonth == 1)
                 {
-                    consolidateSheet.Cells[row, 8] = ((group.plant04.actualThisYearList[fiscalMonth].GetAmount("CA") + group.plant41.actualThisYearList[fiscalMonth].GetAmount("CA") + group.plant48.actualThisYearList[fiscalMonth].GetAmount("CA") + group.plant49.actualThisYearList[fiscalMonth].GetAmount("CA"))*switchpositivenegative).ToString("C2");
+                    consolidateSheet.Cells[row, 8] = ((group.plant04.actualThisYearList[fiscalMonth].GetAmount("CA") + group.plant41.actualThisYearList[fiscalMonth].GetAmount("CA") + group.plant48.actualThisYearList[fiscalMonth].GetAmount("CA") + group.plant49.actualThisYearList[fiscalMonth].GetAmount("CA")) * switchpositivenegative).ToString("C2");
                 }
                 else
                 {
@@ -2275,7 +2284,8 @@ namespace IncomeStatementReport
                 consolidateSheet.Cells[row, i * 2 - 2].Formula = "=" + colCode + salesDepreAuto.ToString();
                 consolidateSheet.Cells[row, i * 2 - 1].NumberFormat = "0.00%";
                 consolidateSheet.Cells[row, i * 2 - 1].Formula = "=" + colCode + row.ToString() + "/" + colCode + totalSSRow.ToString();
-            } row++;
+            }
+            row++;
             consolidateSheet.Cells[row, 1] = "TOOLING";
             for (int i = 2; i <= 6; i++)
             {
@@ -2283,7 +2293,8 @@ namespace IncomeStatementReport
                 consolidateSheet.Cells[row, i * 2 - 2].Formula = "=" + colCode + factoryToolAmort.ToString();
                 consolidateSheet.Cells[row, i * 2 - 1].NumberFormat = "0.00%";
                 consolidateSheet.Cells[row, i * 2 - 1].Formula = "=" + colCode + row.ToString() + "/" + colCode + totalSSRow.ToString();
-            } row++;
+            }
+            row++;
             consolidateSheet.Cells[row, 1] = "TOTAL NON-BUILDING DEPRECIATION:";
             for (int i = 2; i <= 6; i++)
             {
@@ -2511,7 +2522,7 @@ namespace IncomeStatementReport
                 consolidateSheet.Cells[row, i * 2 - 1].Formula = "=" + colCode + row.ToString() + "/" + colCode + totalSSRow.ToString();
             }
             row += 2;
-                 consolidateSheet.Cells[row, 1] = "TOTAL TRAVEL, MEALS & ENTERTAINMENT:";
+            consolidateSheet.Cells[row, 1] = "TOTAL TRAVEL, MEALS & ENTERTAINMENT:";
             for (int i = 2; i <= 6; i++)
             {
                 string colCode = Convert.ToChar((Convert.ToInt32('A') + i * 2 - 3)).ToString();

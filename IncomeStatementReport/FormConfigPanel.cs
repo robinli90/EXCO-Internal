@@ -77,7 +77,7 @@ namespace IncomeStatementReport
         void Run()
         {
             //bool test=false;
-            bool test=false;
+            bool test = false;
             AppendTextBox("thread start" + Environment.NewLine);
             try
             {

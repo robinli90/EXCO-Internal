@@ -21,7 +21,7 @@ namespace ExcoUtility
 
         public static readonly string currPath = @"\\10.0.0.8\EmailAPI\Financials\Exchange Rate\curr.txt";
 
-        private static Currency GetCurrency(string str)
+        public static Currency GetCurrency(string str)
         {
             switch (str)
             {
@@ -39,6 +39,39 @@ namespace ExcoUtility
                 }
             }
             return Currency.USD;
+        }
+
+
+        public static void Save(string msg, string filePath)
+        {
+
+            TextWriter writer = new StreamWriter(filePath);
+            StreamToFile(writer, msg);
+
+            if (writer != null)
+            {
+                writer.Flush();
+                writer.Dispose();
+                writer.Close();
+            }
+        }
+
+        public static void StreamToFile(TextWriter sw, string msg)
+        {
+            sw.Write(msg);
+        }
+
+        public static void SaveExchangeRates(List<CurrencyYear> refList)
+        {
+            StringBuilder str = new StringBuilder();
+            if (refList.Count == 0) return;
+
+            foreach (CurrencyYear CY in refList)
+            {
+                str.Append(CY.CurrencyType + "/" + CY.Year + "/" + String.Join("/", CY.ExchangeRates) + Environment.NewLine);
+            }
+
+            Save(str.ToString(), currPath);
         }
 
         public static void GetExchangeRatesFromFile()

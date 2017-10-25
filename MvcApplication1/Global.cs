@@ -75,7 +75,7 @@ namespace MvcApplication1
             Task.Run(() => ValidateMessages(true));
 
             SaveSettings();
-
+            
             return newEmails;
         }
 

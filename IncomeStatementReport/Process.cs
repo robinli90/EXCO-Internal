@@ -10,12 +10,12 @@ using ExcoUtility;
 using IncomeStatementReport.Categories;
 using Excel = Microsoft.Office.Interop.Excel;
 
+
 namespace IncomeStatementReport
 {
    public class Process
     {
-
-
+        
         // cost of steels
         public Category cs;
         // delivery selling
@@ -52,7 +52,11 @@ namespace IncomeStatementReport
         // period
         public Process(int fiscalYear, int fiscalMonth, bool include_provisional=false)
         {
+            Log.Append("Process started for Income Statement...");
+
             ExcoExRate.GetExchangeRatesFromFile();
+
+            return;
 
             this.fiscalMonth = fiscalMonth;
             this.fiscalYear = fiscalYear > 2000 ? fiscalYear - 2000 : fiscalYear;
@@ -66,14 +70,23 @@ namespace IncomeStatementReport
             ng = new Category("NON GROUPED");
             pt = new Category("");
             // build category
+            Log.Append("    Building CostOfSteels...");
             BuildCostOfSteels();
+            Log.Append("    Building DeliverySelling...");
             BuildDeliverySelling();
+            Log.Append("    Building DirectLabour...");
             BuildDirectLabour();
+            Log.Append("    Building FactoryOverhead...");
             BuildFactoryOverhead();
+            Log.Append("    Building GeneralAdmin...");
             BuildGeneralAdmin();
+            Log.Append("    Building OtherExpense...");
             BuildOtherExpense(include_provisional);
+            Log.Append("    Building Sales...");
             BuildSales();
+            Log.Append("    Building NonGrouped...");
             BuildNonGrouped();
+            Log.Append("    Building Provisional...");
             BuildProvisional();
             // diagnosis
             try
@@ -86,6 +99,7 @@ namespace IncomeStatementReport
             {
                 string msg = e.Message;
             }
+            Log.Append("    IS Process Complete!");
         }
 
         private void FindUnprocessedAccount()
@@ -197,7 +211,7 @@ namespace IncomeStatementReport
             OdbcDataReader reader = database.RunQuery(query);
             if (!reader.Read() || !reader.HasRows)
             {
-                throw new Exception("invalid account " + plantID + " " + account.glNo1 + "-" + account.glNo2);
+                //throw new Exception("invalid account " + plantID + " " + account.glNo1 + "-" + account.glNo2);
             }
             reader.Close();
         }

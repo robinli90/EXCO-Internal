@@ -78,6 +78,9 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="Microsoft.Owin, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Owin.3.0.0\lib\net45\Microsoft.Owin.dll</HintPath>
       <Private>True</Private>
@@ -245,6 +248,146 @@
     <Compile Include="Controllers\ApiSettingsController.cs" />
     <Compile Include="Controllers\ManageDWGController.cs" />
     <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Account.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Category.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Cost of Steels\Cost of Goods Burden.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Cost of Steels\Cost of Goods Material.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Cost of Steels\Cost of Steels Reclass.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Cost of Steels\Freight and Duty in.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Cost of Steels\Increase or Decrease WIP.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Cost of Steels\InterCompany Purchases.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Cost of Steels\Material Parts Non Inventory.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Cost of Steels\Raw Material Steel Usage.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Cost of Steels\SubContract Work.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Cost of Steels\WIP Obsolescence.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Delivery and Selling\Advertising Expense.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Delivery and Selling\Air Fare.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Delivery and Selling\Auto Operation Expense.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Delivery and Selling\Depreciation Automobile.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Delivery and Selling\Employee Benefits Sales.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Delivery and Selling\Group Insurance Sales.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Delivery and Selling\Non Deductible Expense Golf.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Delivery and Selling\Sales Commissions.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Delivery and Selling\Sales Salaries.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Delivery and Selling\Selling and Travel Expenses.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Delivery and Selling\Selling and Travel Meals and Entertainment.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Delivery and Selling\Statutory Holiday Sales.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Delivery and Selling\Vacation Pay Sales.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Delivery and Selling\Workers Compensation Sales.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Direct Labour\CAM Salaries.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Direct Labour\Direct Labour Heat Treat.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Direct Labour\Direct Labour Shop.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Direct Labour\WIP Adjustment Labour.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\CAD and CAM Supplies.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\CAD and CAM System Maintenance.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\CAD Salaries.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\Consulting Fees.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\Depreciation Building Improvement.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\Depreciation Building.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\Depreciation Furniture and Fixture.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\Depreciation Machine and Equipment.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\Depreciation Software.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\Depreciation Vehicles.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\Equipment Rentals.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\Factory Business Insurance.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\Factory Business Tax.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\Factory Cleaning Expense.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\Factory Employee Benefits.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\Factory Group Insurance.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\Factory Rent.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\Factory South America Travel.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\Factory Unclassified Expense.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\Freight and Duty out.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\Goodwill Amortization.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\Indirect Labour ISO IT Purchaser.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\Maintenance and Repair Building.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\Maintenance and Repair Equipment.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\Realty Tax.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\Research and Development.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\Shipping Supplies.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\Shop Air Fare.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\Shop Meals and Entertainment.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\Shop Supplies Expense.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\Shop Supplies Heat Treat.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\Shop Travel.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\Statutory Holiday.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\SubContract.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\Supervisory Salaries.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\Tool Amortization.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\Tools Expense.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\Training and Development.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\Utilities Expense.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\Vacation Pay Expense.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\WIP Adjustment Overhead.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Factory Overhead\Workers Compensation.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\General and Administration\Business Tax.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\General and Administration\Cell Phone Expense.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\General and Administration\Commercial Insurance.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\General and Administration\Donations.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\General and Administration\EDC Insurance.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\General and Administration\Legal and Audit.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\General and Administration\Meal and Entertainment.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\General and Administration\Memberships and Subscriptions.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\General and Administration\Office Air Fare.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\General and Administration\Office Cleaning.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\General and Administration\Office Depreciation Expense.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\General and Administration\Office Employee Benefits.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\General and Administration\Office Group Insurance.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\General and Administration\Office Rent.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\General and Administration\Office South America Travel.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\General and Administration\Office Statutory Holiday.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\General and Administration\Office Supplies.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\General and Administration\Office Vacation Pay.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\General and Administration\Office Worker%27s Compensation.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\General and Administration\Other Expenses.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\General and Administration\Payroll Taxes.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\General and Administration\Postage.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\General and Administration\Recruitment Expense.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\General and Administration\Salaries.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\General and Administration\Software Amortization.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\General and Administration\Telephone Expense.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\General and Administration\Travel Expenses.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Group.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Other Expense and Income\Bad Debt Expense.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Other Expense and Income\Bank Charges.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Other Expense and Income\Captial Tax Expense.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Other Expense and Income\Cash Discounts Earned.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Other Expense and Income\Dividend Interest.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Other Expense and Income\DPSP Expense.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Other Expense and Income\Exchange Gain or Loss.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Other Expense and Income\Gain or Loss on Asset Disposal.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Other Expense and Income\Impuesto_a_La_Riqueza.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Other Expense and Income\Incentive Bonus Expense.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Other Expense and Income\Long Term Interest.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Other Expense and Income\Miscellaneous Income or Expense.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Other Expense and Income\Non Recurring Expenses.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Other Expense and Income\Provision for Income Tax.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Other Expense and Income\Reorganization and Severance Costs.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Other Expense and Income\Severance.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Other Expense and Income\Short Term Interest.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Plant.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Sales\Canada Sales Steel Surcharge.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Sales\Canada Sales.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Sales\Cash and  Volume Discount.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Sales\Colombia Sales Steel Surcharge.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Sales\Colombia Sales.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Sales\Delivery Revenue.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Sales\Europe Sales Steel Surcharge.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Sales\Europe Sales.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Sales\Financial Income.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Sales\InterDivision Sales Steel Surcharge.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Sales\InterDivision Sales.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Sales\Mexico Sales Steel Surcharge.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Sales\Mexico Sales.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Sales\Pacific Rim Sales Steel Surcharge.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Sales\Pacific Rim Sales.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Sales\Scrap Sales.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Sales\South America Sales Steel Surcharge.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Sales\South America Sales.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Sales\USA Sales Steel Surcharge.cs" />
+    <Compile Include="Financial Reports\Income Statement\Categories\Sales\USA Sales.cs" />
+    <Compile Include="Financial Reports\Income Statement\ExcelWriter.cs" />
+    <Compile Include="Financial Reports\Income Statement\Process.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -8032,6 +8175,14 @@
     <Content Include="Scripts\moment.js" />
     <Content Include="Scripts\moment.min.js" />
     <Content Include="Scripts\npm.js" />
+    <Content Include="Scripts\react\react-dom-server.js" />
+    <Content Include="Scripts\react\react-dom-server.min.js" />
+    <Content Include="Scripts\react\react-dom.js" />
+    <Content Include="Scripts\react\react-dom.min.js" />
+    <Content Include="Scripts\react\react-with-addons.js" />
+    <Content Include="Scripts\react\react-with-addons.min.js" />
+    <Content Include="Scripts\react\react.js" />
+    <Content Include="Scripts\react\react.min.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -8081,7 +8232,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Financial Reports\" />
+    <Folder Include="NewFolder1\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -8147,12 +8298,6 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\IncomeStatementReport\IncomeStatementReport.csproj">
-      <Project>{4c622a39-c7b1-44a6-be1c-d2c5a4faa400}</Project>
-      <Name>IncomeStatementReport</Name>
-    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

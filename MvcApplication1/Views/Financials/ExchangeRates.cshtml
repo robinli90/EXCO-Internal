@@ -2,56 +2,101 @@
 @using MvcApplication1.Models
 
 @{
-    ViewBag.Title = "ExchangeRates";
+    ViewBag.Title = "Exchange Rates";
 }
+
+<link href="~/Content/css/personal.css" rel="stylesheet" />
 
 <!-- Main content -->
 <body>
-<section class="content">
+<div class="box box-info  form-horizontal">
+    
+    <div class="box-header with-border">
+        <h4>Add a new exchange rate year</h4>
+        
+        <div class="box-body">
+            <div class="form-group">
+                <label for="year" class="col-xs-1 control-label">Year</label>
+                <div class="col-xs-2">
+                    <select id="newyear" class="form-control">
+                        <option>2016</option>
+                        <option>2017</option>
+                        <option selected>2018</option>
+                        <option>2019</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="period" class="col-xs-1 control-label">Period</label>
+                <div class="col-xs-2">
+                    <select id="newcurr" class="form-control">
+                        <option>USD</option>
+                        <option>COP</option>
+                        <option>COP2</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="box-footer">
+                <button id="addYear" class="btn btn-default">Add Exchange Year</button>
+            </div>
+        </div>
+    </div>
+</div>
+
     <div class="row">
         <div class="col-xs-12">
             <div class="box">
                 <div class="box-header">
-                    <h3 class="box-title">User Management</h3>
+                    <h3>Exchange Rates</h3>
+                    <h5>Manage exchange rates here. The current period is highlighted in blue</h5>
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
-                    <table id="example2" class="table table-bordered table-hover">
-                        <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Department</th>
-                            <th>Email</th>
-                            <th>Rec. Protocol</th>
-                            <th>Port</th>
-                            <th style='text-align:center'>Sync Email</th>
-                            <th></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @{
-                            foreach (CurrencyYear CY in FinancialControls.CurrencyYearList)
-                            {
-                                <tr>
-                                    <td style='text-align: center'>@CY.CurrencyType</td>
-                                    <td style='text-align: center'>@CY.Year</td>
-                                    @{
-                                        foreach (double rate in CY.ExchangeRates)
-                                        {
-                                            <td style='text-align: center'>@Math.Round(rate, 3).ToString()</td>
-                                        }
+                @{
+                    int currencyIndex = 0;
+                    foreach (CurrencyYear CY in FinancialControls.CurrencyYearList)
+                    {
+                        <label for="year" class="col-xs-3 control-label">@(CY.CurrencyType + " (" + CY.Year + ")")</label>
+                        <table id="example2" class="table table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                @{
+                                    for (int i = 1; i <= 12; i++)
+                                    {
+                                        <th style='text-align: center; width: 10px'>@(i)</th>
                                     }
+                                }
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                @{
+                                    int exchangePeriod = 0;
+                                    foreach (double rate in CY.ExchangeRates)
+                                    {
+                                        <td class="ignorepadding" style='text-align: center; width: 10px; @(Html.Raw(FinancialControls.IsCurrentPeriod(CY.Year, exchangePeriod + 1) ? "background-color:powderblue" : ""))'>
+                                            <input class="txtbox" id="@(currencyIndex + "," + exchangePeriod++)" type="text" value="@rate">
+                                        </td>
+                                    }
+
                                     <td style='text-align: center'>
-                                    @{
-                                        <a href="@Url.Action("ModifyRate", "Financials", new {currYear = CY.CurrencyType + CY.Year}, null)"><i class="fa fa-edit" title="Modify User"></i></a>
-                                        <a href="@Url.Action("DeleteRate", "Financials", new {currYear = CY.CurrencyType + CY.Year}, null)"><i class="actionConfirmation fa fa-remove" title="Delete User"></i></a>
-                                    }
+                                        @{
+                                            <a href="@Url.Action("DeleteRate", "Financials", new {currYear = currencyIndex++}, null)"><i class="actionConfirmation fa fa-remove" title="Delete User"></i></a>
+                                        }
                                     </td>
-                                </tr>
-                            }
-                        }
-                        </tbody>
-                    </table>
+                                }
+                            </tr>
+                            </tbody>
+                        </table>
+                        <h1></h1>
+                    }
+                }
+                </div>
+                <div class="box-footer">
+                    <button id="saveChanges" class="btn btn-default">Save Changes</button>
                 </div>
                 <!-- /.box-body -->
             </div>
@@ -61,7 +106,6 @@
         <!-- /.col -->
     </div>
     <!-- /.row -->
-</section>
 <!-- /.content -->
 </body>
 
@@ -71,6 +115,59 @@
 @section Scripts
 {
     <script type="text/javascript">
+
+        $(document).on('change', 'input', function() {
+
+            var paramStr = this.id + "," + $(this).val();
+
+            paramStr = paramStr.replace(/\./g, 'x');
+
+            saveExch(paramStr);
+
+        });
+
+        function saveExch(idx) {
+            return $.ajax({
+                type: "POST",
+                url: "/Financials/SaveExchange/" + idx,
+                contentType: "application/json; charset=utf-8",
+                dataType: "text",
+                success: function () {
+                    var param = idx;
+                    var url = '@Url.Action("SaveExchange", "Financials", new {id = "__param__"})';
+                    window.location.href = url.replace('__param__', encodeURIComponent(param));
+                }
+            });
+        }
+
+        $(document).on('click',
+            '#addYear',
+            function () {
+                //var plant = document.getElementById("plant");
+                var year = document.getElementById("newyear");
+                var period = document.getElementById("newcurr");
+                var queryStr = (year.options[year.selectedIndex].value + ',' +
+                    period.options[period.selectedIndex].value);
+                generateIS(queryStr);
+                //var url = 'Url.Action("GenerateIncomeStatement", "Financials", new {id = "__param__"})';
+                //window.location.href = url.replace('__param__', encodeURIComponent(queryStr));
+            });
+
+        function generateIS(idx) {
+            return $.ajax({
+                type: "POST",
+                url: "/Financials/AddExchange/" + idx,
+                contentType: "application/json; charset=utf-8",
+                dataType: "text",
+                success: function () {
+                    var param = idx;
+                    var url = '@Url.Action("AddExchange", "Financials", new {id = "__param__"})';
+                    window.location.href = url.replace('__param__', encodeURIComponent(param));
+                }
+            });
+        }
+
+
         $('.actionConfirmation').on('click',
             function() {
                 return confirm('Are you sure you wish to proceed with this action?');

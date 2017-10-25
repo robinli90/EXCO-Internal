@@ -27,3 +27,15 @@ body.loading .modal {
     display: block;
 }
 
+.txtbox {
+    width: 53px;
+    text-align: center;
+    padding: 0;
+    border: 0;
+    margin: 0;
+}
+
+td.ignorepadding {
+    padding: 0;
+}
+

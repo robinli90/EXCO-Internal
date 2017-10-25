@@ -40,6 +40,8 @@ namespace ExcoUtility
             {
                 return dbName;
             }
+
+            
         }
 
         public string ConnectionString
@@ -137,6 +139,8 @@ namespace ExcoUtility
                 command.Connection = connection;
                 command.CommandTimeout = 0;
             }
+
+            return;
         }
 
         public OdbcDataReader RunQuery(string query)

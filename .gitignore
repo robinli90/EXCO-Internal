@@ -70,6 +70,7 @@ artifacts/
 *.scc
 
 # Chutzpah Test files
+ExcoODBC.cs
 _Chutzpah*
 
 # Visual C++ cache files

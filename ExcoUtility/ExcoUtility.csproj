@@ -81,6 +81,7 @@
     <Compile Include="ExcoCalendar.cs" />
     <Compile Include="AccountCategory\ExcoCategory.cs" />
     <Compile Include="ExcoZip.cs" />
+    <Compile Include="Logging.cs" />
     <Compile Include="Plant\PlantColombia.cs" />
     <Compile Include="ExcoCustomer.cs" />
     <Compile Include="ExcoCustomerTable.cs" />

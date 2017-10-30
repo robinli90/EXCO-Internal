@@ -1,48 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Web;
 using System.Web.Mvc;
 using ExcoUtility;
 using MvcApplication1.Financial_Reports.Income_Statement;
+using MvcApplication1.Financial_Reports.Sales_Report;
 using MvcApplication1.Models;
-using Process = System.Diagnostics.Process;
 
 namespace MvcApplication1.Controllers
 {
     public class FinancialsController : Controller
     {
-        // GET: Financials
-        [Route("Financials/IncomeStatement/{paramOne}")]
-        public ActionResult IncomeStatement(string paramOne)
-        {
-            return View();
-        }
 
-        // GET: Financials
-        [Route("Financials/SalesReport/{paramOne}")]
-        public ActionResult SalesReport(string paramOne)
-        {
-            return View();
-        }
 
-        // GET: Financials
-        [Route("Financials/TrialBalance/{paramOne}")]
-        public ActionResult TrialBalance(string paramOne)
-        {
-            return View();
-        }
-
-        // GET: Financials
-        [Route("Financials/YTD/{paramOne}")]
-        public ActionResult YTD(string paramOne)
-        {
-            return View();
-            
-        }
-
+        #region Exchange Rates
         // GET: Financials
         [Route("Financials/ExchangeRates/{paramOne}")]
         public ActionResult ExchangeRates(string paramOne)
@@ -92,8 +64,7 @@ namespace MvcApplication1.Controllers
             
             return RedirectToAction("ExchangeRates", new {paramOne = "ER"});
         }
-
-
+        
         [HttpPost]
         [Route("Financials/SaveExchange/{parameterStr}")]
         public ActionResult SaveExchange(string parameterStr)
@@ -124,54 +95,143 @@ namespace MvcApplication1.Controllers
 
             return RedirectToAction("ExchangeRates", new { parameterStr = "ER" });
         }
+        #endregion
 
+        #region Income Statement
 
-        [HttpPost]
+        // GET: Financials
+        [Route("Financials/IncomeStatement/{paramOne}")]
+        public ActionResult IncomeStatement(string paramOne)
+        {
+            return View();
+        }
+
+        private static int runCountIS = 0;
+
+        [HttpGet]
         [Route("Financials/GenerateIncomeStatement/{parameterStr}")]
         public ActionResult GenerateIncomeStatement(string parameterStr)
         {
-            string[] parameters = parameterStr.Split(new[] {","}, StringSplitOptions.None);
-
-            MvcApplication1.Financial_Reports.Income_Statement.Process process = new MvcApplication1.Financial_Reports.Income_Statement.Process(Convert.ToInt32(parameters[1]), Convert.ToInt32(parameters[2]));
-            // create excel object
-
-            Log.Append("    1");
-            try
+            string[] parameters = parameterStr.Split(new[] { "," }, StringSplitOptions.None);
+            
+            // First time 
+            string fileName = "Income Statement Report at " + parameters[1] + "-" + parameters[2] + ".xlsx";
+            string path = @"\\10.0.0.8\EmailAPI\Financials\IS-Reports\" + fileName;
+            
+            if (runCountIS % 2 == 0)
             {
-            }
-            catch
-            {
-                Log.Append("sdfsdf");
+
+                MvcApplication1.Financial_Reports.Income_Statement.Process process = new MvcApplication1.Financial_Reports.Income_Statement.Process(Convert.ToInt32(parameters[1]), Convert.ToInt32(parameters[2]));
+                // create excel object
+                //string path = @"\\10.0.0.8\EmailAPI\Financials\IS-Reports\Income Statement Report at " + process.fiscalMonth + "-" + process.fiscalYear + ".xlsx";
+    
+                ExcelWriter excelWriter = new ExcelWriter(process);
+
+                excelWriter.FillSheets();
+                System.IO.File.Delete(path);
+                excelWriter.OutputToFile(path);
+    
+                // Let file settle
+                Thread.Sleep(1000);
             }
 
-            Log.Append("    1.51");
-            ExcelWriter excelWriter = new ExcelWriter();
+            runCountIS++;
 
-            try
-            {
-                Log.Append("    1.6");
-                excelWriter = new ExcelWriter(process);
-                Log.Append("    1.7");
-            }
-            catch (Exception ex)
-            {
-                Log.Append("sdfsdf2");
-            }
-            Log.Append("    2");
-            excelWriter.FillSheets();
-            Log.Append("    3");
-            // write to file
-            string path = @"\\10.0.0.8\EmailAPI\Financials\IS-Reports\Income Statement Report at " + process.fiscalMonth + "-" + process.fiscalYear + ".xlsx";
-            //string path = "C:\\Sales Report\\Income Statement Report at " + process.fiscalMonth + "-" + process.fiscalYear + ".xlsx";
-            Log.Append("    4");
-            System.IO.File.Delete(path);
-            Log.Append("    5");
-            excelWriter.OutputToFile(path);
-            Log.Append("    Opening Excel File (" + path + ")...");
-            System.Diagnostics.Process.Start(path);
-
-            return RedirectToAction("IncomeStatement");
-            //return Redirect("/Financials/IncomeStatement/syncSettings");
+            byte[] fileBytes = System.IO.File.ReadAllBytes(path);
+            string fn = fileName;
+            return File(fileBytes, "application/octet-stream", fn);
         }
+
+        #endregion
+
+        #region YTD Income Statement
+
+        // GET: Financials
+        [Route("Financials/YTD/{paramOne}")]
+        public ActionResult YTD(string paramOne)
+        {
+            return View();
+
+        }
+
+        #endregion
+
+        #region Sales Report
+        // GET: Financials
+        [Route("Financials/SalesReport/{paramOne}")]
+        public ActionResult SalesReport(string paramOne)
+        {
+            return View();
+        }
+
+        private static int runCountSR = 0;
+
+        [HttpGet]
+        [Route("Financials/GenerateSalesReport/{parameterStr}")]
+        public ActionResult GenerateSalesReport(string parameterStr)
+        {
+
+            // First time 
+            string fileName = "Sales Report at " + DateTime.Now.Year + "-" + DateTime.Now.Month + ".xlsx";
+            string path = @"\\10.0.0.8\EmailAPI\Financials\Sales-Reports\" + fileName;
+            
+            if (runCountSR % 2 == 0)
+            {
+                Financial_Reports.Sales_Report.Process process = new Financial_Reports.Sales_Report.Process(path);
+                // create excel object
+    
+                process.Run(parameterStr == "true");
+                
+                // Let file settle
+                Thread.Sleep(1000);
+            }
+
+            runCountSR++;
+
+            byte[] fileBytes = System.IO.File.ReadAllBytes(path);
+            string fn = fileName;
+            return File(fileBytes, "application/octet-stream", fn);
+        }
+        #endregion
+
+        #region Trial Balance
+
+        // GET: Financials
+        [Route("Financials/TrialBalance/{paramOne}")]
+        public ActionResult TrialBalance(string paramOne)
+        {
+            return View();
+        }
+
+        private static int runCountTB = 0;
+
+        [HttpGet]
+        [Route("Financials/GenerateTrialBalance/{parameterStr}")]
+        public ActionResult GenerateTrialBalance(string parameterStr)
+        {
+            string[] parameters = parameterStr.Split(new[] { "," }, StringSplitOptions.None);
+
+            // First time 
+            string fileName = "Trial Balance at " + DateTime.Now.Year + "-" + DateTime.Now.Month + "(" + parameters[0] + ").xlsx";
+            string path = @"\\10.0.0.8\EmailAPI\Financials\Trial-Balance\" + fileName;
+
+            if (runCountTB % 2 == 0)
+            {
+                Financial_Reports.Trial_Balance.Process process = new Financial_Reports.Trial_Balance.Process(path, parameters[0], 
+                    Convert.ToInt32(parameters[1]), 
+                    Convert.ToInt32(parameters[2]));
+
+                // Let file settle
+                Thread.Sleep(1000);
+            }
+
+            runCountTB++;
+
+            byte[] fileBytes = System.IO.File.ReadAllBytes(path);
+            string fn = fileName;
+            return File(fileBytes, "application/octet-stream", fn);
+        }
+
+        #endregion
     }
 }

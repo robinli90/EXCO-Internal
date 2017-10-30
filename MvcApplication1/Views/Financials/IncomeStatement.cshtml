@@ -93,7 +93,7 @@
 
         function generateIS(idx) {
             return $.ajax({
-                type: "POST",
+                type: "GET",
                 url: "/Financials/GenerateIncomeStatement/" + idx,
                 contentType: "application/json; charset=utf-8",
                 dataType: "text",
@@ -101,6 +101,12 @@
                     var param = idx;
                     var url = '@Url.Action("GenerateIncomeStatement", "Financials", new {id = "__param__"})';
                     window.location.href = url.replace('__param__', encodeURIComponent(param));
+                    jQuery.event.trigger("ajaxStop");
+                },
+                fail: function() {
+                    jQuery.event.trigger("ajaxStop");
+                },
+                error: function() {
                     jQuery.event.trigger("ajaxStop");
                 }
             });

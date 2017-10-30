@@ -3,5 +3,82 @@
     ViewBag.Title = "SalesReport";
 }
 
-<h2>SalesReport</h2>
+<script src="~/Scripts/jquery-2.1.3.min.js"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
 
+<!-- Horizontal Form -->
+<div class="box box-info form-horizontal">
+    <div class="box-header with-border">
+        <h3 class="box-title">Sales Report</h3>
+    </div>
+
+    <div class="box box-warning">
+        <div class="box-header with-border">
+            <!-- /.box-header -->
+            <!-- form start -->
+            <div class="box-body">
+                <label>
+                    <input type="checkbox" id="includeSurcharge" class="minimal">
+                    Include Surcharge
+                </label>
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer">
+                <button id="generateSalesReport" class="btn btn-default">Generate</button>
+            </div>
+            <!-- /.box-footer -->
+        </div>
+    </div>
+</div>
+
+<div class="modal"><!-- Place at bottom of page --></div>
+
+@section Scripts
+{
+    <script type="text/javascript">
+
+        $body = $("body");
+
+        $(document).on({
+            ajaxStart: function() { $body.addClass("loading"); },
+            ajaxStop: function() { $body.removeClass("loading"); }
+
+        });
+
+        $(document).on('click',
+            '#generateSalesReport',
+            function() {
+
+                jQuery.event.trigger("ajaxStart");
+                var needSurcharge = "x";
+                if (document.getElementById('includeSurcharge').checked) {
+                    needSurcharge = "true";
+                }
+
+                generateIS(needSurcharge);
+
+            });
+
+        function generateIS(idx) {
+            return $.ajax({
+                type: "GET",
+                url: "/Financials/GenerateSalesReport/" + idx,
+                contentType: "application/json; charset=utf-8",
+                dataType: "text",
+                success: function() {
+                    var param = idx;
+                    var url = '@Url.Action("GenerateSalesReport", "Financials", new {id = "__param__"})';
+                    window.location.href = url.replace('__param__', encodeURIComponent(param));
+                    jQuery.event.trigger("ajaxStop");
+                },
+                fail: function() {
+                    jQuery.event.trigger("ajaxStop");
+                },
+                error: function() {
+                    jQuery.event.trigger("ajaxStop");
+                }
+            });
+        }
+    </script>
+}

@@ -516,7 +516,7 @@ namespace MvcApplication1.Financial_Reports.Income_Statement
             oe.groupList.Add(new Categories.Other_Expense_and_Income.Long_Term_Interest(fiscalYear, fiscalMonth));
             oe.groupList.Add(new Categories.Other_Expense_and_Income.Miscellaneous_Income_or_Expense(fiscalYear, fiscalMonth));
             oe.groupList.Add(new Categories.Other_Expense_and_Income.Non_Recurring_Expenses(fiscalYear, fiscalMonth));
-            if (include_provisional)
+            //if (include_provisional)
                 oe.groupList.Add(new Categories.Other_Expense_and_Income.Provision_for_Income_Tax(fiscalYear, fiscalMonth));
             oe.groupList.Add(new Categories.Other_Expense_and_Income.Reorganization_Costs(fiscalYear, fiscalMonth));
             oe.groupList.Add(new Categories.Other_Expense_and_Income.Severance(fiscalYear, fiscalMonth));

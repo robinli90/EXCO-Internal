@@ -388,6 +388,12 @@
     <Compile Include="Financial Reports\Income Statement\Categories\Sales\USA Sales.cs" />
     <Compile Include="Financial Reports\Income Statement\ExcelWriter.cs" />
     <Compile Include="Financial Reports\Income Statement\Process.cs" />
+    <Compile Include="Financial Reports\Sales Report\Customer.cs" />
+    <Compile Include="Financial Reports\Sales Report\Invoice.cs" />
+    <Compile Include="Financial Reports\Sales Report\Plant.cs" />
+    <Compile Include="Financial Reports\Sales Report\Process.cs" />
+    <Compile Include="Financial Reports\Trial Balance\Account.cs" />
+    <Compile Include="Financial Reports\Trial Balance\Process.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -8232,7 +8238,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="NewFolder1\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

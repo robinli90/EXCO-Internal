@@ -6,16 +6,17 @@ using System.Net.Mail;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using System.Web.Helpers;
+using System.Web.Http.Results;
 using System.Web.Security.AntiXss;
 using Microsoft.Office.Interop.Outlook;
 using MimeKit;
+using MvcApplication1.Paperless_System;
 
 namespace MvcApplication1.Models
 {
     [DataContract]
     public class Email
     {
-        
         public string UID { get; set; }
 
         [DataMember]
@@ -96,6 +97,16 @@ namespace MvcApplication1.Models
             var message = mailMessage;
 
             using (var stream = File.Create(Global.messagesDirectoryPath + ID + ".eml"))
+                message.WriteTo(stream);
+        }
+
+        public void CreateEmailMsgFile(MimeMessage mailMessage, string path, bool isError = false)
+        {
+            var message = mailMessage;
+
+            int existingFileCount = isError ? 0 : Directory.GetFiles(ArchivesChecker._archivePath + message.Subject.Trim(), "*.eml").Length;
+
+            using (var stream = File.Create(path + (existingFileCount > 0 ? "_" + ++existingFileCount : "") + ".eml"))
                 message.WriteTo(stream);
         }
 

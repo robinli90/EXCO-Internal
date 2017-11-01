@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using ExcoUtility;
-using Excel = Microsoft.Office.Interop.Excel;
+using Excel2 = Microsoft.Office.Interop.Excel;
 
 namespace MvcApplication1.Financial_Reports.Trial_Balance
 {
@@ -84,7 +84,7 @@ namespace MvcApplication1.Financial_Reports.Trial_Balance
                 }
                 else if (plantID == 3)
                 {
-                    query = "select a.aj4gl#1 as no1, a.aj4gl#2 as no2, b.aztitl as title, b.azatyp as account_type, (a.aj4tt" + calendar.GetFiscalMonth().ToString("D2") + "+aj4ob" + calendar.GetFiscalMonth().ToString("D2") + ") as balance from cmsdat.glmt as a, cmsdat.mast as b where a.aj4comp=3 and a.aj4ccyy=" + (calendar.GetFiscalYear() + 2000).ToString("D2") + " and a.aj4gl#1=b.azgl#1 and a.aj4gl#2=b.azgl#2 and b.azcomp=3";
+                    query = "select a.aj4gl#1 as no1, a.aj4gl#2 as no2, b.aztitl as title, b.azatyp as account_type, (a.aj4tt" + calendar.GetFiscalMonth().ToString("D2") + "+aj4ob" + calendar.GetFiscalMonth().ToString("D2") + ") as balance from cmsdat.glmt as a, cmsdat.mast as b where a.aj4comp=3 and a.aj4ccyy=" + (calendar.GetFiscalYear()).ToString("D2") + " and a.aj4gl#1=b.azgl#1 and a.aj4gl#2=b.azgl#2 and b.azcomp=3";
                     reader = database.RunQuery(query);
                     while (reader.Read())
                     {
@@ -111,7 +111,7 @@ namespace MvcApplication1.Financial_Reports.Trial_Balance
                 }
                 else if (plantID == 5)
                 {
-                    query = "select a.aj4gl#1 as no1, a.aj4gl#2 as no2, b.aztitl as title, b.azatyp as account_type, (a.aj4tt" + calendar.GetFiscalMonth().ToString("D2") + "+aj4ob" + calendar.GetFiscalMonth().ToString("D2") + ") as balance from cmsdat.glmt as a, cmsdat.mast as b where a.aj4comp=5 and a.aj4ccyy=" + (calendar.GetFiscalYear() + 2000).ToString("D2") + " and a.aj4gl#1=b.azgl#1 and a.aj4gl#2=b.azgl#2 and b.azcomp=5";
+                    query = "select a.aj4gl#1 as no1, a.aj4gl#2 as no2, b.aztitl as title, b.azatyp as account_type, (a.aj4tt" + calendar.GetFiscalMonth().ToString("D2") + "+aj4ob" + calendar.GetFiscalMonth().ToString("D2") + ") as balance from cmsdat.glmt as a, cmsdat.mast as b where a.aj4comp=5 and a.aj4ccyy=" + (calendar.GetFiscalYear()).ToString("D2") + " and a.aj4gl#1=b.azgl#1 and a.aj4gl#2=b.azgl#2 and b.azcomp=5";
                     reader = database.RunQuery(query);
                     while (reader.Read())
                     {
@@ -139,7 +139,7 @@ namespace MvcApplication1.Financial_Reports.Trial_Balance
                 else if (plantID == 4)
                 {
                     // plant 04
-                    query = "select a.aj4gl#1 as no1, a.aj4gl#2 as no2, b.aztitl as title, b.azatyp as account_type, (a.aj4tt" + calendar.GetFiscalMonth().ToString("D2") + "+aj4ob" + calendar.GetFiscalMonth().ToString("D2") + ") as balance from cmsdat.glmt as a, cmsdat.mast as b where a.aj4comp=4 and a.aj4ccyy=" + (calendar.GetFiscalYear() + 2000).ToString("D2") + " and a.aj4gl#1=b.azgl#1 and a.aj4gl#2=b.azgl#2 and b.azcomp=4";
+                    query = "select a.aj4gl#1 as no1, a.aj4gl#2 as no2, b.aztitl as title, b.azatyp as account_type, (a.aj4tt" + calendar.GetFiscalMonth().ToString("D2") + "+aj4ob" + calendar.GetFiscalMonth().ToString("D2") + ") as balance from cmsdat.glmt as a, cmsdat.mast as b where a.aj4comp=4 and a.aj4ccyy=" + (calendar.GetFiscalYear()).ToString("D2") + " and a.aj4gl#1=b.azgl#1 and a.aj4gl#2=b.azgl#2 and b.azcomp=4";
                     reader = database.RunQuery(query);
                     while (reader.Read())
                     {
@@ -246,11 +246,11 @@ namespace MvcApplication1.Financial_Reports.Trial_Balance
                     throw new Exception("None of plants has been selected!");
                 }
                 // write to excel
-                Excel.Application excel = new Excel.Application();
+                Excel2.Application excel = new Excel2.Application();
                 object misValue = System.Reflection.Missing.Value;
-                Excel.Workbook book = excel.Workbooks.Add(misValue);
+                Excel2.Workbook book = excel.Workbooks.Add(misValue);
                 //Excel.Worksheet sheet = book.Worksheets[1];
-                Excel.Worksheet sheet = book.Worksheets.Add();//[1];
+                Excel2.Worksheet sheet = book.Worksheets.Add();//[1];
                 //sheet.Delete();
                 //sheet = book.Worksheets[1];
                 //sheet.Delete();
@@ -258,7 +258,7 @@ namespace MvcApplication1.Financial_Reports.Trial_Balance
                 sheet.Name = "Trial Balance for " + plantName;
                 // write title
                 sheet.Cells[1, 1] = plantName;
-                Excel.Range range = sheet.get_Range("A1");
+                Excel2.Range range = sheet.get_Range("A1");
                 range.Font.Color = Color.Red;
                 range.Font.Size = 14;
                 sheet.Cells[2, 1] = "Balance Consolidations";
@@ -277,36 +277,36 @@ namespace MvcApplication1.Financial_Reports.Trial_Balance
                 sheet.Cells[7, 1] = "Account";
                 range = sheet.get_Range("A7");
                 range.Font.Size = 11;
-                range.Cells.Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Excel.XlLineStyle.xlContinuous;
+                range.Cells.Borders[Excel2.XlBordersIndex.xlEdgeBottom].LineStyle = Excel2.XlLineStyle.xlContinuous;
                 sheet.Cells[5, 2] = "Company Number";
                 range = sheet.get_Range("B5");
                 range.Font.Size = 11;
-                range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                range.Cells.Borders.LineStyle = Excel2.XlLineStyle.xlContinuous;
                 sheet.Cells[6, 2] = "Period";
                 range = sheet.get_Range("B6");
                 range.Font.Size = 11;
-                range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                range.Cells.Borders.LineStyle = Excel2.XlLineStyle.xlContinuous;
                 sheet.Cells[7, 2] = "Account Name / Company";
                 range = sheet.get_Range("B7");
                 range.Font.Size = 11;
-                range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                range.Cells.Borders.LineStyle = Excel2.XlLineStyle.xlContinuous;
                 if (4 != plantID)
                 {
                     sheet.Cells[5, 3] = plantID.ToString("D2");
                     range = sheet.get_Range("C5");
                     range.Font.Size = 11;
                     range.Font.Color = Color.Red;
-                    range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                    range.Cells.Borders.LineStyle = Excel2.XlLineStyle.xlContinuous;
                     range.Cells.Interior.Color = Color.PeachPuff;
                     sheet.Cells[6, 3] = (calendar.GetFiscalYear() + 2000).ToString() + "-" + calendar.GetFiscalMonth().ToString("D2");
                     range = sheet.get_Range("C6");
                     range.Font.Size = 11;
-                    range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                    range.Cells.Borders.LineStyle = Excel2.XlLineStyle.xlContinuous;
                     range.Cells.Interior.Color = Color.PeachPuff;
                     sheet.Cells[7, 3] = plantName;
                     range = sheet.get_Range("C7");
                     range.Font.Size = 11;
-                    range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                    range.Cells.Borders.LineStyle = Excel2.XlLineStyle.xlContinuous;
                     range.Cells.Interior.Color = Color.PeachPuff;
                 }
                 else
@@ -316,74 +316,74 @@ namespace MvcApplication1.Financial_Reports.Trial_Balance
                     range = sheet.get_Range("C5");
                     range.Font.Size = 11;
                     range.Font.Color = Color.Red;
-                    range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                    range.Cells.Borders.LineStyle = Excel2.XlLineStyle.xlContinuous;
                     range.Cells.Interior.Color = Color.PeachPuff;
                     sheet.Cells[6, 3] = (calendar.GetFiscalYear() + 2000).ToString() + "-" + calendar.GetFiscalMonth().ToString("D2");
                     range = sheet.get_Range("C6");
                     range.Font.Size = 11;
-                    range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                    range.Cells.Borders.LineStyle = Excel2.XlLineStyle.xlContinuous;
                     range.Cells.Interior.Color = Color.PeachPuff;
                     sheet.Cells[7, 3] = "Exco GAAP";
                     range = sheet.get_Range("C7");
                     range.Font.Size = 11;
-                    range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                    range.Cells.Borders.LineStyle = Excel2.XlLineStyle.xlContinuous;
                     range.Cells.Interior.Color = Color.PeachPuff;
                     // 41
                     sheet.Cells[5, 4] = "41";
                     range = sheet.get_Range("D5");
                     range.Font.Size = 11;
                     range.Font.Color = Color.Red;
-                    range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                    range.Cells.Borders.LineStyle = Excel2.XlLineStyle.xlContinuous;
                     range.Cells.Interior.Color = Color.PeachPuff;
                     sheet.Cells[6, 4] = (tempCalendar.GetFiscalYear() + 2000).ToString() + "-" + tempCalendar.GetFiscalMonth().ToString("D2");
                     range = sheet.get_Range("D6");
                     range.Font.Size = 11;
-                    range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                    range.Cells.Borders.LineStyle = Excel2.XlLineStyle.xlContinuous;
                     range.Cells.Interior.Color = Color.PeachPuff;
                     sheet.Cells[7, 4] = "Exco IFRS";
                     range = sheet.get_Range("D7");
                     range.Font.Size = 11;
-                    range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                    range.Cells.Borders.LineStyle = Excel2.XlLineStyle.xlContinuous;
                     range.Cells.Interior.Color = Color.PeachPuff;
                     // 48
                     sheet.Cells[5, 5] = "48";
                     range = sheet.get_Range("E5");
                     range.Font.Size = 11;
                     range.Font.Color = Color.Red;
-                    range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                    range.Cells.Borders.LineStyle = Excel2.XlLineStyle.xlContinuous;
                     range.Cells.Interior.Color = Color.PeachPuff;
                     sheet.Cells[6, 5] = (calendar.GetFiscalYear() + 2000).ToString() + "-" + calendar.GetFiscalMonth().ToString("D2");
                     range = sheet.get_Range("E6");
                     range.Font.Size = 11;
-                    range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                    range.Cells.Borders.LineStyle = Excel2.XlLineStyle.xlContinuous;
                     range.Cells.Interior.Color = Color.PeachPuff;
                     sheet.Cells[7, 5] = "Coltooling GAAP";
                     range = sheet.get_Range("E7");
                     range.Font.Size = 11;
-                    range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                    range.Cells.Borders.LineStyle = Excel2.XlLineStyle.xlContinuous;
                     range.Cells.Interior.Color = Color.PeachPuff;
                     // 49
                     sheet.Cells[5, 6] = "49";
                     range = sheet.get_Range("F5");
                     range.Font.Size = 11;
                     range.Font.Color = Color.Red;
-                    range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                    range.Cells.Borders.LineStyle = Excel2.XlLineStyle.xlContinuous;
                     range.Cells.Interior.Color = Color.PeachPuff;
                     sheet.Cells[6, 6] = (tempCalendar.GetFiscalYear() + 2000).ToString() + "-" + tempCalendar.GetFiscalMonth().ToString("D2");
                     range = sheet.get_Range("F6");
                     range.Font.Size = 11;
-                    range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                    range.Cells.Borders.LineStyle = Excel2.XlLineStyle.xlContinuous;
                     range.Cells.Interior.Color = Color.PeachPuff;
                     sheet.Cells[7, 6] = "Coltooling IFRS";
                     range = sheet.get_Range("F7");
                     range.Font.Size = 11;
-                    range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                    range.Cells.Borders.LineStyle = Excel2.XlLineStyle.xlContinuous;
                     range.Cells.Interior.Color = Color.PeachPuff;
                     // cosolidated
                     sheet.Cells[7, 7] = "Consolidated";
                     range = sheet.get_Range("G7");
                     range.Font.Size = 11;
-                    range.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                    range.Cells.Borders.LineStyle = Excel2.XlLineStyle.xlContinuous;
                     range.Cells.Interior.Color = Color.PeachPuff;
                 }
 
@@ -419,9 +419,9 @@ namespace MvcApplication1.Financial_Reports.Trial_Balance
                 }
                 // write to file
                 sheet.Cells.Columns.AutoFit();
-                sheet.Cells.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                sheet.Cells.HorizontalAlignment = Excel2.XlHAlign.xlHAlignCenter;
                 File.Delete(filePath);
-                book.SaveAs(filePath, Excel.XlFileFormat.xlOpenXMLWorkbook);
+                book.SaveAs(filePath, Excel2.XlFileFormat.xlOpenXMLWorkbook);
                 excel.Quit();
             }
             catch (Exception e)

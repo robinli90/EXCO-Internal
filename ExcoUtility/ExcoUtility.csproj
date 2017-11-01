@@ -80,6 +80,7 @@
     <Compile Include="ExcoBudget.cs" />
     <Compile Include="ExcoCalendar.cs" />
     <Compile Include="AccountCategory\ExcoCategory.cs" />
+    <Compile Include="ExcoODBC.cs" />
     <Compile Include="ExcoZip.cs" />
     <Compile Include="Logging.cs" />
     <Compile Include="Plant\PlantColombia.cs" />
@@ -90,7 +91,6 @@
     <Compile Include="Plant\PlantMarkham.cs" />
     <Compile Include="Plant\PlantMichigan.cs" />
     <Compile Include="ExcoMoney.cs" />
-    <Compile Include="ExcoODBC.cs" />
     <Compile Include="ExcoExRate.cs" />
     <Compile Include="Plant\ExcoPlant.cs" />
     <Compile Include="Plant\PlantTexas.cs" />

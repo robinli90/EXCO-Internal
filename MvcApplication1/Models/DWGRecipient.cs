@@ -25,7 +25,7 @@ namespace MvcApplication1.Models
     {
         public static Dictionary<string, List<DWGRecipient>> Recipients { get; set; }
 
-        private static readonly string _recipientFilePath = @"\\10.0.0.8\idrive\inspection\list.txt";
+        private static readonly string _recipientFilePath = @"\\10.0.0.8\EmailAPI\Documentations\list.txt";
 
         static DWGEmail()
         {

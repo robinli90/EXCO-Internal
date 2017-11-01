@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Excel = Microsoft.Office.Interop.Excel;
+using Excel2 = Microsoft.Office.Interop.Excel;
 using ExcoUtility;
 using MvcApplication1.Financial_Reports.Income_Statement.Categories;
 
@@ -12,19 +12,19 @@ namespace MvcApplication1.Financial_Reports.Income_Statement
     {
         private bool Implement_Changes = true;
 
-        // excel objects
-        private Excel.Application excel = new Excel.Application();
+        // Excel2 objects
+        private Excel2.Application Excel2 = new Excel2.Application();
         private object misValue = System.Reflection.Missing.Value;
-        private Excel.Workbook workBook;
+        private Excel2.Workbook workBook;
         // work sheets
-        private Excel.Worksheet colCADSheet;
-        private Excel.Worksheet colPESOSheet;
-        private Excel.Worksheet texCADSheet;
-        private Excel.Worksheet texUSDSheet;
-        private Excel.Worksheet micCADSheet;
-        private Excel.Worksheet micUSDSheet;
-        private Excel.Worksheet marCADSheet;
-        private Excel.Worksheet consolidateSheet;
+        private Excel2.Worksheet colCADSheet;
+        private Excel2.Worksheet colPESOSheet;
+        private Excel2.Worksheet texCADSheet;
+        private Excel2.Worksheet texUSDSheet;
+        private Excel2.Worksheet micCADSheet;
+        private Excel2.Worksheet micUSDSheet;
+        private Excel2.Worksheet marCADSheet;
+        private Excel2.Worksheet consolidateSheet;
         // period
         private int fiscalYear;
         private int fiscalMonth;
@@ -179,7 +179,7 @@ namespace MvcApplication1.Financial_Reports.Income_Statement
             {
                 // create work book        
                 
-                workBook = excel.Workbooks.Add(misValue);
+                workBook = Excel2.Workbooks.Add(misValue);
             }
             catch (Exception p)
             {
@@ -233,14 +233,14 @@ namespace MvcApplication1.Financial_Reports.Income_Statement
             
         }
 
-        // output to an external excel file
+        // output to an external Excel2 file
         public void OutputToFile(string filePath)
         {
             try
             {
-                Log.Append("    Outputting Excel File...");
-                workBook.SaveAs(filePath, Excel.XlFileFormat.xlOpenXMLWorkbook);
-                excel.Quit();
+                Log.Append("    Outputting Excel2 File...");
+                workBook.SaveAs(filePath, Microsoft.Office.Interop.Excel.XlFileFormat.xlOpenXMLWorkbook);
+                Excel2.Quit();
             }
             finally
             {
@@ -275,7 +275,7 @@ namespace MvcApplication1.Financial_Reports.Income_Statement
         }
 
         // write sheet header
-        private int WriteSheetHeader(string title, Excel.Worksheet sheet)
+        private int WriteSheetHeader(string title, Excel2.Worksheet sheet)
         {
             int row = 1;
             sheet.Cells[row, 1] = title;
@@ -287,7 +287,7 @@ namespace MvcApplication1.Financial_Reports.Income_Statement
         }
 
         // write exchange rate row
-        private int WriteExchangeRateRow(int row, int plantID, string currency, Excel.Worksheet sheet)
+        private int WriteExchangeRateRow(int row, int plantID, string currency, Excel2.Worksheet sheet)
         {
             if (plantID == 4)
             {
@@ -316,16 +316,16 @@ namespace MvcApplication1.Financial_Reports.Income_Statement
         }
 
         // adjust style for a sheet
-        private void AdjustSheetStyle(Excel.Worksheet sheet, int row)
+        private void AdjustSheetStyle(Excel2.Worksheet sheet, int row)
         {
             sheet.Cells.Columns.AutoFit();
-            sheet.Cells.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
-            sheet.Cells.get_Range("A2", "A" + row.ToString()).HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
-            sheet.Cells.get_Range("B2", "M" + row.ToString()).HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
+            sheet.Cells.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+            sheet.Cells.get_Range("A2", "A" + row.ToString()).HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
+            sheet.Cells.get_Range("B2", "M" + row.ToString()).HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight;
         }
 
         // write header
-        private int WriteHeader(Excel.Worksheet sheet, int row)
+        private int WriteHeader(Excel2.Worksheet sheet, int row)
         {
             sheet.Cells[row, 1] = "Name";
             sheet.Cells[row, 2] = "Period " + fiscalMonth + " Actual";
@@ -334,10 +334,11 @@ namespace MvcApplication1.Financial_Reports.Income_Statement
             sheet.Cells[row, 8] = "Y-T-D Actual";
             sheet.Cells[row, 10] = "Y-T-D Budget";
             sheet.Cells[row, 12] = "Last Year Period " + fiscalMonth + " Actual"; ;
-            Excel.Range range = sheet.Cells.get_Range("A" + row.ToString(), "M" + row.ToString());
+            Excel2.Range range = sheet.Cells.get_Range("A" + row.ToString(), "M" + row.ToString());
             range.Font.Bold = true;
             range.Font.Size = 14;
-            range.Cells.Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.Cells.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+            
             return row;
         }
 
@@ -349,7 +350,7 @@ namespace MvcApplication1.Financial_Reports.Income_Statement
         int OtherSalesRowTotal = 0;
 
         // write a group list
-        private int WriteGroupList(Excel.Worksheet sheet, int row, int plantID, string currency, Category category, bool Native_Currency = false, bool isActuallyProvision = false)
+        private int WriteGroupList(Excel2.Worksheet sheet, int row, int plantID, string currency, Category category, bool Native_Currency = false, bool isActuallyProvision = false)
         {
             List<Group> groupList = category.groupList;
 
@@ -684,20 +685,20 @@ namespace MvcApplication1.Financial_Reports.Income_Statement
         }
 
         // style of summary
-        private void StyleOfSummary(Excel.Worksheet sheet, int row)
+        private void StyleOfSummary(Excel2.Worksheet sheet, int row)
         {
             sheet.Cells.get_Range("A" + row.ToString(), "M" + row.ToString()).Font.Bold = true;
-            sheet.Cells.get_Range("A" + row.ToString(), "M" + row.ToString()).Cells.Borders[Excel.XlBordersIndex.xlEdgeTop].LineStyle = Excel.XlLineStyle.xlContinuous;
+            sheet.Cells.get_Range("A" + row.ToString(), "M" + row.ToString()).Cells.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
         }
 
         // style of sub summary
-        private void StyleOfSubSummary(Excel.Worksheet sheet, int row)
+        private void StyleOfSubSummary(Excel2.Worksheet sheet, int row)
         {
-            sheet.Cells.get_Range("A" + row.ToString(), "M" + row.ToString()).Cells.Borders[Excel.XlBordersIndex.xlEdgeTop].LineStyle = Excel.XlLineStyle.xlContinuous;
+            sheet.Cells.get_Range("A" + row.ToString(), "M" + row.ToString()).Cells.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
         }
 
         // write a group list summary
-        private int WriteGroupListSummary(Excel.Worksheet sheet, int startRow, int row)
+        private int WriteGroupListSummary(Excel2.Worksheet sheet, int startRow, int row)
         {
             sheet.Cells[row, 1] = "TOTAL :";
             if (ProductionSalesRowTotal > 0 && SteelSurchargeRowTotal > 0 && OtherSalesRowTotal > 0)
@@ -764,7 +765,7 @@ namespace MvcApplication1.Financial_Reports.Income_Statement
 
 
         // write category
-        private int WriteCategory(Excel.Worksheet sheet, int row, int plantID, string currency, Category category, bool Native_Currency = false, bool isActuallyProvision = false)
+        private int WriteCategory(Excel2.Worksheet sheet, int row, int plantID, string currency, Category category, bool Native_Currency = false, bool isActuallyProvision = false)
         {
 
             if (!(category.name == ""))
@@ -2005,10 +2006,10 @@ namespace MvcApplication1.Financial_Reports.Income_Statement
             consolidateSheet.Cells[row, 6] = "Texas";
             consolidateSheet.Cells[row, 8] = "Colombia";
             consolidateSheet.Cells[row, 10] = "Total";
-            Excel.Range range = consolidateSheet.Cells.get_Range("A" + row.ToString(), "K" + row.ToString());
+            Excel2.Range range = consolidateSheet.Cells.get_Range("A" + row.ToString(), "K" + row.ToString());
             range.Font.Bold = true;
             range.Font.Size = 14;
-            range.Cells.Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.Cells.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
             // write sales
             row++;
             row = WriteConsolidateCategory(process.ss, row);

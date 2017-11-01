@@ -7,7 +7,7 @@ using ExcoUtility;
 using System.Data.Odbc;
 using System.Net.Mail;
 using System.Net;
-using Excel = Microsoft.Office.Interop.Excel;
+using Excel2 = Microsoft.Office.Interop.Excel;
 
 namespace MvcApplication1.Financial_Reports.Sales_Report
 {
@@ -610,18 +610,18 @@ namespace MvcApplication1.Financial_Reports.Sales_Report
             texPlant.CountParts();
             colPlant.GetSurcharge();
             colPlant.CountParts();
-            // create excel object
-            Excel.Application excel = new Excel.Application();
+            // create Excel2 object
+            Excel2.Application Excel2 = new Excel2.Application();
             object misValue = System.Reflection.Missing.Value;
-            Excel.Workbook book = excel.Workbooks.Add(misValue);
+            Excel2.Workbook book = Excel2.Workbooks.Add(misValue);
             //[1],[2],[3]
-            Excel.Worksheet micSheet = book.Worksheets.Add();
+            Excel2.Worksheet micSheet = book.Worksheets.Add();
             micSheet.Name = "Michigan 20" + fiscalYear.ToString();
-            Excel.Worksheet texSheet = book.Worksheets.Add();
+            Excel2.Worksheet texSheet = book.Worksheets.Add();
             texSheet.Name = "Texas 20" + fiscalYear.ToString();
-            Excel.Worksheet colSheet = book.Worksheets.Add();
+            Excel2.Worksheet colSheet = book.Worksheets.Add();
             colSheet.Name = "Colombia 20" + fiscalYear.ToString();
-            Excel.Worksheet marSheet = book.Worksheets.Add();
+            Excel2.Worksheet marSheet = book.Worksheets.Add();
             marSheet.Name = "Markham 20" + fiscalYear.ToString();
             // write to sheet
             FillSheet(marSheet, marPlant);
@@ -634,12 +634,12 @@ namespace MvcApplication1.Financial_Reports.Sales_Report
             Console.WriteLine("Write Colombia Sheet Done");
             // output to file
             File.Delete(filePath);
-            book.SaveAs(filePath, Excel.XlFileFormat.xlOpenXMLWorkbook);
-            excel.Quit();
+            book.SaveAs(filePath, Microsoft.Office.Interop.Excel.XlFileFormat.xlOpenXMLWorkbook);
+            Excel2.Quit();
             System.Diagnostics.Process.Start(filePath);
         }
 
-        private void FillSheet(Excel.Worksheet sheet, Plant plant)
+        private void FillSheet(Excel2.Worksheet sheet, Plant plant)
         {
             #region Fill Sheet
             // insert title
@@ -678,10 +678,10 @@ namespace MvcApplication1.Financial_Reports.Sales_Report
             sheet.Cells[row, col++] = "Aug";
             sheet.Cells[row, col++] = "Sep";
             sheet.Cells[row, col++] = "Yearly Total";
-            Excel.Range headerRange = sheet.Cells.get_Range("A" + row.ToString(), "R" + row.ToString());
+            Excel2.Range headerRange = sheet.Cells.get_Range("A" + row.ToString(), "R" + row.ToString());
             headerRange.Font.Bold = true;
             headerRange.Cells.Interior.ColorIndex = 40;
-            headerRange.Cells.Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Excel.XlLineStyle.xlContinuous;
+            headerRange.Cells.Borders[Excel2.XlBordersIndex.xlEdgeBottom].LineStyle = Excel2.XlLineStyle.xlContinuous;
             row++;
             // 
             // check currency
@@ -1020,7 +1020,7 @@ namespace MvcApplication1.Financial_Reports.Sales_Report
                     }
                     sheet.Cells[row, column++].Formula = "=sum(F" + row.ToString() + ":Q" + row.ToString();
                     // adjust style
-                    Excel.Range range = sheet.get_Range("E" + (row - 2).ToString(), "E" + row.ToString());
+                    Excel2.Range range = sheet.get_Range("E" + (row - 2).ToString(), "E" + row.ToString());
                     range.Font.Size = 9;
                     range.Font.ColorIndex = 16;
                     range = sheet.get_Range("E" + (row - 4).ToString(), "E" + row.ToString());
@@ -1030,7 +1030,7 @@ namespace MvcApplication1.Financial_Reports.Sales_Report
                     range.Font.Size = 9;
                     range.Font.ColorIndex = 16;
                     range = sheet.get_Range("D" + row.ToString(), "R" + row.ToString());
-                    range.Cells.Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Excel.XlLineStyle.xlContinuous;
+                    range.Cells.Borders[Excel2.XlBordersIndex.xlEdgeBottom].LineStyle = Excel2.XlLineStyle.xlContinuous;
                     range = sheet.get_Range("F" + (row - 2).ToString(), "R" + row.ToString());
                     range.NumberFormat = "$#,##0";
 
@@ -1080,7 +1080,7 @@ namespace MvcApplication1.Financial_Reports.Sales_Report
                     range.Font.Size = 9;
                     range.Font.ColorIndex = 16;
                     range = sheet.get_Range("D" + row.ToString(), "R" + row.ToString());
-                    range.Cells.Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Excel.XlLineStyle.xlContinuous;
+                    range.Cells.Borders[Excel2.XlBordersIndex.xlEdgeBottom].LineStyle = Excel2.XlLineStyle.xlContinuous;
                     range = sheet.get_Range("F" + (row - 2).ToString(), "R" + row.ToString());
                     range.NumberFormat = "$#,##0";
                 }
@@ -1144,7 +1144,7 @@ namespace MvcApplication1.Financial_Reports.Sales_Report
                     }
                     sheet.Cells[row, column++].Formula = "=sum(F" + row.ToString() + ":Q" + row.ToString();
                     // adjust style
-                    Excel.Range range = sheet.get_Range("E" + (row - 2).ToString(), "E" + row.ToString());
+                    Excel2.Range range = sheet.get_Range("E" + (row - 2).ToString(), "E" + row.ToString());
                     range.Font.Size = 9;
                     range.Font.ColorIndex = 16;
                     range = sheet.get_Range("E" + (row - 4).ToString(), "E" + row.ToString());
@@ -1154,7 +1154,7 @@ namespace MvcApplication1.Financial_Reports.Sales_Report
                     range.Font.Size = 9;
                     range.Font.ColorIndex = 16;
                     range = sheet.get_Range("D" + row.ToString(), "R" + row.ToString());
-                    range.Cells.Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Excel.XlLineStyle.xlContinuous;
+                    range.Cells.Borders[Excel2.XlBordersIndex.xlEdgeBottom].LineStyle = Excel2.XlLineStyle.xlContinuous;
                     range = sheet.get_Range("F" + (row - 2).ToString(), "R" + row.ToString());
                     range.NumberFormat = "$#,##0";
 
@@ -1205,7 +1205,7 @@ namespace MvcApplication1.Financial_Reports.Sales_Report
                     range.Font.Size = 9;
                     range.Font.ColorIndex = 16;
                     range = sheet.get_Range("D" + row.ToString(), "R" + row.ToString());
-                    range.Cells.Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Excel.XlLineStyle.xlContinuous;
+                    range.Cells.Borders[Excel2.XlBordersIndex.xlEdgeBottom].LineStyle = Excel2.XlLineStyle.xlContinuous;
                     range = sheet.get_Range("F" + (row - 2).ToString(), "R" + row.ToString());
                     range.NumberFormat = "$#,##0";
                 }
@@ -1802,8 +1802,8 @@ namespace MvcApplication1.Financial_Reports.Sales_Report
                         sheet.Cells[row, col++] = reader[0].ToString();
                     }
 
-                    Excel.Range range2 = sheet.get_Range("E" + row.ToString(), "R" + row.ToString());
-                    range2.Cells.Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Excel.XlLineStyle.xlContinuous;
+                    Excel2.Range range2 = sheet.get_Range("E" + row.ToString(), "R" + row.ToString());
+                    range2.Cells.Borders[Excel2.XlBordersIndex.xlEdgeBottom].LineStyle = Excel2.XlLineStyle.xlContinuous;
                 }
                 Console.WriteLine("Other Query done for plant: " + plant.plantID.ToString());
                 #endregion
@@ -1825,8 +1825,8 @@ namespace MvcApplication1.Financial_Reports.Sales_Report
                 sheet.Cells[row, col++].Formula = "=sum(P" + (row - 3).ToString() + ":P" + (row - 1).ToString();
                 sheet.Cells[row, col++].Formula = "=sum(Q" + (row - 3).ToString() + ":Q" + (row - 1).ToString();
                 sheet.Cells[row, col++].Formula = "=sum(R" + (row - 3).ToString() + ":R" + (row - 1).ToString();
-                Excel.Range range23 = sheet.get_Range("E" + row.ToString(), "R" + row.ToString());
-                range23.Cells.Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Excel.XlLineStyle.xlContinuous;
+                Excel2.Range range23 = sheet.get_Range("E" + row.ToString(), "R" + row.ToString());
+                range23.Cells.Borders[Excel2.XlBordersIndex.xlEdgeBottom].LineStyle = Excel2.XlLineStyle.xlContinuous;
                 row++;
                 row++;
                 col = 5;
@@ -1938,8 +1938,8 @@ namespace MvcApplication1.Financial_Reports.Sales_Report
             #endregion
         }
 
-        //public void SummarizeColumn(Excel.Worksheet sheet, int row, int startRow, int endRow, string title, List<int> listIndex)
-        public void SummarizeColumn(Excel.Worksheet sheet, int row, string title, List<int> listIndex, int rowOffset = 0)
+        //public void SummarizeColumn(Excel2.Worksheet sheet, int row, int startRow, int endRow, string title, List<int> listIndex)
+        public void SummarizeColumn(Excel2.Worksheet sheet, int row, string title, List<int> listIndex, int rowOffset = 0)
         {
             int col = 5;
             sheet.Cells[row, col++] = title;
@@ -1980,7 +1980,7 @@ namespace MvcApplication1.Financial_Reports.Sales_Report
             sheet.Cells[row, col++].Formula = "=sum(F" + row.ToString() + ":Q" + row.ToString() + ")";
         }
 
-        public int WriteCurrencySummary(Excel.Worksheet sheet, int startRow, ref int row, string currency, List<int> listIndex)
+        public int WriteCurrencySummary(Excel2.Worksheet sheet, int startRow, ref int row, string currency, List<int> listIndex)
         {
             if (listIndex.Count > 0)
             {
@@ -1997,7 +1997,7 @@ namespace MvcApplication1.Financial_Reports.Sales_Report
                 // budget
                 //SummarizeColumn(sheet, row, startRow + 1, endRow + 1, "Budget:");
                 SummarizeColumn(sheet, row, "Budget:", listIndex, 1);
-                Excel.Range range = sheet.get_Range("A" + row.ToString(), "R" + row.ToString());
+                Excel2.Range range = sheet.get_Range("A" + row.ToString(), "R" + row.ToString());
                 range.Font.Size = 9;
                 range.Font.ColorIndex = 16;
                 row++;
@@ -2008,7 +2008,7 @@ namespace MvcApplication1.Financial_Reports.Sales_Report
                 range.Font.Size = 9;
                 range.Font.ColorIndex = 16;
                 range = sheet.get_Range("D" + row.ToString(), "R" + row.ToString());
-                range.Cells.Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Excel.XlLineStyle.xlContinuous;
+                range.Cells.Borders[Excel2.XlBordersIndex.xlEdgeBottom].LineStyle = Excel2.XlLineStyle.xlContinuous;
                 range = sheet.get_Range("E" + (row - 2).ToString());
                 range.Font.Size = 9;
                 range.Font.ColorIndex = 16;
@@ -2017,7 +2017,7 @@ namespace MvcApplication1.Financial_Reports.Sales_Report
         }
 
 
-        public int WriteTerritorySummary(Excel.Worksheet sheet, int startRow, ref int row, string territory, List<int> listIndex)
+        public int WriteTerritorySummary(Excel2.Worksheet sheet, int startRow, ref int row, string territory, List<int> listIndex)
         {
             if (listIndex.Count > 0)
             {
@@ -2034,7 +2034,7 @@ namespace MvcApplication1.Financial_Reports.Sales_Report
                 // budget
                 //SummarizeColumn(sheet, row, startRow + 1, endRow + 1, "Budget:");
                 SummarizeColumn(sheet, row, "Budget:", listIndex, 1);
-                Excel.Range range = sheet.get_Range("A" + row.ToString(), "R" + row.ToString());
+                Excel2.Range range = sheet.get_Range("A" + row.ToString(), "R" + row.ToString());
                 range.Font.Size = 9;
                 range.Font.ColorIndex = 16;
                 row++;
@@ -2045,7 +2045,7 @@ namespace MvcApplication1.Financial_Reports.Sales_Report
                 range.Font.Size = 9;
                 range.Font.ColorIndex = 16;
                 range = sheet.get_Range("D" + row.ToString(), "R" + row.ToString());
-                range.Cells.Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Excel.XlLineStyle.xlContinuous;
+                range.Cells.Borders[Excel2.XlBordersIndex.xlEdgeBottom].LineStyle = Excel2.XlLineStyle.xlContinuous;
                 range = sheet.get_Range("E" + (row - 2).ToString());
                 range.Font.Size = 9;
                 range.Font.ColorIndex = 16;
@@ -2054,7 +2054,7 @@ namespace MvcApplication1.Financial_Reports.Sales_Report
         }
 
         /*
-        public int WriteTerritorySummary(Excel.Worksheet sheet, int startRow, ref int row, string territory, List<int> listIndex)
+        public int WriteTerritorySummary(Excel2.Worksheet sheet, int startRow, ref int row, string territory, List<int> listIndex)
         {
             int summaryRow = 0;
             // actual
@@ -2067,7 +2067,7 @@ namespace MvcApplication1.Financial_Reports.Sales_Report
             row++;
             // budget
             //SummarizeColumn(sheet, row, startRow + 1, endRow + 1, "Budget:");
-            Excel.Range range = sheet.get_Range("A" + row.ToString(), "R" + row.ToString());
+            Excel2.Range range = sheet.get_Range("A" + row.ToString(), "R" + row.ToString());
             range.Font.Size = 9;
             range.Font.ColorIndex = 16;
             row++;
@@ -2077,7 +2077,7 @@ namespace MvcApplication1.Financial_Reports.Sales_Report
             range.Font.Size = 9;
             range.Font.ColorIndex = 16;
             range = sheet.get_Range("D" + row.ToString(), "R" + row.ToString());
-            range.Cells.Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.Cells.Borders[Excel2.XlBordersIndex.xlEdgeBottom].LineStyle = Excel2.XlLineStyle.xlContinuous;
             range = sheet.get_Range("E" + (row - 2).ToString());
             range.Font.Size = 9;
             range.Font.ColorIndex = 16;
@@ -2087,7 +2087,7 @@ namespace MvcApplication1.Financial_Reports.Sales_Report
          * 
          */ 
 
-        private void WriteCustomer(Excel.Worksheet sheet, Customer customer, int row, int col)
+        private void WriteCustomer(Excel2.Worksheet sheet, Customer customer, int row, int col)
         {
             // temp budget line
             //sheet.Cells[row, col++] = "Budget 2017:";
@@ -2124,10 +2124,10 @@ namespace MvcApplication1.Financial_Reports.Sales_Report
             }
             sheet.Cells[row, col++].Formula = "=sum(F" + row.ToString() + ":Q" + row.ToString() + ")";
             // adjust style
-            Excel.Range range = sheet.get_Range("A" + (row - 1).ToString(), "R" + row.ToString());
+            Excel2.Range range = sheet.get_Range("A" + (row - 1).ToString(), "R" + row.ToString());
             range.Font.Size = 9;
             range.Font.ColorIndex = 16;
-            range.Cells.Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Excel.XlLineStyle.xlContinuous;
+            range.Cells.Borders[Excel2.XlBordersIndex.xlEdgeBottom].LineStyle = Excel2.XlLineStyle.xlContinuous;
             range = sheet.get_Range("E" + (row - 2).ToString());
             range.Font.Size = 9;
             range.Font.ColorIndex = 16;

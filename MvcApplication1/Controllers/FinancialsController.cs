@@ -5,7 +5,7 @@ using System.Threading;
 using System.Web.Mvc;
 using ExcoUtility;
 using MvcApplication1.Financial_Reports.Income_Statement;
-using MvcApplication1.Financial_Reports.Sales_Report;
+using MvcApplication1.Financial_Reports.YTD;
 using MvcApplication1.Models;
 
 namespace MvcApplication1.Controllers
@@ -153,6 +153,68 @@ namespace MvcApplication1.Controllers
             return View();
 
         }
+        
+        private static int runCountYTD;
+
+        [HttpGet]
+        [Route("Financials/GenerateYTDIS/{parameterStr}")]
+        public ActionResult GenerateYTDIS(string parameterStr)
+        {
+            Log.Append("Creating YTD Income Statement Excel spreadsheet...");
+
+            string[] parameters = parameterStr.Split(new[] {","}, StringSplitOptions.None);
+            
+            Updater upd = new Updater(parameters[1], parameters[2]);
+
+            if (parameters.Length > 3 && parameters[3] == "true")
+            {
+                upd._SET_CURRENCY(true);
+            }
+
+            // First time 
+            string fileName = "YTD at " + DateTime.Now.Year + "-" + DateTime.Now.Month + " (" + parameters[0] +
+                              ").xlsx";
+            string path = @"\\10.0.0.8\EmailAPI\Financials\YTD-IS-Reports\" + fileName;
+
+            if (runCountYTD % 2 == 0)
+            {
+                upd.Generate(path,
+                    parameters[0],
+                    parameters[1],
+                    parameters[2]);
+
+                // Let file settle
+                Thread.Sleep(1000);
+            }
+
+            runCountYTD++;
+
+            byte[] fileBytes = System.IO.File.ReadAllBytes(path);
+            string fn = fileName;
+            return File(fileBytes, "application/octet-stream", fn);
+        }
+
+        [HttpGet]
+        [Route("Financials/RegenerateYTD/{parameterStr}")]
+        public ActionResult RegenerateYTD(string parameterStr)
+        {
+            Log.Append("Refreshing Data for YTD");
+
+            string[] parameters = parameterStr.Split(new[] {","}, StringSplitOptions.None);
+
+            // First time 
+            string fileName = "YTD at " + DateTime.Now.Year + "-" + DateTime.Now.Month + " (" + parameters[0] +
+                                ").xlsx";
+            string path = @"\\10.0.0.8\EmailAPI\Financials\YTD-IS-Reports\" + fileName;
+
+            Updater upd = new Updater(parameters[1], parameters[2]);
+
+            upd.RefreshData();
+
+            // Let file settle
+            Thread.Sleep(1000);
+            return RedirectToAction("YTD");
+        }
 
         #endregion
 
@@ -212,7 +274,7 @@ namespace MvcApplication1.Controllers
             string[] parameters = parameterStr.Split(new[] { "," }, StringSplitOptions.None);
 
             // First time 
-            string fileName = "Trial Balance at " + DateTime.Now.Year + "-" + DateTime.Now.Month + "(" + parameters[0] + ").xlsx";
+            string fileName = "Trial Balance at " + DateTime.Now.Year + "-" + DateTime.Now.Month + " (" + parameters[0] + ").xlsx";
             string path = @"\\10.0.0.8\EmailAPI\Financials\Trial-Balance\" + fileName;
 
             if (runCountTB % 2 == 0)

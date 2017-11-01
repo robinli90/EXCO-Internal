@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using MvcApplication1.Paperless_System;
 
 namespace MvcApplication1.Models
 {
@@ -77,6 +78,13 @@ namespace MvcApplication1.Models
             else if (!_SyncReady && DateTime.Now.Hour == Convert.ToInt32(Settings.GetSettingsValue("EmailSyncHour", "1")) + _SyncBuffer)
             {
                 _SyncReady = true;
+            }
+
+            // Archive check every 10 minutes
+            if (DateTime.Now.Minute % 10 == 0)
+            {
+                ArchivesChecker.ProcessEmailsForArchive();
+                ArchivesChecker.CheckPendingOrders();
             }
         }
     }

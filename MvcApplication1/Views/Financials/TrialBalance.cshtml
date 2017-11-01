@@ -1,4 +1,5 @@
-﻿
+﻿@using MvcApplication1.Models
+
 @{
     ViewBag.Title = "TrialBalance";
 }
@@ -22,9 +23,12 @@
                     <label for="year" class="col-xs-1 control-label">Plant</label>
                     <div class="col-xs-3">
                         <select id="plant" class="form-control">
-                            <option selected>Markham</option>
-                            <option>Michigan</option>
-                            <option>Texas</option>
+                            @if (Permissions.HasAccess(HttpContext.Current.Session["Department"].ToString(), "Manager", true, null, new List<string> { "lsilva" }))
+                            {
+                                <option selected>Markham</option>
+                                <option>Michigan</option>
+                                <option>Texas</option>
+                            }
                             <option>Colombia</option>
                         </select>
                     </div>

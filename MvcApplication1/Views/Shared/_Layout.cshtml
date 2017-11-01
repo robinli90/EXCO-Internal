@@ -144,7 +144,7 @@ desired effect
                         </ul>
                     </li>
                 }
-                if (Permissions.HasAccess(HttpContext.Current.Session["Department"].ToString(), "Sales", true, new List<string> {"ipasmenko"}))
+                if (Permissions.HasAccess(HttpContext.Current.Session["Department"].ToString(), "Administrator", true, new List<string> {"ipasmenko", "jchepack"}))
                 {
                     <li class="treeview">
                         <a href="#">
@@ -158,7 +158,7 @@ desired effect
                         </ul>
                     </li>
                 }
-                if (Permissions.HasAccess(HttpContext.Current.Session["Department"].ToString(), "Sales", false, null, new List<string> {"bcarwright", "fparisi"}))
+                if (Permissions.HasAccess(HttpContext.Current.Session["Department"].ToString(), "Manager", false, null, new List<string> {"bcarwright", "fparisi"}))
                 {
                     <li class="treeview">
                         <a href="#">
@@ -168,15 +168,15 @@ desired effect
                             </span>
                         </a>
                         <ul class="treeview-menu">
+                            <li>@Html.ActionLink("Search Emails", "SearchEmails", "EmailRepository", new { paramOne = "search" }, null)</li>
                             @if (Permissions.HasAccess(HttpContext.Current.Session["Department"].ToString(), "Administrator", true))
                             {
-                                <li>@Html.ActionLink("Organize Emails", "SearchEmails", "EmailRepository", new {paramOne = "manage"}, null)</li>
+                                <li>@Html.ActionLink("Organize Emails", "OrganizeEmails", "EmailRepository", new {paramOne = "manage"}, null)</li>
                             }
-                            <li>@Html.ActionLink("Search Emails", "OrganizeEmails", "EmailRepository", new {paramOne = "search"}, null)</li>
                         </ul>
                     </li>
                 }
-                if (Permissions.HasAccess(HttpContext.Current.Session["Department"].ToString(), "Manager"))
+                if (Permissions.HasAccess(HttpContext.Current.Session["Department"].ToString(), "Manager", false, new List<string> {"lsilva"}))
                 {
                     <li class="treeview">
                         <a href="#">
@@ -186,11 +186,31 @@ desired effect
                             </span>
                         </a>
                         <ul class="treeview-menu">
-                            <li>@Html.ActionLink("Exchange Rates", "ExchangeRates", "Financials", new { paramOne = "ER" }, null)</li>
-                            <li>@Html.ActionLink("Income Statement", "IncomeStatement", "Financials", new { paramOne = "IS" }, null)</li>
-                            <li>@Html.ActionLink("Y-T-D Income Statement", "YTD", "Financials", new { paramOne = "YTD" }, null)</li>
-                            <li>@Html.ActionLink("Sales Report", "SalesReport", "Financials", new { paramOne = "SR" }, null)</li>
-                            <li>@Html.ActionLink("Trial Balance", "TrialBalance", "Financials", new { paramOne = "TB" }, null)</li>
+                            @{
+                                if (Permissions.HasAccess(HttpContext.Current.Session["Department"].ToString(), "Manager", false, null, new List<string> {"lsilva"}))
+                                {
+                                    <li>@Html.ActionLink("Exchange Rates", "ExchangeRates", "Financials", new {paramOne = "ER"}, null)</li>
+                                    <li>@Html.ActionLink("Income Statement", "IncomeStatement", "Financials", new {paramOne = "IS"}, null)</li>
+                                    <li>@Html.ActionLink("Sales Report", "SalesReport", "Financials", new {paramOne = "SR"}, null)</li>
+                                }
+                                <li>@Html.ActionLink("Trial Balance", "TrialBalance", "Financials", new {paramOne = "TB"}, null)</li>
+                                <li>@Html.ActionLink("Y-T-D Income Statement", "YTD", "Financials", new { paramOne = "YTD" }, null)</li>
+                            }
+                        </ul>
+                    </li>
+                }
+                if (Permissions.HasAccess(HttpContext.Current.Session["Department"].ToString(), "General", false, null, new List<string> {"lsilva"}))
+                {
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-paperclip"></i> <span>Paperless System</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li>@Html.ActionLink("Daily Invoicing", "DailyInvoicing", "Paperless", new { paramOne = "DI" }, null)</li>
+                            <li>@Html.ActionLink("View Archive", "SearchArchive", "Paperless", new { paramOne = "SA" }, null)</li>
                         </ul>
                     </li>
                 }

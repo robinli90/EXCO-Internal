@@ -2,9 +2,12 @@
 @using MvcApplication1.Paperless_System
 
 @{
-    ViewBag.Title = "DailyInvoicing";
+    ViewBag.Title = "DailyOrders";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+<link href="~/Content/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+<link href="~/Content/css/personal.css" rel="stylesheet" />
 
 <body>
 <section class="content">
@@ -14,8 +17,8 @@
                 <!-- /.box-header -->
                 <div class="box-body">
                     <div class="box-header">
-                        <h1 class="box-title">Daily Invoicing Checklist</h1>
-                        <button style="float:right" id="refresh" class="btn btn-default">Refresh & Sync</button>
+                        <h1 class="box-title">Daily Orders</h1>
+                        <button style="float:right" id="refresh" class="btn btn-default">Refresh Orders</button>
                         <div style="float:right" class="col-xs-4">
                             <div class="input-group">
                                 <input type="text" id="searchBox" name="q" class="form-control" placeholder="Search for shop order #">
@@ -28,12 +31,11 @@
                         </div>
                     </div>
                     <h3></h3>
-                    <h1></h1>
                     <div class="input-group ">
                         <div class="input-group-addon">
                             <i class="fa fa-calendar"></i>
                         </div>
-                        <input class="form-control pull-right" id="minDate" placeholder="Invoice Date (default is yesterday's date)" @Html.Raw(ArchivesChecker.currentInvoiceDateSearch.Length > 0 ? String.Format(" value='{0}'", ArchivesChecker.currentInvoiceDateSearch) : "")>
+                        <input class="form-control pull-right" id="minDate" placeholder="Order Date (default is yesterday's date)" @Html.Raw(ArchivesChecker.currentOrderDateSearch.Length > 0 ? String.Format(" value='{0}'", ArchivesChecker.currentOrderDateSearch) : "")>
                         <span class="input-group-btn">
                             <button class="btn btn-flat" id="searchDateButton">
                                 <i class="fa fa-search"></i>
@@ -42,7 +44,7 @@
                     </div>
                     <h4></h4>
                     <div class="input-group">
-                        <input type="text" id="searchBar" onkeyup="searchRecipients()" name="q" class="form-control" placeholder="Search current table for order or invoice #">
+                        <input type="text" id="searchBar" onkeyup="searchRecipients()" name="q" class="form-control" placeholder="Search for order # / customer # / customer name">
                         <span class="input-group-btn">
                             <button class="btn btn-flat">
                                 <i class="fa fa-search"></i>
@@ -55,26 +57,22 @@
                         <thead>
                         <tr>
                             <th style="text-align: center">Order #</th>
-                            <th style="text-align: center">Invoice #</th>
-                            <th style="text-align: center">Die Form</th>
-                            <th style="text-align: center">Order</th>
-                            <th style="text-align: center">Invoice</th>
-                            <th style="text-align: center">Drawings</th>
-                            <th style="text-align: center">Misc. Count</th>
+                            <th style="text-align: center">Cust. #</th>
+                            <th style="text-align: center">Cust. name</th>
+                            <th style="text-align: center">Order Date</th>
+                            <th style="text-align: center">Created</th>
                         </tr>
                         </thead>
                         <tbody>
                         @{
-                            foreach (var archiveOrder in ArchivesChecker.CurrentInvoiceOrders)
+                            foreach (var order in ArchivesChecker.CurrentOrders)
                             {
-                                <tr class="drop-zone" name="list2" id=@("dropZone" + archiveOrder._orderNo)>
-                                    <td style='text-align:center'><a href="@("http://10.0.0.6/Tracking/Order/" + archiveOrder._orderNo)" style="color:steelblue">@archiveOrder._orderNo</a></td>
-                                    <td style='text-align:center'>@archiveOrder._invoiceNo</td>
-                                    <td style='text-align:center'>@Html.Raw(archiveOrder.hasDieForm ? "<i class=\"fa fa-check\" style=\"color:green\"></i>" : "<i class=\"fa fa-remove\" style=\"color:red\"></i>")</td>
-                                    <td style='text-align:center'>@Html.Raw(archiveOrder.hasOrderForm ? "<i class=\"fa fa-check\" style=\"color:green\"></i>" : "<i class=\"fa fa-remove\" style=\"color:red\"></i>")</td>
-                                    <td style='text-align:center'>@Html.Raw(archiveOrder.hasInvoice ? "<i class=\"fa fa-check\" style=\"color:green\"></i>" : "<i class=\"fa fa-remove\" style=\"color:red\"></i>")</td>
-                                    <td style='text-align:center'>@Html.Raw(archiveOrder.hasDrawings ? "<i class=\"fa fa-check\" style=\"color:green\"></i>" : "<i class=\"fa fa-remove\" style=\"color:red\"></i>")</td>
-                                    <td style='text-align:center'>@archiveOrder.miscScanItems</td>
+                                <tr class="drop-zone" name="list2" id=@("dropZone" + order._orderNo)>
+                                    <td name="list" style='text-align:center'><a href="@("http://10.0.0.6/Tracking/Order/" + order._orderNo)" style="color:steelblue">@order._orderNo</a></td>
+                                    <td style='text-align:center'>@order._custNo</td>
+                                    <td style='text-align:center'>@order._custName</td>
+                                    <td style='text-align:center'>@order._orderDate</td>
+                                    <td id=@("checkRow" + order._orderNo) style='text-align:center'>@Html.Raw(order._hasFolder ? "<i class=\"fa fa-check\" style=\"color:green\"></i>" : "<i class=\"fa fa-remove\" style=\"color:red\"></i>")</td>
                                 </tr>
                             }
                         }
@@ -89,11 +87,13 @@
         <!-- /.col -->
     </div>
     
-<!-- /.box -->
+    <!-- /.box -->
     <!-- /.row -->
 </section>
 <!-- /.content -->
 </body>
+
+<div id="currentOrderUpload" style="display:none"></div>
 
 <div class="modal"><!-- Place at bottom of page --></div>
 
@@ -102,15 +102,14 @@
 
     <script src="~/Scripts/jquery-1.10.2.min.js"></script>
     <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.filedrop.js"></script>
     <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
-<script src="~/Scripts/jquery.filedrop.js"></script>
     <script src="~/scripts/moment.js"></script>
     <script src="~/scripts/bootstrap.min.js"></script>
     <script src="~/scripts/bootstrap-datetimepicker.min.js"></script>
-    <link href="~/Content/bootstrap-datetimepicker.min.css" rel="stylesheet" />
     <script src="~/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="~/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-    
+
     ]
     <script type="text/javascript">
 
@@ -143,25 +142,11 @@
         function initiateSearch() {
             queryStr = $('#searchBox').val();
 
-            var url = '@Url.Action("DailyInvoicingGetOrder", "Paperless", new {paramOne = "__param__"})';
+            var url = '@Url.Action("DailyOrderGetOrder", "Paperless", new {paramOne = "__param__"})';
             window.location.href = url.replace('__param__', encodeURIComponent(queryStr));
         }
 
-        // refresh button 
-
-        $(document).on('click',
-            '#refresh',
-            function () {
-                jQuery.event.trigger("ajaxStart");
-
-                var queryStr = 'RF';
-
-                var url = '@Url.Action("DailyInvoicingRefresh", "Paperless", new {id = "__param__"})';
-                window.location.href = url.replace('__param__', encodeURIComponent(queryStr));
-            });
-
-
-        $(function () {
+        $(function() {
             $('#example1').DataTable({
                 'paging': true,
                 'lengthChange': false,
@@ -172,7 +157,7 @@
             })
         })
 
-        $(function () {
+        $(function() {
             $('#minDate').datetimepicker({
                 viewMode: 'years',
                 format: 'MM/DD/YYYY'
@@ -180,19 +165,37 @@
         });
 
         $('.actionConfirmation').on('click',
-            function () {
+            function() {
                 jQuery.event.trigger("ajaxStart");
             });
 
+        $(document).on('click',
+            '#refresh',
+            function() {
+                jQuery.event.trigger("ajaxStart");
+
+                var queryStr = 'RF';
+
+                var url = '@Url.Action("DailyOrderRefresh", "Paperless", new {id = "__param__"})';
+                window.location.href = url.replace('__param__', encodeURIComponent(queryStr));
+            });
+
+        $(document).on('click',
+            '#refresh2',
+            function() {
+                alert(document.getElementById("currentOrderUpload").textContent);
+            });
+
+
         $('#searchDateButton').on('click',
-            function () {
+            function() {
                 var dateStr = 'Di';
                 // If has date
                 if ($("#minDate").val().length > 0) {
                     dateStr = $("#minDate").val().replace('/', '-').replace('/', '-');
                 }
 
-                var url = '@Url.Action("DailyInvoicingRefresh", "Paperless", new {paramOne = "__param__"})';
+                var url = '@Url.Action("DailyOrderRefresh", "Paperless", new {paramOne = "__param__"})';
                 window.location.href = url.replace('__param__', encodeURIComponent(dateStr));
             });
 
@@ -200,8 +203,8 @@
         $body = $("body");
 
         $(document).on({
-            ajaxStart: function () { $body.addClass("loading"); },
-            ajaxStop: function () { $body.removeClass("loading"); }
+            ajaxStart: function() { $body.addClass("loading"); },
+            ajaxStop: function() { $body.removeClass("loading"); }
 
         });
 
@@ -216,6 +219,7 @@
             // Loop through all table rows, and hide those who don't match the search query
             for (i = 0; i < tr.length; i++) {
                 var done = false;
+                td2 = tr[i].getElementsByTagName("td")[2];
                 td = tr[i].getElementsByTagName("td")[1];
                 td1 = tr[i].getElementsByTagName("td")[0];
                 if (td) {
@@ -234,12 +238,19 @@
                         tr[i].style.display = "none";
                     }
                 }
-
+                if (!done && td2) {
+                    if (td2.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                        done = true;
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
             }
         }
 
 
-        $(document).ready(function () {
+        $(document).ready(function() {
 
             var soList = [];
 
@@ -257,7 +268,7 @@
                     fallback_dropzoneClick:
                         false, // if true, clicking dropzone triggers fallback file selection and the fallback element is made invisible.
                     url:
-                        "/Paperless/InvoiceDragUpload/" +
+                        "/Paperless/OrdersDragUpload/" +
                             soList[i], // upload handler, handles each file separately, can also be a function taking the file and returning a url
 
                     paramname:
@@ -268,12 +279,12 @@
                     },
 
                     allowedfileextensions:
-                        ['msg'], // file extensions allowed. Empty array means no restrictions
+                       ['msg'], // file extensions allowed. Empty array means no restrictions
 
                     maxfiles: 25,
                     maxfilesize: 20, // max file size in MBs
 
-                    uploadStarted: function (i, file, len) {
+                    uploadStarted: function(i, file, len) {
                         // a file began uploading
                         // i = index => 0, 1, 2, 3, 4 etc
                         // file is the actual file of the index
@@ -285,8 +296,11 @@
                     drop: function () {
                         var data = new FormData();
                         $(this).css('border', '');
+                        var curOrder = $(this).attr("id").substring(8);
+                        //$('#checkRow' + curOrder).css('border', 'steelblue dashed 3px');
+                        $('#checkRow' + curOrder).html("<i class=\"fa fa-check\" style=\"color:green\"></i>");
                     },
-                    dragOver: function (ixd, dd) {
+                    dragOver: function(ixd, dd) {
 
                         $(this).css('border', 'steelblue dashed 3px');
                         //alert('df')
@@ -298,7 +312,7 @@
                     },
 
 
-                    error: function (err, file) {
+                    error: function(err, file) {
                         switch (err) {
                         case 'BrowserNotSupported':
                             alert('Cannot drag from Outlook without DDAddin appl. Please see administrator!');
@@ -324,5 +338,6 @@
                 });
             }
         });
+
     </script>
 }

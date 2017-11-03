@@ -42,17 +42,7 @@ namespace MvcApplication1
             if (initialized) return;
 
             Log.AppendBlankLine();
-            Global.LoadSettings();
-            Global.ImportEmailFile();
-
-            Readiness.DeleteBlockerFile();
-
-            if (!Environment.MachineName.Contains("ROBIN"))
-            {
-                //
-                //Global.GetAllEmails();
-            }
-
+            Global.LoadInitializers();
             initialized = true;
 
         }

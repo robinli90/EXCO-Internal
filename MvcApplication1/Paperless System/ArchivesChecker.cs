@@ -25,12 +25,17 @@ namespace MvcApplication1.Paperless_System
         private static User archiveUser;
 
         public static List<ArchiveOrder> CurrentInvoiceOrders = new List<ArchiveOrder>();
+        public static List<DieOrder> CurrentOrders = new List<DieOrder>();
 
-        public static string currentDateSearch = "";
+        public static List<ArchiveOrder> Archives = new List<ArchiveOrder>();
+
+        public static string currentInvoiceDateSearch = "";
+        public static string currentOrderDateSearch = "";
 
         static ArchivesChecker()
         {
-            PopulateOrders();
+            PopulateOrdersByInvoiceDate();
+            PopulateOrdersByOrderDate();
         }
 
         public static void InitializeArchive()
@@ -51,18 +56,19 @@ namespace MvcApplication1.Paperless_System
             archiveUser.GetArchiveEmails();
         }
 
-        public static string CreateArchiveDirectory(string emailSubject)
+        public static string CreateArchiveDirectory(string orderNumber)
         {
-            Log.Append(String.Format("New order found (Order#={0}). Creating directory and pend file...", emailSubject));
+            Log.Append(String.Format("New order found (Order#={0}). Creating directory and pend file...", orderNumber));
 
-            string directoryPath = _archivePath + emailSubject;
+            string directoryPath = _archivePath + orderNumber;
 
             if (!Directory.Exists(directoryPath))
             {
                 Directory.CreateDirectory(directoryPath);
             }
 
-            File.CreateText(_pendingPath + emailSubject);
+            if (!File.Exists(_pendingPath + orderNumber))
+                File.CreateText(_pendingPath + orderNumber);
 
             return directoryPath;
         }
@@ -142,14 +148,13 @@ namespace MvcApplication1.Paperless_System
 
             return invoiceDate.Year > 2000;
         }
-
-
-        public static void PopulateOrders(DateTime refDate = new DateTime())
+        
+        public static void PopulateOrdersByInvoiceDate(DateTime refDate = new DateTime())
         {
             if (refDate.Year < 2000)
                 refDate = DateTime.Now.AddDays(-1);
 
-            currentDateSearch = refDate.ToShortDateString();
+            currentInvoiceDateSearch = refDate.ToShortDateString();
 
             Log.Append("Getting today's invoice list...");
             CurrentInvoiceOrders = new List<ArchiveOrder>();
@@ -180,19 +185,126 @@ namespace MvcApplication1.Paperless_System
 
             Log.Append("Complete");
         }
+        
+        public static void PopulateOrdersByOrderNo(string orderNo)
+        {
+            CurrentInvoiceOrders = new List<ArchiveOrder>();
 
-        public static List<ArchiveOrder> GetEntireArchive()
+            SqlConnection objConn = null;
+            SqlCommand objCmd = null;
+            SqlDataReader objReader = null;
+
+            objConn = new SqlConnection("SERVER =10.0.0.6; Database =decade; UID =jamie; PWD =jamie;");
+            objConn.Open();
+            objCmd = objConn.CreateCommand();
+            objCmd.CommandText = String.Format("select ordernumber, invoicenumber from d_order where ordernumber = '{0}'",
+                orderNo);
+
+            objReader = objCmd.ExecuteReader();
+
+            if (objReader.HasRows)
+            {
+                while (objReader.Read())
+                {
+                    CurrentInvoiceOrders.Add(
+                        new ArchiveOrder(objReader["ordernumber"].ToString().Trim(), 
+                                         objReader["invoicenumber"].ToString().Trim()));
+                }
+            }
+
+            objReader.Close();
+            objConn.Close();
+
+            Log.Append("Complete");
+        }
+        
+        public static void PopulateOrdersByOrderDate(DateTime refDate = new DateTime())
+        {
+            if (refDate.Year < 2000)
+                refDate = DateTime.Now;
+
+            currentOrderDateSearch = refDate.ToShortDateString();
+
+            Log.Append("Getting today's order list...");
+            CurrentOrders = new List<DieOrder>();
+
+            SqlConnection objConn = null;
+            SqlCommand objCmd = null;
+            SqlDataReader objReader = null;
+
+            objConn = new SqlConnection("SERVER =10.0.0.6; Database =decade; UID =jamie; PWD =jamie;");
+            objConn.Open();
+            objCmd = objConn.CreateCommand();
+            objCmd.CommandText = String.Format("select a.ordernumber, a.customercode, b.name, a.orderdate from d_order as a, d_customer as b where a.customercode = b.customercode and orderdate > '{0}' and orderdate < '{1}'", refDate.ToShortDateString(), refDate.AddDays(1).ToShortDateString());
+            objReader = objCmd.ExecuteReader();
+
+            if (objReader.HasRows)
+            {
+                while (objReader.Read())
+                {
+                    CurrentOrders.Add(
+                        new DieOrder(objReader["ordernumber"].ToString().Trim(),
+                            objReader["customercode"].ToString().Trim(),
+                            objReader["name"].ToString().Trim(),
+                            Convert.ToDateTime(objReader["orderdate"].ToString().Trim())
+                        ));
+                }
+            }
+
+            objReader.Close();
+            objConn.Close();
+
+            Log.Append("Complete");
+        }
+        
+        public static void PopulateDieOrdersByOrderNo(string orderNo)
+        {
+
+            Log.Append("Getting today's order list...");
+            CurrentOrders = new List<DieOrder>();
+
+            SqlConnection objConn = null;
+            SqlCommand objCmd = null;
+            SqlDataReader objReader = null;
+
+            objConn = new SqlConnection("SERVER =10.0.0.6; Database =decade; UID =jamie; PWD =jamie;");
+            objConn.Open();
+            objCmd = objConn.CreateCommand();
+            objCmd.CommandText = String.Format("select a.ordernumber, a.customercode, b.name, a.orderdate from d_order as a, d_customer as b where a.customercode = b.customercode and a.ordernumber = '{0}'", orderNo);
+            objReader = objCmd.ExecuteReader();
+
+            if (objReader.HasRows)
+            {
+                while (objReader.Read())
+                {
+                    CurrentOrders.Add(
+                        new DieOrder(objReader["ordernumber"].ToString().Trim(),
+                            objReader["customercode"].ToString().Trim(),
+                            objReader["name"].ToString().Trim(),
+                            Convert.ToDateTime(objReader["orderdate"].ToString().Trim())
+                        ));
+                }
+            }
+
+            objReader.Close();
+            objConn.Close();
+
+            Log.Append("Complete");
+        }
+
+        /// <summary>
+        /// Download entire archive from archive server and store in list
+        /// </summary>
+        public static void GetEntireArchive()
         {
             List<string> orderNumbers = Directory.GetDirectories(_archivePath).Select(x => x.Substring(x.Length - 6)).ToList();
 
-            List<ArchiveOrder> archive = new List<ArchiveOrder>();
+            Archives = new List<ArchiveOrder>();
 
             foreach (string orderNumber in orderNumbers)
             {
-                archive.Add(new ArchiveOrder(orderNumber));
+                Archives.Add(new ArchiveOrder(orderNumber));
             }
-
-            return archive;
         }
 
         public static string CreatePackage(string archiveOrderNo)
@@ -277,7 +389,9 @@ namespace MvcApplication1.Paperless_System
             // Set invoice to given invoice number; if no invoice no provided, try to locate using invoice file
             _invoiceNo = invoiceNo;
 
-            if (invoiceNo == "")
+            if (orderNo == "353434") Console.WriteLine("");
+
+            if (_invoiceNo == "" && Directory.Exists(Path.Combine(ArchivesChecker._archivePath, orderNo)))
             {
                 string[] fileName = Directory.GetFiles(Path.Combine(ArchivesChecker._archivePath, orderNo),
                     "*.invoice");
@@ -287,15 +401,47 @@ namespace MvcApplication1.Paperless_System
             }
 
             // Validate files and toggle bool as per
-            hasDieForm = File.Exists(Path.Combine(ArchivesChecker._archivePath + _orderNo, _orderNo + ".eml"));
+            hasDieForm = File.Exists(Path.Combine(ArchivesChecker._archivePath + _orderNo, _orderNo + "_DIEFORM.eml")) ||
+                            File.Exists(Path.Combine(ArchivesChecker._archivePath + _orderNo, _orderNo + "_DIEFORM.msg"));
             hasOrderForm = File.Exists(Path.Combine(ArchivesChecker._archivePath + _orderNo, _orderNo + "_ORDER.pdf"));
             hasInvoice = File.Exists(Path.Combine(ArchivesChecker._archivePath + _orderNo, _orderNo + "_INVOICE.pdf"));
 
             if (Directory.Exists(Path.Combine(ArchivesChecker._archivePath, orderNo)))
             {
                 hasDrawings = Directory.GetFiles(Path.Combine(ArchivesChecker._archivePath, orderNo), "*.dwg").Length > 0;
-                miscScanItems = Directory.GetFiles(Path.Combine(ArchivesChecker._archivePath, orderNo), "*.eml").Length - (hasDieForm ? 1 : 0);
+                //miscScanItems = Directory.GetFiles(, "*.eml").Length - (hasDieForm ? 1 : 0);
+                miscScanItems = Directory.GetFiles(Path.Combine(ArchivesChecker._archivePath, orderNo))
+                                    .Where(name => !name.EndsWith(".invoice") && !name.EndsWith(".dwg")).ToList().Count -
+                                (hasDieForm ? 1 : 0) -
+                                (hasOrderForm ? 1 : 0) -
+                                (hasInvoice ? 1 : 0);
             }
+        }
+    }
+
+    public class DieOrder
+    {
+        public string _orderNo { get; }
+        public string _custNo { get; }
+        public string _custName { get; }
+        public DateTime _orderDate { get; }
+
+        public bool _hasFolder { get; set; }
+
+        public DieOrder(string orderNo, string custNo, string custName, DateTime orderDate)
+        {
+
+            _orderNo = orderNo;
+            _custNo = custNo;
+            _custName = custName;
+            _orderDate = orderDate;
+
+            _hasFolder = File.Exists(Path.Combine(ArchivesChecker._archivePath, orderNo + "_DIEFORM.msg"));
+        }
+
+        public void SetHasFolder(bool hasFolder = false)
+        {
+            _hasFolder = hasFolder;
         }
     }
 }

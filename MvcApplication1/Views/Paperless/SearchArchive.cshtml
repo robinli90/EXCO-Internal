@@ -1,61 +1,67 @@
-﻿@using MvcApplication1.Paperless_System
+﻿@using DocumentFormat.OpenXml.EMMA
+@using MvcApplication1.Paperless_System
 
 @{
     ViewBag.Title = "SearchArchive";
 }
+
 <!-- Main content -->
 <section class="content">
     <div class="row">
-        <div class="col-xs-12">
+        <div class="col-xs-14">
             <div class="box">
                 <div class="box-header">
-                    <h3 class="box-title">Exco Paperless Archive</h3>
+                    <h1 class="box-title">Exco Paperless Archive</h1>
+                    <button style="float:right" id="refresh" class="btn btn-default">Refresh Archives</button>
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
                     <table id="example1" class="table table-bordered table-striped">
                         <thead>
-                        <tr>
-                            <th style="text-align: center">Order #</th>
-                            <th style="text-align: center">Invoice #</th>
-                            <th style="text-align: center">Die Form</th>
-                            <th style="text-align: center">Order</th>
-                            <th style="text-align: center">Invoice</th>
-                            <th style="text-align: center">Drawings</th>
-                            <th style="text-align: center">Misc. Count</th>
-                            <th style="text-align: center"></th>
-                        </tr>
+                            <tr>
+                                <th style="text-align: center">Order #</th>
+                                <th style="text-align: center">Invoice #</th>
+                                <th style="text-align: center">Die Form</th>
+                                <th style="text-align: center">Order</th>
+                                <th style="text-align: center">Invoice</th>
+                                <th style="text-align: center">Drawings</th>
+                                <th style="text-align: center">Misc. Count</th>
+                                <th style="text-align: center"></th>
+                            </tr>
                         </thead>
-                            <tbody>
+                        <tbody>
                             @{
-                                foreach (var archiveOrder in ArchivesChecker.GetEntireArchive())
+                                foreach (var archiveOrder in ArchivesChecker.Archives)
                                 {
                                     int archiveIndex = 0;
                                     <tr>
-                                        <td style='text-align:center'><a href="@("http://10.0.0.6/Tracking/Order/" + archiveOrder._orderNo)" style="color:steelblue">@archiveOrder._orderNo</a></td>
-                                        <td style='text-align:center'>@archiveOrder._invoiceNo</td>
-                                        <td style='text-align:center'>@Html.Raw(archiveOrder.hasDieForm ? "<i class=\"fa fa-check\" style=\"color:green\"></i>" : "<i class=\"fa fa-remove\" style=\"color:red\"></i>")</td>
-                                        <td style='text-align:center'>@Html.Raw(archiveOrder.hasOrderForm ? "<i class=\"fa fa-check\" style=\"color:green\"></i>" : "<i class=\"fa fa-remove\" style=\"color:red\"></i>")</td>
-                                        <td style='text-align:center'>@Html.Raw(archiveOrder.hasInvoice ? "<i class=\"fa fa-check\" style=\"color:green\"></i>" : "<i class=\"fa fa-remove\" style=\"color:red\"></i>")</td>
-                                        <td style='text-align:center'>@Html.Raw(archiveOrder.hasDrawings ? "<i class=\"fa fa-check\" style=\"color:green\"></i>" : "<i class=\"fa fa-remove\" style=\"color:red\"></i>")</td>
-                                        <td style='text-align:center'>@archiveOrder.miscScanItems</td>
-                                        <td style='text-align:center'>
-                                            <a href="@Url.Action("DownloadArchive", "Paperless", new {paramOne = @archiveOrder._orderNo}, null)"><i class="actionConfirmation fa fa-download" title="Refresh"></i></a>
+                                        <td style='text-align: center'><a href="@("http://10.0.0.6/Tracking/Order/" + archiveOrder._orderNo)" style="color: steelblue">@archiveOrder._orderNo</a></td>
+                                        <td style='text-align: center'>@archiveOrder._invoiceNo</td>
+                                        <td style='text-align: center'>@Html.Raw(archiveOrder.hasDieForm ? "<i class=\"fa fa-check\" style=\"color:green\"></i>" : "<i class=\"fa fa-remove\" style=\"color:red\"></i>")</td>
+                                        <td style='text-align: center'>@Html.Raw(archiveOrder.hasOrderForm ? "<i class=\"fa fa-check\" style=\"color:green\"></i>" : "<i class=\"fa fa-remove\" style=\"color:red\"></i>")</td>
+                                        <td style='text-align: center'>@Html.Raw(archiveOrder.hasInvoice ? "<i class=\"fa fa-check\" style=\"color:green\"></i>" : "<i class=\"fa fa-remove\" style=\"color:red\"></i>")</td>
+                                        <td style='text-align: center'>@Html.Raw(archiveOrder.hasDrawings ? "<i class=\"fa fa-check\" style=\"color:green\"></i>" : "<i class=\"fa fa-remove\" style=\"color:red\"></i>")</td>
+                                        <td style='text-align: center'>@archiveOrder.miscScanItems</td>
+                                        <td style='text-align: center'>
+                                            <a href="@Url.Action("DownloadArchive", "Paperless", new {paramOne = @archiveOrder._orderNo}, null)"><i class="fa fa-download" title="Download Archive"></i></a>
+                                            <input type="file" name="attach" id="attach-input" multiple="" style="display:none" />
+                                            <a type='submit' name=@("FU_" + archiveOrder._orderNo) id="attach-button"><i class="fa fa-upload" title="Upload to Archive"></i></a>
                                         </td>
                                     </tr>
                                     archiveIndex++;
                                 }
                             }
-                            </tbody>
+                        </tbody>
                     </table>
                 </div>
-            <!-- /.box-body -->
+                <!-- /.box-body -->
             </div>
             <!-- /.box -->
         </div>
         <!-- /.col -->
     </div>
     <!-- /.row -->
+    <div id="currentOrderUpload" style="display: none;"></div>
 </section>
 
 
@@ -89,6 +95,17 @@
         });
 
 
+        $(document).on('click',
+            '#refresh',
+            function () {
+
+                jQuery.event.trigger("ajaxStart");
+
+                var queryStr = 'RF';
+
+                var url = '@Url.Action("RefreshArchives", "Paperless", new {id = "__param__"})';
+                window.location.href = url.replace('__param__', encodeURIComponent(queryStr));
+            });
 
         $body = $("body");
 
@@ -97,5 +114,82 @@
             ajaxStop: function () { $body.removeClass("loading"); }
 
         });
+
+
+        // below is for uploading files
+
+        //var button = $('#attach-button');
+        var button = $('[id="attach-button"]');
+        var input = $('#attach-input');
+
+        // translates collection of files into a form
+        function BuildFormData(files) {
+
+            var data = new FormData();
+
+            for (var i = 0; i < files.length; i++) {
+
+                data.append(files[i].name, files[i]);
+            }
+
+            return data;
+        }
+
+        // posts the files to a given url
+        function PostData(data, id) {
+
+            $.ajax({
+                // method
+                type: 'POST',
+
+                // endpoint
+                url: "/Paperless/UploadToArchive/" + id,
+
+                // next 2 lines required for using FormData with jQuery
+                contentType: false,
+                processData: false,
+
+                // FormData instance
+                data: data,
+
+                // success handler
+                success: function (result) {
+
+                    //alert('Success: Files uploaded for ' + id);
+
+                    console.log(result);
+                },
+                
+                error: function (result) {
+
+                    alert('Error uploading file for: ' + id);
+
+                    console.log(result);
+                }
+            });
+        }
+
+        // when the button is clicked..
+        button.on('click', function (e) {
+
+            // it launches the file picker
+            $("#currentOrderUpload").text($(this).attr("name").substring(3));
+            input.click();
+        });
+
+        // when the file picker changes..
+        input.on('change', function (e) {
+
+            // turn it into a form
+            var data = BuildFormData(e.target.files);
+
+            var myDivObj = document.getElementById("currentOrderUpload");
+            var currentOrderNo = myDivObj.textContent;
+
+
+            // post the form to the action method
+            PostData(data, currentOrderNo);
+        });
+
     </script>
 }

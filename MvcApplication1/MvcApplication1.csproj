@@ -8290,6 +8290,7 @@
     <Content Include="Views\Financials\ExchangeRates.cshtml" />
     <Content Include="Views\Paperless\DailyInvoicing.cshtml" />
     <Content Include="Views\Paperless\SearchArchive.cshtml" />
+    <Content Include="Views\Paperless\DailyOrders.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

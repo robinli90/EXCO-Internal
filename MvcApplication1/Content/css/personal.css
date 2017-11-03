@@ -39,3 +39,15 @@ td.ignorepadding {
     padding: 0;
 }
 
+#dropZone {
+    /*background: gray;*/
+    border: black dashed 3px;
+    text-align: center;
+    color: white;
+}
+
+.borderGreen {
+    border: green dashed 3px;
+    text-align: center;
+    color: black;
+}

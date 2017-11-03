@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Web;
 using Microsoft.Ajax.Utilities;
 using MvcApplication1.Models;
+using MvcApplication1.Paperless_System;
 
 namespace MvcApplication1
 {
@@ -24,6 +25,20 @@ namespace MvcApplication1
 
         public static List<Email> EmailList = new List<Email>();
         public static List<User> UserList = new List<User>();
+        
+        internal static void LoadInitializers()
+        {
+            ArchivesChecker.GetEntireArchive();
+            LoadSettings();
+            ImportEmailFile();
+            Readiness.DeleteBlockerFile();
+
+            if (!Environment.MachineName.Contains("ROBIN"))
+            {
+                //Global.GetAllEmails();
+            }
+
+        }
 
         // ==========================================================================================
         // =====================================[ EMAILS ]===========================================

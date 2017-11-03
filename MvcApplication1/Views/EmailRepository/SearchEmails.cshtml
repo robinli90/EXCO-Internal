@@ -124,11 +124,6 @@
 
         });
 
-        $(document).keypress(function (e) {
-            if (e.which == 13 && ($('#searchBox').val().length > 1)) {
-                initiateSearch();
-            }
-        });
 
         function clearValues() {
             // clear values
@@ -180,6 +175,12 @@
             }
         }
 
+        $(document).keypress(function (e) {
+            if (e.which == 13 && ($('#searchBox').val().length > 1)) {
+                initiateSearch();
+            }
+        });
+
         // Disable search button on empty search box
         $("#searchBox").keyup(function () {
             if ($(this).val().length > 1) {
@@ -220,7 +221,7 @@
                     "</button>");
 
                 button.click(function () {
-                    var obj = getUIContent($(this).attr("id").substring(6));;
+                    var obj = getUIContent($(this).attr("id").substring(6));
                     console.log(obj);
                 });
 

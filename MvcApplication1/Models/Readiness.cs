@@ -80,8 +80,8 @@ namespace MvcApplication1.Models
                 _SyncReady = true;
             }
 
-            // Archive check every 10 minutes
-            if (DateTime.Now.Minute % 10 == 0)
+            // Archive check every 59 minutes
+            if (DateTime.Now.Minute % 30 == 0)
             {
                 ArchivesChecker.ProcessEmailsForArchive();
                 ArchivesChecker.CheckPendingOrders();

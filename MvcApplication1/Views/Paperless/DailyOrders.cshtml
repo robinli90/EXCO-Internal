@@ -21,7 +21,7 @@
                         <button style="float:right" id="refresh" class="btn btn-default">Refresh Orders</button>
                         <div style="float:right" class="col-xs-4">
                             <div class="input-group">
-                                <input type="text" id="searchBox" name="q" class="form-control" placeholder="Search for shop order #">
+                                <input type="text" id="searchBox" name="q" maxlength="6" class="form-control" placeholder="Search for shop order #">
                                 <span class="input-group-btn">
                                     <button class="btn btn-flat" id="searchButton" disabled>
                                         <i class="fa fa-search"></i>
@@ -44,7 +44,7 @@
                     </div>
                     <h4></h4>
                     <div class="input-group">
-                        <input type="text" id="searchBar" onkeyup="searchRecipients()" name="q" class="form-control" placeholder="Search for order # / customer # / customer name">
+                        <input type="text" id="searchBar" onkeyup="searchRecipients()" name="q" class="form-control" placeholder="Search current table for order # / customer # / customer name">
                         <span class="input-group-btn">
                             <button class="btn btn-flat">
                                 <i class="fa fa-search"></i>

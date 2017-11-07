@@ -44,6 +44,7 @@
                                         <td style='text-align: center'>@archiveOrder.miscScanItems</td>
                                         <td style='text-align: center'>
                                             <a href="@Url.Action("DownloadArchive", "Paperless", new {paramOne = @archiveOrder._orderNo}, null)"><i class="fa fa-download" title="Download Archive"></i></a>
+                                            <a href="@Url.Action("DownloadArchive", "Paperless", new {paramOne = @archiveOrder._orderNo}, null)"><i class="fa fa-eye" title="Preview Archive"></i></a>
                                             <input type="file" name="attach" id="attach-input" multiple="" style="display:none" />
                                             <a type='submit' name=@("FU_" + archiveOrder._orderNo) id="attach-button"><i class="fa fa-upload" title="Upload to Archive"></i></a>
                                         </td>

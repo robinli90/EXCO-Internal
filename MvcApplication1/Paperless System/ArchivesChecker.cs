@@ -22,6 +22,7 @@ namespace MvcApplication1.Paperless_System
         public static readonly string _drawingPath1 = @"\\10.0.0.8\sdrive\CADDRAWING\";
         public static readonly string _drawingPath2 = @"\\10.0.0.8\sdrive\CADDRAWINGBOL\";
 
+
         private static User archiveUser;
 
         public static List<ArchiveOrder> CurrentInvoiceOrders = new List<ArchiveOrder>();
@@ -123,28 +124,27 @@ namespace MvcApplication1.Paperless_System
         public static bool IsOrderInvoiced(string orderNumber)
         {
             DateTime invoiceDate = new DateTime();
-
-            SqlConnection objConn = null;
+            
             SqlCommand objCmd = null;
-            SqlDataReader objReader = null;
-
-            objConn = new SqlConnection("SERVER =10.0.0.6; Database =decade; UID =jamie; PWD =jamie;");
-            objConn.Open();
-            objCmd = objConn.CreateCommand();
-            objCmd.CommandText = String.Format("select invoicedate from d_order where ordernumber = '{0}'",
-                orderNumber);
-            objReader = objCmd.ExecuteReader();
-
-            if (objReader.HasRows)
+            using (SqlConnection objConn =
+                new SqlConnection("SERVER =10.0.0.6; Database =decade; UID =jamie; PWD =jamie;"))
             {
-                while (objReader.Read())
+                objConn.Open();
+                objCmd = objConn.CreateCommand();
+                objCmd.CommandText = String.Format("select invoicedate from d_order where ordernumber = '{0}'",
+                    orderNumber);
+
+                using (SqlDataReader objReader = objCmd.ExecuteReader())
                 {
-                    return DateTime.TryParse(objReader["invoicedate"].ToString().Trim(), out invoiceDate);
+                    if (objReader.HasRows)
+                    {
+                        while (objReader.Read())
+                        {
+                            return DateTime.TryParse(objReader["invoicedate"].ToString().Trim(), out invoiceDate);
+                        }
+                    }
                 }
             }
-
-            objReader.Close();
-            objConn.Close();
 
             return invoiceDate.Year > 2000;
         }
@@ -159,30 +159,30 @@ namespace MvcApplication1.Paperless_System
             Log.Append("Getting today's invoice list...");
             CurrentInvoiceOrders = new List<ArchiveOrder>();
 
-            SqlConnection objConn = null;
             SqlCommand objCmd = null;
-            SqlDataReader objReader = null;
 
-            objConn = new SqlConnection("SERVER =10.0.0.6; Database =decade; UID =jamie; PWD =jamie;");
-            objConn.Open();
-            objCmd = objConn.CreateCommand();
-            objCmd.CommandText = String.Format("select ordernumber, invoicenumber from d_order where invoicedate = '{0}'",
-                refDate.ToShortDateString());
-            objReader = objCmd.ExecuteReader();
-
-            if (objReader.HasRows)
+            using (SqlConnection objConn =
+                new SqlConnection("SERVER =10.0.0.6; Database =decade; UID =jamie; PWD =jamie;"))
             {
-                while (objReader.Read())
+                objConn.Open();
+                objCmd = objConn.CreateCommand();
+                objCmd.CommandText = String.Format("select ordernumber, invoicenumber from d_order where invoicedate = '{0}'",
+                    refDate.ToShortDateString());
+
+                using (SqlDataReader objReader = objCmd.ExecuteReader())
                 {
-                    CurrentInvoiceOrders.Add(
-                        new ArchiveOrder(objReader["ordernumber"].ToString().Trim(), 
-                                         objReader["invoicenumber"].ToString().Trim()));
+                    if (objReader.HasRows)
+                    {
+                        while (objReader.Read())
+                        {
+                            CurrentInvoiceOrders.Add(
+                                new ArchiveOrder(objReader["ordernumber"].ToString().Trim(),
+                                    objReader["invoicenumber"].ToString().Trim()));
+                        }
+                    }
                 }
+
             }
-
-            objReader.Close();
-            objConn.Close();
-
             Log.Append("Complete");
         }
         
@@ -190,30 +190,30 @@ namespace MvcApplication1.Paperless_System
         {
             CurrentInvoiceOrders = new List<ArchiveOrder>();
 
-            SqlConnection objConn = null;
             SqlCommand objCmd = null;
-            SqlDataReader objReader = null;
 
-            objConn = new SqlConnection("SERVER =10.0.0.6; Database =decade; UID =jamie; PWD =jamie;");
-            objConn.Open();
-            objCmd = objConn.CreateCommand();
-            objCmd.CommandText = String.Format("select ordernumber, invoicenumber from d_order where ordernumber = '{0}'",
-                orderNo);
-
-            objReader = objCmd.ExecuteReader();
-
-            if (objReader.HasRows)
+            using (SqlConnection objConn =
+                new SqlConnection("SERVER =10.0.0.6; Database =decade; UID =jamie; PWD =jamie;"))
             {
-                while (objReader.Read())
+                objConn.Open();
+                objCmd = objConn.CreateCommand();
+                objCmd.CommandText = String.Format(
+                    "select ordernumber, invoicenumber from d_order where ordernumber = '{0}'",
+                    orderNo);
+
+                using (SqlDataReader objReader = objCmd.ExecuteReader())
                 {
-                    CurrentInvoiceOrders.Add(
-                        new ArchiveOrder(objReader["ordernumber"].ToString().Trim(), 
-                                         objReader["invoicenumber"].ToString().Trim()));
+                    if (objReader.HasRows)
+                    {
+                        while (objReader.Read())
+                        {
+                            CurrentInvoiceOrders.Add(
+                                new ArchiveOrder(objReader["ordernumber"].ToString().Trim(),
+                                    objReader["invoicenumber"].ToString().Trim()));
+                        }
+                    }
                 }
             }
-
-            objReader.Close();
-            objConn.Close();
 
             Log.Append("Complete");
         }
@@ -228,66 +228,72 @@ namespace MvcApplication1.Paperless_System
             Log.Append("Getting today's order list...");
             CurrentOrders = new List<DieOrder>();
 
-            SqlConnection objConn = null;
             SqlCommand objCmd = null;
-            SqlDataReader objReader = null;
 
-            objConn = new SqlConnection("SERVER =10.0.0.6; Database =decade; UID =jamie; PWD =jamie;");
-            objConn.Open();
-            objCmd = objConn.CreateCommand();
-            objCmd.CommandText = String.Format("select a.ordernumber, a.customercode, b.name, a.orderdate from d_order as a, d_customer as b where a.customercode = b.customercode and orderdate > '{0}' and orderdate < '{1}'", refDate.ToShortDateString(), refDate.AddDays(1).ToShortDateString());
-            objReader = objCmd.ExecuteReader();
-
-            if (objReader.HasRows)
+            using (SqlConnection objConn =
+                new SqlConnection("SERVER =10.0.0.6; Database =decade; UID =jamie; PWD =jamie;"))
             {
-                while (objReader.Read())
+                objConn.Open();
+                objCmd = objConn.CreateCommand();
+                objCmd.CommandText =
+                    String.Format(
+                        "select a.ordernumber, a.customercode, b.name, a.orderdate from d_order as a, d_customer as b where a.customercode = b.customercode and orderdate > '{0}' and orderdate < '{1}'",
+                        refDate.ToShortDateString(), refDate.AddDays(1).ToShortDateString());
+
+                using (SqlDataReader objReader = objCmd.ExecuteReader())
                 {
-                    CurrentOrders.Add(
-                        new DieOrder(objReader["ordernumber"].ToString().Trim(),
-                            objReader["customercode"].ToString().Trim(),
-                            objReader["name"].ToString().Trim(),
-                            Convert.ToDateTime(objReader["orderdate"].ToString().Trim())
-                        ));
+
+                    if (objReader.HasRows)
+                    {
+                        while (objReader.Read())
+                        {
+                            CurrentOrders.Add(
+                                new DieOrder(objReader["ordernumber"].ToString().Trim(),
+                                    objReader["customercode"].ToString().Trim(),
+                                    objReader["name"].ToString().Trim(),
+                                    Convert.ToDateTime(objReader["orderdate"].ToString().Trim())
+                                ));
+                        }
+                    }
                 }
             }
-
-            objReader.Close();
-            objConn.Close();
 
             Log.Append("Complete");
         }
         
         public static void PopulateDieOrdersByOrderNo(string orderNo)
         {
-
             Log.Append("Getting today's order list...");
             CurrentOrders = new List<DieOrder>();
-
-            SqlConnection objConn = null;
+            
             SqlCommand objCmd = null;
-            SqlDataReader objReader = null;
-
-            objConn = new SqlConnection("SERVER =10.0.0.6; Database =decade; UID =jamie; PWD =jamie;");
-            objConn.Open();
-            objCmd = objConn.CreateCommand();
-            objCmd.CommandText = String.Format("select a.ordernumber, a.customercode, b.name, a.orderdate from d_order as a, d_customer as b where a.customercode = b.customercode and a.ordernumber = '{0}'", orderNo);
-            objReader = objCmd.ExecuteReader();
-
-            if (objReader.HasRows)
+            
+            using (SqlConnection objConn =
+                new SqlConnection("SERVER =10.0.0.6; Database =decade; UID =jamie; PWD =jamie;"))
             {
-                while (objReader.Read())
+                objConn.Open();
+                objCmd = objConn.CreateCommand();
+                objCmd.CommandText =
+                    String.Format(
+                        "select a.ordernumber, a.customercode, b.name, a.orderdate from d_order as a, d_customer as b where a.customercode = b.customercode and a.ordernumber = '{0}'",
+                        orderNo);
+
+                using (SqlDataReader objReader = objCmd.ExecuteReader())
                 {
-                    CurrentOrders.Add(
-                        new DieOrder(objReader["ordernumber"].ToString().Trim(),
-                            objReader["customercode"].ToString().Trim(),
-                            objReader["name"].ToString().Trim(),
-                            Convert.ToDateTime(objReader["orderdate"].ToString().Trim())
-                        ));
+                    if (objReader.HasRows)
+                    {
+                        while (objReader.Read())
+                        {
+                            CurrentOrders.Add(
+                                new DieOrder(objReader["ordernumber"].ToString().Trim(),
+                                    objReader["customercode"].ToString().Trim(),
+                                    objReader["name"].ToString().Trim(),
+                                    Convert.ToDateTime(objReader["orderdate"].ToString().Trim())
+                                ));
+                        }
+                    }
                 }
             }
-
-            objReader.Close();
-            objConn.Close();
 
             Log.Append("Complete");
         }
@@ -409,7 +415,6 @@ namespace MvcApplication1.Paperless_System
             if (Directory.Exists(Path.Combine(ArchivesChecker._archivePath, orderNo)))
             {
                 hasDrawings = Directory.GetFiles(Path.Combine(ArchivesChecker._archivePath, orderNo), "*.dwg").Length > 0;
-                //miscScanItems = Directory.GetFiles(, "*.eml").Length - (hasDieForm ? 1 : 0);
                 miscScanItems = Directory.GetFiles(Path.Combine(ArchivesChecker._archivePath, orderNo))
                                     .Where(name => !name.EndsWith(".invoice") && !name.EndsWith(".dwg")).ToList().Count -
                                 (hasDieForm ? 1 : 0) -
@@ -436,7 +441,7 @@ namespace MvcApplication1.Paperless_System
             _custName = custName;
             _orderDate = orderDate;
 
-            _hasFolder = File.Exists(Path.Combine(ArchivesChecker._archivePath, orderNo + "_DIEFORM.msg"));
+            _hasFolder = File.Exists(Path.Combine(ArchivesChecker._archivePath + orderNo, orderNo+ "_DIEFORM.msg"));
         }
 
         public void SetHasFolder(bool hasFolder = false)

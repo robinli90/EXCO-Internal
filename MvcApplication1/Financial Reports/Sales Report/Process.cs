@@ -140,6 +140,8 @@ namespace MvcApplication1.Financial_Reports.Sales_Report
                         return 1900;
                     case 17:
                         return 3000;
+                    case 18:
+                        return 2730;
                     default:
                         return 1750;
                 }
@@ -187,9 +189,9 @@ namespace MvcApplication1.Financial_Reports.Sales_Report
                     case 16:
                         return 1.2;
                     case 17:
-                        return 1.25;
+                        return 1.3;
                     default:
-                        return 1.2;
+                        return 1.3;
                 }
             }
         }
@@ -361,8 +363,7 @@ namespace MvcApplication1.Financial_Reports.Sales_Report
                 int invNum = Convert.ToInt32(reader[0]);
                 if (invoiceMap.ContainsKey(invNum))
                 {
-                    invoiceMap[invNum].sale += Convert.ToDouble(reader
-[1]);
+                    invoiceMap[invNum].sale += Convert.ToDouble(reader[1]);
                 }
             }
             reader.Close();
@@ -623,6 +624,48 @@ namespace MvcApplication1.Financial_Reports.Sales_Report
             colSheet.Name = "Colombia 20" + fiscalYear.ToString();
             Excel2.Worksheet marSheet = book.Worksheets.Add();
             marSheet.Name = "Markham 20" + fiscalYear.ToString();
+
+
+            #region Michigan plant aggregation
+            // Aggregate michigan accounts 0003020S to 0003030S (astrex ca to astrex us)
+            // Aggregate michigan accounts 00006800 to 0003025S (signature ca to signature us)
+
+            //foreach (Customer customer in plant.custList)
+            for (int j = 0; j < micPlant.custList.Count; j++)
+            {
+                Customer customer = micPlant.custList[j];
+
+                if (customer.excoCustomer.BillToID == "0003020S")
+                {
+                    Customer c = micPlant.custList.First(x => x.excoCustomer.BillToID == "0003030S");
+
+                    if (c == null) continue;
+
+                    for (int i = 1; i <= 12; i++)
+                    {
+                        c.actualList[i] += customer.actualList[i];
+                        c.budgetList[i] += customer.budgetList[i];
+                        c.actualListLastYear[i] += customer.actualListLastYear[i];
+                    }
+                    micPlant.custList.RemoveAt(j);
+                }
+                else if (customer.excoCustomer.BillToID == "00006800")
+                {
+                    Customer c = micPlant.custList.First(x => x.excoCustomer.BillToID == "0003025S");
+
+                    if (c == null) continue;
+
+                    for (int i = 1; i <= 12; i++)
+                    {
+                        c.actualList[i] += customer.actualList[i];
+                        c.budgetList[i] += customer.budgetList[i];
+                        c.actualListLastYear[i] += customer.actualListLastYear[i];
+                    }
+                    micPlant.custList.RemoveAt(j);
+                }
+            }
+            #endregion
+
             // write to sheet
             FillSheet(marSheet, marPlant);
             Console.WriteLine("Write Markham Sheet Done");
@@ -2120,7 +2163,12 @@ namespace MvcApplication1.Financial_Reports.Sales_Report
             sheet.Cells[row, col++] = "Last Year:";
             for (int i = 1; i <= 12; i++)
             {
-                sheet.Cells[row, col++] = customer.actualListLastYear[i].GetAmount(customer.excoCustomer.Currency).ToString("C0");
+                double adjustment = 0;
+
+                if (i == 2 && customer.excoCustomer.Name.Trim() == "Cuprum Mexico City" && fiscalYear == 18)
+                    adjustment = 50488;  // see frank, correction for nov 30, 2016 entry from delivery revenue
+
+                sheet.Cells[row, col++] = (customer.actualListLastYear[i].GetAmount(customer.excoCustomer.Currency) - adjustment).ToString("C0");
             }
             sheet.Cells[row, col++].Formula = "=sum(F" + row.ToString() + ":Q" + row.ToString() + ")";
             // adjust style

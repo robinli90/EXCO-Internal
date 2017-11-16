@@ -81,7 +81,7 @@ namespace MvcApplication1.Models
         public void RetrieveMsg()
         {
             EmailMessage =
-                WebUtility.HtmlDecode(AntiXssEncoder.HtmlEncode(ReadMessage(Global.messagesDirectoryPath + ID + ".eml").TextBody, true));
+                WebUtility.HtmlEncode(AntiXssEncoder.HtmlEncode(ReadMessage(Global.messagesDirectoryPath + ID + ".eml").TextBody, true));
 
             // Prevent JSON overflow error
             if (EmailMessage.Length >= 2097152)

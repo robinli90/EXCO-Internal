@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
+using System.Web.Script.Services;
 using MvcApplication1.Models;
 using MvcApplication1.Paperless_System;
 
@@ -169,6 +171,16 @@ namespace MvcApplication1.Controllers
             ArchivesChecker.GetEntireArchive();
             return RedirectToAction("SearchArchive");
         }
+        
+        [HttpGet]
+        // GET: EmailRepository
+        [Route("Paperless/GetFilesById/{id}")]
+        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        public string GetFilesById(string id)
+        {
+            return String.Join("<br />", ArchivesChecker.GetFilesForOrder(id));
+        }
+
 
         // GET: Paperless
         [HttpGet]

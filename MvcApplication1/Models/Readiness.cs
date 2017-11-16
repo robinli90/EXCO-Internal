@@ -79,9 +79,9 @@ namespace MvcApplication1.Models
             {
                 _SyncReady = true;
             }
-
+            
             // Archive check every 59 minutes
-            if (DateTime.Now.Minute % 30 == 0)
+            if (Environment.MachineName.Contains("EXCOTRACK3") && DateTime.Now.Minute % 30 == 0)
             {
                 ArchivesChecker.ProcessEmailsForArchive();
                 ArchivesChecker.CheckPendingOrders();

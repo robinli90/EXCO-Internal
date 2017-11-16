@@ -6,6 +6,55 @@ using ExcoUtility;
 
 namespace MvcApplication1.Models
 {
+    public enum FinancialPlant
+    {
+        All,
+        Consolidated,
+        Markham,
+        Michigan,
+        Texas,
+        Colombia
+    }
+
+    public static class FinancialPlantControls
+    {
+        public static FinancialPlant GetFinancialPlant(string financialPlantName)
+        {
+            switch (financialPlantName)
+            {
+                case "All":
+                {
+                    return FinancialPlant.All;
+                }
+                case "Consolidated":
+                {
+                    return FinancialPlant.Consolidated;
+                }
+                case "Markham":
+                {
+                    return FinancialPlant.Markham;
+                }
+                case "Michigan":
+                {
+                    return FinancialPlant.Michigan;
+                }
+                case "Texas":
+                {
+                    return FinancialPlant.Texas;
+                }
+                case "Colombia":
+                {
+                    return FinancialPlant.Colombia;
+                }
+                default:
+                {
+                    return FinancialPlant.Colombia;
+                }
+            }
+            
+        }
+    }
+
     public static class FinancialControls
     {
         public static List<CurrencyYear> CurrencyYearList { get; set; }
@@ -27,4 +76,6 @@ namespace MvcApplication1.Models
             return false;
         }
     }
+
+
 }

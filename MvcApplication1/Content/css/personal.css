@@ -1,7 +1,7 @@
 ﻿
 /* Loading section -----------------------------------------------------------*/
 
-.modal {
+.modalloading {
     display:    none;
     position:   fixed;
     z-index:    1000;
@@ -23,7 +23,7 @@ body.loading {
 
 /* Anytime the body has the loading class, our
    modal element will be visible */
-body.loading .modal {
+body.loading .modalloading {
     display: block;
 }
 
@@ -50,4 +50,20 @@ td.ignorepadding {
     border: green dashed 3px;
     text-align: center;
     color: black;
+}
+
+.dataTables_filter {
+    text-align: right;
+}
+
+
+.vertical-align-center {
+    /* To center vertically */
+    vertical-align: middle;
+    
+}
+
+.modal-admin {
+    /* new custom width */
+    width: 250px;
 }

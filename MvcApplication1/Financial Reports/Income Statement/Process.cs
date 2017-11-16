@@ -478,29 +478,32 @@ namespace MvcApplication1.Financial_Reports.Income_Statement
             //ga.groupList.Add(new Categories.General_and_Administration.Business_Tax(fiscalYear, fiscalMonth));
             ga.groupList.Add(new Categories.General_and_Administration.Cell_Phone_Expense(fiscalYear, fiscalMonth));
             //ga.groupList.Add(new Categories.General_and_Administration.Commercial_Insurance(fiscalYear, fiscalMonth));
-            ga.groupList.Add(new Categories.General_and_Administration.Office_Depreciation_Expense(fiscalYear, fiscalMonth));
             ga.groupList.Add(new Categories.General_and_Administration.Donations(fiscalYear, fiscalMonth));
             ga.groupList.Add(new Categories.General_and_Administration.EDC_Insurance(fiscalYear, fiscalMonth));
             ga.groupList.Add(new Categories.General_and_Administration.Legal_and_Audit(fiscalYear, fiscalMonth));
-            ga.groupList.Add(new Categories.General_and_Administration.Salaries(fiscalYear, fiscalMonth));
             //ga.groupList.Add(new Categories.General_and_Administration.Meal_and_Entertainment(fiscalYear, fiscalMonth));
             ga.groupList.Add(new Categories.General_and_Administration.Memberships_and_Subscriptions(fiscalYear, fiscalMonth));
+            //ga.groupList.Add(new Categories.General_and_Administration.Payroll_Taxes(fiscalYear, fiscalMonth));
+            //ga.groupList.Add(new Categories.General_and_Administration.Travel_Expenses(fiscalYear, fiscalMonth));
+            ga.groupList.Add(new Categories.General_and_Administration.Office_Airfare(fiscalYear, fiscalMonth));
             ga.groupList.Add(new Categories.General_and_Administration.Office_Cleaning(fiscalYear, fiscalMonth));
+            ga.groupList.Add(new Categories.General_and_Administration.Office_Depreciation_Expense(fiscalYear, fiscalMonth));
             ga.groupList.Add(new Categories.General_and_Administration.Office_Employee_Benefits(fiscalYear, fiscalMonth));
             ga.groupList.Add(new Categories.General_and_Administration.Office_Group_Insurance(fiscalYear, fiscalMonth));
+            ga.groupList.Add(new Categories.General_and_Administration.Office_Meals_and_Entertainment(fiscalYear, fiscalMonth));
             ga.groupList.Add(new Categories.General_and_Administration.Office_Rent(fiscalYear, fiscalMonth));
-            ga.groupList.Add(new Categories.General_and_Administration.Office_Supplies(fiscalYear, fiscalMonth));
-            //ga.groupList.Add(new Categories.General_and_Administration.Payroll_Taxes(fiscalYear, fiscalMonth));
-            ga.groupList.Add(new Categories.General_and_Administration.Postage(fiscalYear, fiscalMonth));
-            ga.groupList.Add(new Categories.General_and_Administration.Recruitment_Expense(fiscalYear, fiscalMonth));
-            ga.groupList.Add(new Categories.General_and_Administration.Software_Amortization(fiscalYear, fiscalMonth));
+            ga.groupList.Add(new Categories.General_and_Administration.Office_Travel(fiscalYear, fiscalMonth));
             ga.groupList.Add(new Categories.General_and_Administration.Office_South_America_Travel(fiscalYear, fiscalMonth));
             ga.groupList.Add(new Categories.General_and_Administration.Office_Statutory_Holiday(fiscalYear, fiscalMonth));
-            ga.groupList.Add(new Categories.General_and_Administration.Telephone_Expense(fiscalYear, fiscalMonth));
-            //ga.groupList.Add(new Categories.General_and_Administration.Travel_Expenses(fiscalYear, fiscalMonth));
+            ga.groupList.Add(new Categories.General_and_Administration.Office_Supplies(fiscalYear, fiscalMonth));
             ga.groupList.Add(new Categories.General_and_Administration.Office_Vacation_Pay(fiscalYear, fiscalMonth));
             ga.groupList.Add(new Categories.General_and_Administration.Office_Workers_Compensation(fiscalYear, fiscalMonth));
             ga.groupList.Add(new Categories.General_and_Administration.Other_Expenses(fiscalYear, fiscalMonth));
+            ga.groupList.Add(new Categories.General_and_Administration.Postage(fiscalYear, fiscalMonth));
+            ga.groupList.Add(new Categories.General_and_Administration.Recruitment_Expense(fiscalYear, fiscalMonth));
+            ga.groupList.Add(new Categories.General_and_Administration.Salaries(fiscalYear, fiscalMonth));
+            ga.groupList.Add(new Categories.General_and_Administration.Software_Amortization(fiscalYear, fiscalMonth));
+            ga.groupList.Add(new Categories.General_and_Administration.Telephone_Expense(fiscalYear, fiscalMonth));
         }
 
         private void BuildOtherExpense(bool include_provisional = false)

@@ -23,7 +23,7 @@
                     <label for="year" class="col-xs-1 control-label">Plant</label>
                     <div class="col-xs-3">
                         <select id="plant" class="form-control">
-                            @if (Permissions.HasAccess(HttpContext.Current.Session["Department"].ToString(), "Manager", true, null, new List<string> {"lsilva"}))
+                            @if (Permissions.HasAccess(HttpContext.Current.Session["Department"].ToString(), "Manager", true, null, new List<string> { "lsilva" }))
                             {
                                 <option selected>Markham</option>
                                 <option>Michigan</option>
@@ -66,7 +66,7 @@
                         </select>
                     </div>
                 </div>
-                
+
                 <div class="box-body">
                     <label>
                         <input type="checkbox" id="nativeCurrency" class="minimal">
@@ -79,6 +79,10 @@
             <div class="box-footer">
                 <button id="generateYTD" class="btn btn-default">Generate</button>
                 <button id="refreshYTD" class="btn btn-default">Refresh Data</button>
+                @if (Permissions.HasAccess(HttpContext.Current.Session["Department"].ToString(), "Administrator", true, null, new List<string> { "lsilva" }))
+                {
+                    <button id="refreshAll" class="btn btn-default">Refresh 12 months</button>
+                }
             </div>
             <!-- /.box-footer -->
         </div>
@@ -135,10 +139,10 @@
                     window.location.href = url.replace('__param__', encodeURIComponent(param));
                     jQuery.event.trigger("ajaxStop");
                 },
-                fail: function() {
+                fail: function () {
                     jQuery.event.trigger("ajaxStop");
                 },
-                error: function() {
+                error: function () {
                     jQuery.event.trigger("ajaxStop");
                 }
             });
@@ -168,6 +172,49 @@
                 //window.location.href = url.replace('__param__', encodeURIComponent(queryStr));
             });
 
+        $(document).on('click',
+            '#refreshAll',
+            function () {
+
+                jQuery.event.trigger("ajaxStart");
+
+                //var plant = document.getElementById("plant");
+                var plant = document.getElementById("plant");
+                var year = document.getElementById("year");
+                var period = document.getElementById("period");
+
+
+
+                var queryStr = (plant.options[plant.selectedIndex].value + ',' +
+                    year.options[year.selectedIndex].value + ',' +
+                    period.options[period.selectedIndex].value
+                    );
+                refreshAllIS(queryStr);
+                //var url = 'Url.Action("GenerateIncomeStatement", "Financials", new {id = "__param__"})';
+                //window.location.href = url.replace('__param__', encodeURIComponent(queryStr));
+            });
+
+        function refreshAllIS(idx) {
+            return $.ajax({
+                type: "GET",
+                url: "/Financials/RegenerateAllYTD/" + idx,
+                contentType: "application/json; charset=utf-8",
+                dataType: "text",
+                success: function () {
+                    var param = idx;
+                    var url = '@Url.Action("RegenerateAllYTD", "Financials", new {id = "__param__"})';
+                    window.location.href = url.replace('__param__', encodeURIComponent(param));
+                    jQuery.event.trigger("ajaxStop");
+                },
+                fail: function () {
+                    jQuery.event.trigger("ajaxStop");
+                },
+                error: function () {
+                    jQuery.event.trigger("ajaxStop");
+                }
+            });
+        }
+
         function refreshIS(idx) {
             return $.ajax({
                 type: "GET",
@@ -180,10 +227,10 @@
                     window.location.href = url.replace('__param__', encodeURIComponent(param));
                     jQuery.event.trigger("ajaxStop");
                 },
-                fail: function() {
+                fail: function () {
                     jQuery.event.trigger("ajaxStop");
                 },
-                error: function() {
+                error: function () {
                     jQuery.event.trigger("ajaxStop");
                 }
             });

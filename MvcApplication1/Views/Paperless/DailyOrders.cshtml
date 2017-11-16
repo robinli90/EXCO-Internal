@@ -44,7 +44,7 @@
                     </div>
                     <h4></h4>
                     <div class="input-group">
-                        <input type="text" id="searchBar" onkeyup="searchRecipients()" name="q" class="form-control" placeholder="Search current table for order # / customer # / customer name">
+                        <input type="text" id="searchBar" onkeyup="searchRecipients()" name="q" class="form-control" placeholder="Search current table for order # / die # / customer # / customer name">
                         <span class="input-group-btn">
                             <button class="btn btn-flat">
                                 <i class="fa fa-search"></i>
@@ -57,6 +57,7 @@
                         <thead>
                         <tr>
                             <th style="text-align: center">Order #</th>
+                            <th style="text-align: center; width:300px">Dies</th>
                             <th style="text-align: center">Cust. #</th>
                             <th style="text-align: center">Cust. name</th>
                             <th style="text-align: center">Order Date</th>
@@ -69,6 +70,7 @@
                             {
                                 <tr class="drop-zone" name="list2" id=@("dropZone" + order._orderNo)>
                                     <td name="list" style='text-align:center'><a href="@("http://10.0.0.6/Tracking/Order/" + order._orderNo)" style="color:steelblue">@order._orderNo</a></td>
+                                    <td style='text-align: center; word-wrap:break-word' >@(String.Join(", ", order._dieNumbers))</td>
                                     <td style='text-align:center'>@order._custNo</td>
                                     <td style='text-align:center'>@order._custName</td>
                                     <td style='text-align:center'>@order._orderDate</td>
@@ -219,6 +221,7 @@
             // Loop through all table rows, and hide those who don't match the search query
             for (i = 0; i < tr.length; i++) {
                 var done = false;
+                td3 = tr[i].getElementsByTagName("td")[3];
                 td2 = tr[i].getElementsByTagName("td")[2];
                 td = tr[i].getElementsByTagName("td")[1];
                 td1 = tr[i].getElementsByTagName("td")[0];
@@ -240,6 +243,14 @@
                 }
                 if (!done && td2) {
                     if (td2.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                        done = true;
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+                if (!done && td3) {
+                    if (td3.innerHTML.toUpperCase().indexOf(filter) > -1) {
                         tr[i].style.display = "";
                         done = true;
                     } else {

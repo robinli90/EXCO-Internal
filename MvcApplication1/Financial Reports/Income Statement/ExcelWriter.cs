@@ -5,6 +5,7 @@ using System.Text;
 using Excel2 = Microsoft.Office.Interop.Excel;
 using ExcoUtility;
 using MvcApplication1.Financial_Reports.Income_Statement.Categories;
+using MvcApplication1.Models;
 
 namespace MvcApplication1.Financial_Reports.Income_Statement
 {
@@ -123,6 +124,10 @@ namespace MvcApplication1.Financial_Reports.Income_Statement
                         return 1900;
                     case 17:
                         return 2400;
+                    case 18:
+                        return 2100;
+                    case 19:
+                        return 2100;
                     default:
                         return 1900;
                 }
@@ -147,6 +152,10 @@ namespace MvcApplication1.Financial_Reports.Income_Statement
                         return 1.111;
                     case 17:
                         return 1.25;
+                    case 18:
+                        return 1.3;
+                    case 19:
+                        return 1.3;
                     default:
                         return 1.1111;
                 }
@@ -156,14 +165,14 @@ namespace MvcApplication1.Financial_Reports.Income_Statement
                 return 1;
             }
         }
-
+        
         public ExcelWriter()
         {
             //Log.Append("ExcelWriter initialized");
         }
 
         // constructor
-        public ExcelWriter(Process process)
+        public ExcelWriter(Process process, Models.FinancialPlant plant = FinancialPlant.All)
         {
 
             Log.Append("    ExcelWriter Process started");
@@ -189,39 +198,67 @@ namespace MvcApplication1.Financial_Reports.Income_Statement
 
             try
             {
-                if (true)
+                switch (plant)
                 {
-                    colCADSheet = workBook.Worksheets.Add();
-                    colCADSheet.Name = "Colombia at " + fiscalMonth + "-" + fiscalYear + " (CAD)";
-                    colPESOSheet = workBook.Worksheets.Add();
-                    colPESOSheet.Name = "Colombia at " + fiscalMonth + "-" + fiscalYear + " (PESO)";
-                    //texCADSheet = workBook.Worksheets.Add();
+                    case FinancialPlant.All:
+                    {
+                        colCADSheet = workBook.Worksheets.Add();
+                        colPESOSheet = workBook.Worksheets.Add();
+                        texCADSheet = workBook.Worksheets.Add();
+                        texUSDSheet = workBook.Worksheets.Add();
+                        micCADSheet = workBook.Worksheets.Add();
+                        micUSDSheet = workBook.Worksheets.Add();
+                        marCADSheet = workBook.Worksheets.Add();
+                        consolidateSheet = workBook.Worksheets.Add();
+                        colCADSheet.Name = "Colombia at " + fiscalMonth + "-" + fiscalYear + " (CAD)";
+                        colPESOSheet.Name = "Colombia at " + fiscalMonth + "-" + fiscalYear + " (PESO)";
+                        texCADSheet.Name = "Texas at " + fiscalMonth + "-" + fiscalYear + " (CAD)";
+                        texUSDSheet.Name = "Texas at " + fiscalMonth + "-" + fiscalYear + " (USD)";
+                        micCADSheet.Name = "Michigan at " + fiscalMonth + "-" + fiscalYear + " (CAD)";
+                        micUSDSheet.Name = "Michigan at " + fiscalMonth + "-" + fiscalYear + " (USD)";
+                        marCADSheet.Name = "Markham at " + fiscalMonth + "-" + fiscalYear + " (CAD)";
+                        consolidateSheet.Name = "Consolidate " + fiscalMonth + "-" + fiscalYear + " (CAD)";
+                            break;
+                    }
+                    case FinancialPlant.Consolidated:
+                    {
+                        consolidateSheet = workBook.Worksheets.Add();
+                        consolidateSheet.Name = "Consolidate " + fiscalMonth + "-" + fiscalYear + " (CAD)";
+                            break;
+                    }
+                    case FinancialPlant.Markham:
+                    {
+                        marCADSheet = workBook.Worksheets.Add();
+                        marCADSheet.Name = "Markham at " + fiscalMonth + "-" + fiscalYear + " (CAD)";
+                            break;
+                    }
+                    case FinancialPlant.Michigan:
+                    {
+                        micCADSheet = workBook.Worksheets.Add();
+                        micUSDSheet = workBook.Worksheets.Add();
+                        micCADSheet.Name = "Michigan at " + fiscalMonth + "-" + fiscalYear + " (CAD)";
+                        micUSDSheet.Name = "Michigan at " + fiscalMonth + "-" + fiscalYear + " (USD)";
+                        break;
+                    }
+                    case FinancialPlant.Texas:
+                    {
+                        texCADSheet = workBook.Worksheets.Add();
+                        texUSDSheet = workBook.Worksheets.Add();
+                        texCADSheet.Name = "Texas at " + fiscalMonth + "-" + fiscalYear + " (CAD)";
+                        texUSDSheet.Name = "Texas at " + fiscalMonth + "-" + fiscalYear + " (USD)";
+                        break;
+                    }
+                    case FinancialPlant.Colombia:
+                    {
+                        colCADSheet = workBook.Worksheets.Add();
+                        colPESOSheet = workBook.Worksheets.Add();
+                        colCADSheet.Name = "Colombia at " + fiscalMonth + "-" + fiscalYear + " (CAD)";
+                        colPESOSheet.Name = "Colombia at " + fiscalMonth + "-" + fiscalYear + " (PESO)";
+                        break;
+                    }
                 }
-                else
-                {
-                    colCADSheet = workBook.Worksheets[3];
-                    colCADSheet.Name = "Colombia at ?" + fiscalMonth + "-" + fiscalYear + " (CAD)";
-                    colPESOSheet = workBook.Worksheets[2];
-                    colPESOSheet.Name = "Colombia at " + fiscalMonth + "-" + fiscalYear + " (PESO)";
 
-                    //colCADSheet = workBook.Worksheets.Add();
-                    //colCADSheet.Name = "Colombia at " + fiscalMonth + "-" + fiscalYear + " (CAD)";
-                    //colPESOSheet = workBook.Worksheets.Add();
-                    //colPESOSheet.Name = "Colombia at " + fiscalMonth + "-" + fiscalYear + " (PESO)";
-                    //texCADSheet = workBook.Worksheets.Add();
-                }
-                texCADSheet = workBook.Worksheets.Add();
-                texCADSheet.Name = "Texas at " + fiscalMonth + "-" + fiscalYear + " (CAD)";
-                texUSDSheet = workBook.Worksheets.Add();
-                texUSDSheet.Name = "Texas at " + fiscalMonth + "-" + fiscalYear + " (USD)";
-                micCADSheet = workBook.Worksheets.Add();
-                micCADSheet.Name = "Michigan at " + fiscalMonth + "-" + fiscalYear + " (CAD)";
-                micUSDSheet = workBook.Worksheets.Add();
-                micUSDSheet.Name = "Michigan at " + fiscalMonth + "-" + fiscalYear + " (USD)";
-                marCADSheet = workBook.Worksheets.Add();
-                marCADSheet.Name = "Markham at " + fiscalMonth + "-" + fiscalYear + " (CAD)";
-                consolidateSheet = workBook.Worksheets.Add();
-                consolidateSheet.Name = "Consolidate " + fiscalMonth + "-" + fiscalYear + " (CAD)";
+                
             }
             catch (Exception p)
             {
@@ -254,23 +291,50 @@ namespace MvcApplication1.Financial_Reports.Income_Statement
         }
 
         // fill sheets
-        public void FillSheets(bool consolidatedReport = false)
+        public void FillSheets(Models.FinancialPlant plant = FinancialPlant.All)
         {
-            if (!consolidatedReport)
+            switch (plant)
             {
-                FillMarkhamCADWorkSheet();
-                FillMichiganCADWorkSheet();
-                FillMichiganUSDWorkSheet();
-                FillTexasCADWorkSheet();
-                FillTexasUSDWorkSheet();
-                FillColombiaCADWorkSheet();
-                FillColombiaPESOWorkSheet();
-                FillConsolidateCADWorkSheet();
-            }
-            else
-            {
-                // new process for consolidated
-                //this.process = new Process(process.fiscalYear, process.fiscalMonth, true);
+                case FinancialPlant.All:
+                {
+                    FillMarkhamCADWorkSheet();
+                    FillMichiganCADWorkSheet();
+                    FillMichiganUSDWorkSheet();
+                    FillTexasCADWorkSheet();
+                    FillTexasUSDWorkSheet();
+                    FillColombiaCADWorkSheet();
+                    FillColombiaPESOWorkSheet();
+                    FillConsolidateCADWorkSheet();
+                    break;
+                }
+                case FinancialPlant.Consolidated:
+                {
+                    FillConsolidateCADWorkSheet();
+                    break;
+                }
+                case FinancialPlant.Markham:
+                {
+                    FillMarkhamCADWorkSheet();
+                    break;
+                }
+                case FinancialPlant.Michigan:
+                {
+                    FillMichiganCADWorkSheet();
+                    FillMichiganUSDWorkSheet();
+                    break;
+                }
+                case FinancialPlant.Texas:
+                {
+                    FillTexasCADWorkSheet();
+                    FillTexasUSDWorkSheet();
+                    break;
+                }
+                case FinancialPlant.Colombia:
+                {
+                    FillColombiaCADWorkSheet();
+                    FillColombiaPESOWorkSheet();
+                    break;
+                }
             }
         }
 
@@ -1003,7 +1067,7 @@ namespace MvcApplication1.Financial_Reports.Income_Statement
                 micCADSheet.Cells[row, j * 2 - 1].NumberFormat = "0.00%";
                 micCADSheet.Cells[row, j * 2 - 1].Formula = "=" + colCode + row.ToString() + "/" + colCode + totalSSRow.ToString();
             }
-            row = WriteCategory(micCADSheet, row, 3, "CA", process.pt, true);
+            row = WriteCategory(micCADSheet, row, 3, "CA", process.pt, false, true);
             row--;
 
             // adjust style
@@ -1125,7 +1189,7 @@ namespace MvcApplication1.Financial_Reports.Income_Statement
                 micUSDSheet.Cells[row, j * 2 - 1].NumberFormat = "0.00%";
                 micUSDSheet.Cells[row, j * 2 - 1].Formula = "=" + colCode + row.ToString() + "/" + colCode + totalSSRow.ToString();
             }
-            row = WriteCategory(micUSDSheet, row, 3, "US", process.pt, true);
+            row = WriteCategory(micUSDSheet, row, 3, "US", process.pt, true, true);
             row--;
 
             // adjust style
@@ -1237,7 +1301,7 @@ namespace MvcApplication1.Financial_Reports.Income_Statement
                 texCADSheet.Cells[row, j * 2 - 1].NumberFormat = "0.00%";
                 texCADSheet.Cells[row, j * 2 - 1].Formula = "=" + colCode + row.ToString() + "/" + colCode + totalSSRow.ToString();
             }
-            row = WriteCategory(texCADSheet, row, 5, "CA", process.pt, true);
+            row = WriteCategory(texCADSheet, row, 5, "CA", process.pt, false, true);
             row--;
 
             // adjust style
@@ -1346,7 +1410,7 @@ namespace MvcApplication1.Financial_Reports.Income_Statement
                 texUSDSheet.Cells[row, j * 2 - 1].NumberFormat = "0.00%";
                 texUSDSheet.Cells[row, j * 2 - 1].Formula = "=" + colCode + row.ToString() + "/" + colCode + totalSSRow.ToString();
             }
-            row = WriteCategory(texUSDSheet, row, 5, "US", process.pt, true);
+            row = WriteCategory(texUSDSheet, row, 5, "US", process.pt, true, true);
             row--;
 
             // adjust style
@@ -1458,7 +1522,7 @@ namespace MvcApplication1.Financial_Reports.Income_Statement
                 colCADSheet.Cells[row, j * 2 - 1].NumberFormat = "0.00%";
                 colCADSheet.Cells[row, j * 2 - 1].Formula = "=" + colCode + row.ToString() + "/" + colCode + totalSSRow.ToString();
             }
-            row = WriteCategory(colCADSheet, row, 4, "CA", process.pt);
+            row = WriteCategory(colCADSheet, row, 4, "CA", process.pt, false, true);
             row--;
 
             // adjust style
@@ -1567,7 +1631,7 @@ namespace MvcApplication1.Financial_Reports.Income_Statement
                 colPESOSheet.Cells[row, j * 2 - 1].NumberFormat = "0.00%";
                 colPESOSheet.Cells[row, j * 2 - 1].Formula = "=" + colCode + row.ToString() + "/" + colCode + totalSSRow.ToString();
             }
-            row = WriteCategory(colPESOSheet, row, 4, "CP", process.pt, true);
+            row = WriteCategory(colPESOSheet, row, 4, "CP", process.pt, true, true);
             row--;
 
             // adjust style
@@ -1786,13 +1850,13 @@ namespace MvcApplication1.Financial_Reports.Income_Statement
                     case "AIR FARE":
                         salesAirFare = row;
                         break;
-                    case "MEAL AND ENTERTAINMENT":
+                    case "OFFICE MEALS AND ENTERTAINMENT":
                         officeMeals = row;
                         break;
-                    case "TRAVEL EXPENSES":
+                    case "OFFICE TRAVEL":
                         officeTravel = row;
                         break;
-                    case "OFFICE AIR FARE":
+                    case "OFFICE AIRFARE":
                         officeAirFare = row;
                         break;
                 }
@@ -2487,7 +2551,7 @@ namespace MvcApplication1.Financial_Reports.Income_Statement
             for (int i = 2; i <= 6; i++)
             {
                 string colCode = Convert.ToChar((Convert.ToInt32('A') + i * 2 - 3)).ToString();
-                consolidateSheet.Cells[row, i * 2 - 2].Formula = "=" + colCode + salesMeals.ToString();
+                consolidateSheet.Cells[row, i * 2 - 2].Formula = "=" + colCode + salesMeals.ToString() + "+" + colCode + officeMeals.ToString();
                 consolidateSheet.Cells[row, i * 2 - 1].NumberFormat = "0.00%";
                 consolidateSheet.Cells[row, i * 2 - 1].Formula = "=" + colCode + row.ToString() + "/" + colCode + totalSSRow.ToString();
             }
@@ -2496,7 +2560,7 @@ namespace MvcApplication1.Financial_Reports.Income_Statement
             for (int i = 2; i <= 6; i++)
             {
                 string colCode = Convert.ToChar((Convert.ToInt32('A') + i * 2 - 3)).ToString();
-                consolidateSheet.Cells[row, i * 2 - 2].Formula = "=" + colCode + salesTravel.ToString();
+                consolidateSheet.Cells[row, i * 2 - 2].Formula = "=" + colCode + salesTravel.ToString() + "+" + colCode + officeTravel.ToString();
                 consolidateSheet.Cells[row, i * 2 - 1].NumberFormat = "0.00%";
                 consolidateSheet.Cells[row, i * 2 - 1].Formula = "=" + colCode + row.ToString() + "/" + colCode + totalSSRow.ToString();
             }
@@ -2505,7 +2569,7 @@ namespace MvcApplication1.Financial_Reports.Income_Statement
             for (int i = 2; i <= 6; i++)
             {
                 string colCode = Convert.ToChar((Convert.ToInt32('A') + i * 2 - 3)).ToString();
-                consolidateSheet.Cells[row, i * 2 - 2].Formula = "=" + colCode + salesAirFare.ToString();
+                consolidateSheet.Cells[row, i * 2 - 2].Formula = "=" + colCode + salesAirFare.ToString() + "+" + colCode + officeAirFare.ToString();
                 consolidateSheet.Cells[row, i * 2 - 1].NumberFormat = "0.00%";
                 consolidateSheet.Cells[row, i * 2 - 1].Formula = "=" + colCode + row.ToString() + "/" + colCode + totalSSRow.ToString();
             }

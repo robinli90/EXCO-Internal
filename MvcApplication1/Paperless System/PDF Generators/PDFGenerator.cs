@@ -77,7 +77,11 @@ namespace MvcApplication1.Paperless_System.PDF_Generators
             //save pdf file
             if (!File.Exists(invoiceName))
             {
-                File.CreateText(invoiceName);
+                using (var tw = new StreamWriter(invoiceName, false))
+                {
+                    tw.WriteLine(customer.newSO.invoicedate);
+                    tw.Close();
+                }
                 File.SetAttributes(invoiceName, File.GetAttributes(invoiceName) | FileAttributes.Hidden); // set as hidden
             }
         }

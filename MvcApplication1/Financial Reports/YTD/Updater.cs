@@ -77,28 +77,23 @@ namespace MvcApplication1.Financial_Reports.YTD
         {
             
             int fiscalYear = Convert.ToInt32(fiscal_year);
-            int fiscalMonth = 10;
-            if (generate_files)
+            //int fiscalMonth = Convert.ToInt32(fiscal_month);
+            //int fiscalMonth = 10;
+            for (int i = 1; i < 13; i++)
             {
-                for (int i = 1; i < 13; i++)
-                {
-                    Log.Append("    Retrieving information for period... " + (i).ToString() + "...");
-                    //if (fiscalMonth > 12) fiscalMonth = 1;
-                    //Process process = new Process((fiscalMonth > 9 ? fiscalYear - 1 : fiscalYear), fiscalMonth);
-                    Process process = new Process(fiscalYear, i);
-                    // create excel object
-                    MvcApplication1.Financial_Reports.Income_Statement.ExcelWriter excelWriter = new MvcApplication1.Financial_Reports.Income_Statement.ExcelWriter(process);
-                    excelWriter.FillSheets();
-                    // write to file
-                    string path = "";
-                    path = @"\\10.0.0.8\EmailAPI\Financials\YTD-IS-Reports\Repository\Income Statement Report at " + process.fiscalMonth + "-" + process.fiscalYear + ".xlsx";
-                    File.Delete(path);
-                    excelWriter.OutputToFile(path);
-                    fiscalMonth++;
-                    excel.Quit();
-                    Log.Append("    Done");
-                }
-                //}
+                Log.Append("    Retrieving information for period... " + (i).ToString() + "...");
+                //if (fiscalMonth > 12) fiscalMonth = 1;
+                //Process process = new Process((fiscalMonth > 9 ? fiscalYear - 1 : fiscalYear), fiscalMonth);
+                Process process = new Process(fiscalYear, i);
+                // create excel object
+                MvcApplication1.Financial_Reports.Income_Statement.ExcelWriter excelWriter = new MvcApplication1.Financial_Reports.Income_Statement.ExcelWriter(process);
+                excelWriter.FillSheets();
+                // write to file
+                string path = @"\\10.0.0.8\EmailAPI\Financials\YTD-IS-Reports\Repository\Income Statement Report at " + process.fiscalMonth + "-" + process.fiscalYear + ".xlsx";
+                File.Delete(path);
+                excelWriter.OutputToFile(path);
+                //fiscalMonth++;
+                Log.Append("    Done");
             }
             
         }
@@ -610,13 +605,13 @@ namespace MvcApplication1.Financial_Reports.YTD
                                     if (native_currency || plant == "Markham")
                                     {
                                         string gg = "=SUM(" + GECN(r) + "58:" + GECN(r) + "60)+" +
-                                            GECN(r) + "81+" + GECN(r) + "88+" + GECN(r) + "100+" + GECN(r) + "116+" + GECN(r) + "129";
+                                            GECN(r) + "81+" + GECN(r) + "88+" + GECN(r) + "100+" + GECN(r) + "122+" + GECN(r) + "137";
                                         sheet.Cells[row, r] = gg;
                                     }
                                     else
                                     {
                                         string gg = "=SUM(" + GECN(r) + "59:" + GECN(r) + "61)+" +
-                                            GECN(r) + "82+" + GECN(r) + "89+" + GECN(r) + "101+" + GECN(r) + "117+" + GECN(r) + "130";
+                                            GECN(r) + "82+" + GECN(r) + "89+" + GECN(r) + "101+" + GECN(r) + "123+" + GECN(r) + "138";
                                         sheet.Cells[row, r] = gg;
                                     }
                                 }

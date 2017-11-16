@@ -115,7 +115,7 @@ namespace MvcApplication1.Controllers
             string[] parameters = parameterStr.Split(new[] { "," }, StringSplitOptions.None);
             
             // First time 
-            string fileName = "Income Statement Report at " + parameters[1] + "-" + parameters[2] + ".xlsx";
+            string fileName = "Income Statement Report at " + parameters[1] + "-" + parameters[2] + " for " + parameters[3] + ".xlsx";
             string path = @"\\10.0.0.8\EmailAPI\Financials\IS-Reports\" + fileName;
             
             if (runCountIS % 2 == 0)
@@ -125,9 +125,9 @@ namespace MvcApplication1.Controllers
                 // create excel object
                 //string path = @"\\10.0.0.8\EmailAPI\Financials\IS-Reports\Income Statement Report at " + process.fiscalMonth + "-" + process.fiscalYear + ".xlsx";
     
-                ExcelWriter excelWriter = new ExcelWriter(process);
+                ExcelWriter excelWriter = new ExcelWriter(process, FinancialPlantControls.GetFinancialPlant(parameters[3]));
 
-                excelWriter.FillSheets();
+                excelWriter.FillSheets(FinancialPlantControls.GetFinancialPlant(parameters[3]));
                 System.IO.File.Delete(path);
                 excelWriter.OutputToFile(path);
     
@@ -205,11 +205,30 @@ namespace MvcApplication1.Controllers
             // First time 
             string fileName = "YTD at " + DateTime.Now.Year + "-" + DateTime.Now.Month + " (" + parameters[0] +
                                 ").xlsx";
-            string path = @"\\10.0.0.8\EmailAPI\Financials\YTD-IS-Reports\" + fileName;
 
             Updater upd = new Updater(parameters[1], parameters[2]);
 
             upd.RefreshData();
+
+            // Let file settle
+            Thread.Sleep(1000);
+            return RedirectToAction("YTD");
+        }
+
+        [HttpGet]
+        [Route("Financials/RegenerateAllYTD/{parameterStr}")]
+        public ActionResult RegenerateAllYTD(string parameterStr)
+        {
+            Log.Append("Refreshing Data for YTD");
+
+            string[] parameters = parameterStr.Split(new[] {","}, StringSplitOptions.None);
+
+            // First time 
+            string fileName = "YTD at " + DateTime.Now.Year + "-" + DateTime.Now.Month + " (" + parameters[0] +
+                                ").xlsx";
+
+            Updater upd = new Updater(parameters[1], parameters[2]);
+            upd.RefreshDataAll();
 
             // Let file settle
             Thread.Sleep(1000);

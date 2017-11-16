@@ -15,6 +15,7 @@ namespace MvcApplication1.Financial_Reports.Income_Statement.Categories.Factory_
             plant01.accountList.Add(new Account("100", "400500"));
             plant03.accountList.Add(new Account("300", "400500"));
             plant04.accountList.Add(new Account("473", "950102"));
+            plant41.accountList.Add(new Account("4173", "950102"));
             plant05.accountList.Add(new Account("500", "400500"));
             // process accounts
             plant01.GetAccountsData(fiscalYear, fiscalMonth);

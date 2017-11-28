@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
@@ -36,7 +35,7 @@ namespace MvcApplication1.Paperless_System.PDF_Generators
             SqlCommand objCmd = null;
 
             using (SqlConnection objConn =
-                new SqlConnection("SERVER =10.0.0.6; Database =decade; UID =jamie; PWD =jamie;"))
+                new SqlConnection(Global.ConnectionStr))
             {
                 objConn.Open();
                 objCmd = objConn.CreateCommand();
@@ -66,7 +65,7 @@ namespace MvcApplication1.Paperless_System.PDF_Generators
         {
             SqlCommand objCmd = null;
 
-            using (SqlConnection objConn = new SqlConnection("SERVER =10.0.0.6; Database =decade; UID =jamie; PWD =jamie;"))
+            using (SqlConnection objConn = new SqlConnection(Global.ConnectionStr))
             {
                 objConn.Open();
                 objCmd = objConn.CreateCommand();
@@ -103,7 +102,7 @@ namespace MvcApplication1.Paperless_System.PDF_Generators
             }
 
             using (SqlConnection objConn =
-                new SqlConnection("SERVER =10.0.0.6; Database =decade; UID =jamie; PWD =jamie;"))
+                new SqlConnection(Global.ConnectionStr))
             {
                 objConn.Open();
                 objCmd = objConn.CreateCommand();
@@ -175,7 +174,7 @@ namespace MvcApplication1.Paperless_System.PDF_Generators
             SqlCommand objCmd = null;
 
             using (SqlConnection objConn =
-                new SqlConnection("SERVER =10.0.0.6; Database =decade; UID =jamie; PWD =jamie;"))
+                new SqlConnection(Global.ConnectionStr))
             {
                 objConn.Open();
                 objCmd = objConn.CreateCommand();
@@ -269,7 +268,7 @@ namespace MvcApplication1.Paperless_System.PDF_Generators
             SqlCommand objCmd = null;
 
             using (SqlConnection objConn =
-                new SqlConnection("SERVER =10.0.0.6; Database =decade; UID =jamie; PWD =jamie;"))
+                new SqlConnection(Global.ConnectionStr))
             {
                 objConn.Open();
                 objCmd = objConn.CreateCommand();
@@ -291,52 +290,5 @@ namespace MvcApplication1.Paperless_System.PDF_Generators
                 }
             }
         }
-    }
-
-    public class SO
-    {
-        public string ordernumber = "";
-        public string invoicenumber = "";
-        public string customerpo = "";
-        public string designtype = "";
-        public string shipvia = "";
-        public string note = "";
-        public DateTime invoicedate;
-        public DateTime shopdate;
-        public DateTime shipdate;
-        public DateTime orderdate;
-        public bool isSelected = false;
-        public double total = 0.0;
-        public double sales = 0.0;
-        public double steelrate = 0.0;
-        public double freight = 0.0;
-        public double freightcharge = 0.0;
-        public double freightweight = 0.0;
-        public double discountamount = 0.0;
-        public double subtotal = 0.0;
-        public double fasttrackcharge = 0.0;
-        public List<SOitem> orderitems = new List<SOitem>();
-        public Dictionary<string, double> taxinfo = new Dictionary<string, double>();
-    }
-
-    public class SOitem
-    {
-        public string dienumber = "";
-        public string location = "";
-        public string note = "";
-        public string description = "";
-        public int qty = 0;
-        public double baseprice = 0.0;
-        public double price = 0.0;
-        public double steelcost = 0.0;
-        public List<SOitemcharge> itemcharges = new List<SOitemcharge>();
-    }
-
-    public class SOitemcharge
-    {
-        public string chargename = "";
-        public int qty = 0;
-        public double price = 0.0;
-        public double chargeprice = 0.0;
     }
 }

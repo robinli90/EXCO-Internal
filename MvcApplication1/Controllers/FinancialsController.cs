@@ -136,7 +136,7 @@ namespace MvcApplication1.Controllers
             }
 
             runCountIS++;
-
+            
             byte[] fileBytes = System.IO.File.ReadAllBytes(path);
             string fn = fileName;
             return File(fileBytes, "application/octet-stream", fn);
@@ -150,6 +150,7 @@ namespace MvcApplication1.Controllers
         [Route("Financials/YTD/{paramOne}")]
         public ActionResult YTD(string paramOne)
         {
+
             return View();
 
         }
@@ -201,11 +202,7 @@ namespace MvcApplication1.Controllers
             Log.Append("Refreshing Data for YTD");
 
             string[] parameters = parameterStr.Split(new[] {","}, StringSplitOptions.None);
-
-            // First time 
-            string fileName = "YTD at " + DateTime.Now.Year + "-" + DateTime.Now.Month + " (" + parameters[0] +
-                                ").xlsx";
-
+            
             Updater upd = new Updater(parameters[1], parameters[2]);
 
             upd.RefreshData();
@@ -222,11 +219,7 @@ namespace MvcApplication1.Controllers
             Log.Append("Refreshing Data for YTD");
 
             string[] parameters = parameterStr.Split(new[] {","}, StringSplitOptions.None);
-
-            // First time 
-            string fileName = "YTD at " + DateTime.Now.Year + "-" + DateTime.Now.Month + " (" + parameters[0] +
-                                ").xlsx";
-
+            
             Updater upd = new Updater(parameters[1], parameters[2]);
             upd.RefreshDataAll();
 

@@ -5,10 +5,12 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Optimization;
 using System.Web.Script.Serialization;
 using System.Web.Script.Services;
 using MvcApplication1.Models;
 using MvcApplication1.Paperless_System;
+using WebGrease.Css.Extensions;
 
 namespace MvcApplication1.Controllers
 {
@@ -171,17 +173,53 @@ namespace MvcApplication1.Controllers
             ArchivesChecker.GetEntireArchive();
             return RedirectToAction("SearchArchive");
         }
-        
+
+
         [HttpGet]
         // GET: EmailRepository
         [Route("Paperless/GetFilesById/{id}")]
         [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
         public string GetFilesById(string id)
         {
-            return String.Join("<br />", ArchivesChecker.GetFilesForOrder(id));
+            // Setup virtual path and delete existing content
+            string virtualPath = Server.MapPath("~/Temp");
+            Directory.GetFiles(virtualPath).ForEach(x => System.IO.File.Delete(x));
+
+            List<string> fileList = ArchivesChecker.GetFilesForOrder(id);
+
+            string returnStr = "";
+
+
+            List<string> IgnoreFileExtensions = new List<string>() { ".dwg", ".msg" };
+
+            for (int i = 0; i < fileList.Count; i++)
+            {
+                if (IgnoreFileExtensions.Any(x => fileList[i].Contains(x)))
+                {
+                    returnStr += String.Format("<a href=\"#\">{0}</a>", fileList[i]);
+                }
+                else
+                {
+                    returnStr += String.Format("<a href=\"{1}\" target=\"_blank\">{0}</a>", fileList[i],
+                        Path.Combine("/temp/", fileList[i]));
+
+                    // Copy file to virtual server
+                    System.IO.File.Copy(Path.Combine(ArchivesChecker._archivePath + id, fileList[i]),
+                        Path.Combine(virtualPath, fileList[i]));
+                }
+
+                if (i <= fileList.Count - 1)
+                {
+                    returnStr += "<br>";
+                }
+
+                
+            }
+
+            //return String.Join("<br />", );
+            return returnStr;
         }
-
-
+        
         // GET: Paperless
         [HttpGet]
         [Route("Paperless/DownloadArchive/{paramOne}")]
@@ -216,10 +254,13 @@ namespace MvcApplication1.Controllers
                 {
                     stream.CopyTo(fileStream);
                 }
+
+                stream.Close();
             }
 
             return RedirectToAction("SearchArchive");
         }
         #endregion
     }
+    
 }

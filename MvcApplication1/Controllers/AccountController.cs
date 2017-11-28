@@ -23,7 +23,6 @@ namespace MvcApplication1.Controllers
         [Route("Account/Login/CheckCredentials")]
         public ActionResult CheckCredentials(Account model)
         {
-
             Log.Append(String.Format("Login request created for login '{0}'...", model.Email));
 
             if (ModelState.IsValid)

@@ -46,9 +46,9 @@
                                     <td style='text-align: center'>@Html.Raw(archiveOrder.hasDrawings ? "<i class=\"fa fa-check\" style=\"color:green\"></i>" : "<i class=\"fa fa-remove\" style=\"color:red\"></i>")</td>
                                     <td style='text-align: center'>@archiveOrder.miscScanItems</td>
                                     <td style='text-align: center'>
-                                        <a href="@Url.Action("DownloadArchive", "Paperless", new {paramOne = @archiveOrder._orderNo}, null)"><i class="fa fa-download" title="Download Archive"></i></a>
                                         <a href="#" id=@("MO_" + archiveOrder._orderNo) data-toggle="modal" data-target="#modal-info"><i class="fa fa-eye" title="Preview Archive"></i></a>
-                                        <input type="file" name="attach" id="attach-input" multiple="" style="display:none" />
+                                        <a href="@Url.Action("DownloadArchive", "Paperless", new {paramOne = @archiveOrder._orderNo}, null)"><i class="fa fa-download" title="Download Archive"></i></a>
+                                        <input type="file" name="attach" id="attach-input" multiple="" style="display: none"/>
                                         <a href="#" type='submit' name=@("FU_" + archiveOrder._orderNo) id="attach-button"><i class="fa fa-upload" title="Upload to Archive"></i></a>
                                     </td>
                                 </tr>
@@ -130,6 +130,18 @@
         });
 
 
+        $(document).ready(function () {
+            $('[id^="File_"]').trigger("click");
+        });
+        $(document).on("click", $('[id^="File_"]'), function () {
+            $(this).text("It works!");
+        });
+        $('[id^="File_"]').click(function () {
+            // do something
+            alert($(this).attr("id"));
+        });
+
+
         function getUIContent(id) {
             return $.ajax({
                 type: "GET",
@@ -177,7 +189,6 @@
             var data = new FormData();
 
             for (var i = 0; i < files.length; i++) {
-
                 data.append(files[i].name, files[i]);
             }
 

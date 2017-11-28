@@ -8,6 +8,7 @@ using System.Web;
 using MvcApplication1.Models;
 using MvcApplication1.Paperless_System.PDF_Generators;
 using System.IO.Compression;
+using System.Threading.Tasks;
 using WebGrease.Css.Extensions;
 
 namespace MvcApplication1.Paperless_System
@@ -21,7 +22,7 @@ namespace MvcApplication1.Paperless_System
 
         public static readonly string _drawingPath1 = @"\\10.0.0.8\sdrive\CADDRAWING\";
         public static readonly string _drawingPath2 = @"\\10.0.0.8\sdrive\CADDRAWINGBOL\";
-
+        
 
         private static User archiveUser;
 
@@ -132,7 +133,7 @@ namespace MvcApplication1.Paperless_System
             
             SqlCommand objCmd = null;
             using (SqlConnection objConn =
-                new SqlConnection("SERVER =10.0.0.6; Database =decade; UID =jamie; PWD =jamie;"))
+                new SqlConnection(Global.ConnectionStr))
             {
                 objConn.Open();
                 objCmd = objConn.CreateCommand();
@@ -167,7 +168,7 @@ namespace MvcApplication1.Paperless_System
             SqlCommand objCmd = null;
 
             using (SqlConnection objConn =
-                new SqlConnection("SERVER =10.0.0.6; Database =decade; UID =jamie; PWD =jamie;"))
+                new SqlConnection(Global.ConnectionStr))
             {
                 objConn.Open();
                 objCmd = objConn.CreateCommand();
@@ -198,7 +199,7 @@ namespace MvcApplication1.Paperless_System
             SqlCommand objCmd = null;
 
             using (SqlConnection objConn =
-                new SqlConnection("SERVER =10.0.0.6; Database =decade; UID =jamie; PWD =jamie;"))
+                new SqlConnection(Global.ConnectionStr))
             {
                 objConn.Open();
                 objCmd = objConn.CreateCommand();
@@ -236,7 +237,7 @@ namespace MvcApplication1.Paperless_System
             SqlCommand objCmd = null;
 
             using (SqlConnection objConn =
-                new SqlConnection("SERVER =10.0.0.6; Database =decade; UID =jamie; PWD =jamie;"))
+                new SqlConnection(Global.ConnectionStr))
             {
                 objConn.Open();
                 objCmd = objConn.CreateCommand();
@@ -274,7 +275,7 @@ namespace MvcApplication1.Paperless_System
             SqlCommand objCmd = null;
             
             using (SqlConnection objConn =
-                new SqlConnection("SERVER =10.0.0.6; Database =decade; UID =jamie; PWD =jamie;"))
+                new SqlConnection(Global.ConnectionStr))
             {
                 objConn.Open();
                 objCmd = objConn.CreateCommand();
@@ -390,7 +391,6 @@ namespace MvcApplication1.Paperless_System
 
                 return zipPath;
             }
-
             return "";
         }
     }
@@ -472,7 +472,7 @@ namespace MvcApplication1.Paperless_System
             // Query die numbers
             SqlCommand objCmd = null;
             using (SqlConnection objConn =
-                new SqlConnection("SERVER =10.0.0.6; Database =decade; UID =jamie; PWD =jamie;"))
+                new SqlConnection(Global.ConnectionStr))
             {
                 objConn.Open();
                 objCmd = objConn.CreateCommand();
@@ -493,11 +493,6 @@ namespace MvcApplication1.Paperless_System
 
             // Remove duplicates
             _dieNumbers = _dieNumbers.Distinct().ToList();
-        }
-
-        public void SetHasFolder(bool hasFolder = false)
-        {
-            _hasFolder = hasFolder;
         }
     }
 }

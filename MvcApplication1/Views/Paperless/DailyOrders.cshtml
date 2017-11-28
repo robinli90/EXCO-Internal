@@ -97,7 +97,7 @@
 
 <div id="currentOrderUpload" style="display:none"></div>
 
-<div class="modal"><!-- Place at bottom of page --></div>
+<div class="modalloading"><!-- Place at bottom of page --></div>
 
 @section Scripts
 {
@@ -265,13 +265,15 @@
 
             var soList = [];
 
-            var input, filter, table, tr, td, i;
+            var tr, i;
             tr = document.getElementsByName("list2");
 
+            // iterate through entire table and get the order IDs
             for (i = 0; i < tr.length; i++) {
                 soList[i] = $(tr[i]).attr("id").substring(8);
             }
 
+            // bind drag-drop to all <td> elements
             for (i = 0; i < soList.length; i++) {
                 $('#dropZone' + soList[i]).filedrop({
                     fallback_id:
@@ -314,11 +316,6 @@
                     dragOver: function(ixd, dd) {
 
                         $(this).css('border', 'steelblue dashed 3px');
-                        //alert('df')
-                        // Declare variables
-                        //var input, filter, table, tr, td, td1, xi;
-                        //tr = document.getElementsByName("list2");
-
                         // Loop through all table rows, and hide those who don't match the search query
                     },
 

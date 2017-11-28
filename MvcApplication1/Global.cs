@@ -25,7 +25,10 @@ namespace MvcApplication1
 
         public static List<Email> EmailList = new List<Email>();
         public static List<User> UserList = new List<User>();
-        
+
+        public static string ConnectionStr = "SERVER =10.0.0.6; Database =decade; UID =jamie; PWD =jamie;";
+
+
         internal static void LoadInitializers()
         {
             ArchivesChecker.GetEntireArchive();

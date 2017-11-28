@@ -23,6 +23,7 @@
     <IISExpressUseClassicPipelineMode />
     <UseGlobalApplicationHostFile />
     <TypeScriptToolsVersion>1.8</TypeScriptToolsVersion>
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -429,6 +430,9 @@
     <Compile Include="Paperless System\ArchivesChecker.cs" />
     <Compile Include="Paperless System\PDF Generators\Cust.cs" />
     <Compile Include="Paperless System\PDF Generators\PDFGenerator.cs" />
+    <Compile Include="Paperless System\PDF Generators\SO.cs" />
+    <Compile Include="Paperless System\PDF Generators\SOitem.cs" />
+    <Compile Include="Paperless System\PDF Generators\SOitemcharge.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\EmailRepository.cs" />
     <Compile Include="Services\SearchAlgorithm.cs" />

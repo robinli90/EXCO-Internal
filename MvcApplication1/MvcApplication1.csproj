@@ -407,6 +407,7 @@
     <Compile Include="Financial Reports\Sales Report\Invoice.cs" />
     <Compile Include="Financial Reports\Sales Report\Plant.cs" />
     <Compile Include="Financial Reports\Sales Report\Process.cs" />
+    <Compile Include="Financial Reports\Sapa Sales By Month\SapaSales.cs" />
     <Compile Include="Financial Reports\Trial Balance\Account.cs" />
     <Compile Include="Financial Reports\Trial Balance\Process.cs" />
     <Compile Include="Financial Reports\YTD\Updater.cs" />
@@ -427,7 +428,9 @@
     <Compile Include="Models\Readiness.cs" />
     <Compile Include="Models\Settings.cs" />
     <Compile Include="Models\User.cs" />
+    <Compile Include="Paperless System\ArchiveOrder.cs" />
     <Compile Include="Paperless System\ArchivesChecker.cs" />
+    <Compile Include="Paperless System\DieOrder.cs" />
     <Compile Include="Paperless System\PDF Generators\Cust.cs" />
     <Compile Include="Paperless System\PDF Generators\PDFGenerator.cs" />
     <Compile Include="Paperless System\PDF Generators\SO.cs" />
@@ -8301,6 +8304,8 @@
     <Content Include="Views\Paperless\DailyInvoicing.cshtml" />
     <Content Include="Views\Paperless\SearchArchive.cshtml" />
     <Content Include="Views\Paperless\DailyOrders.cshtml" />
+    <Content Include="Views\Financials\SapaSales.cshtml" />
+    <Content Include="Views\Paperless\AuditorView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

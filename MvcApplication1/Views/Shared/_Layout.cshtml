@@ -9,7 +9,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>EXCO Email API</title>
+    <title>EXCO Internal</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     @Styles.Render("~/Content/css")
@@ -158,7 +158,7 @@ desired effect
                         </ul>
                     </li>
                 }
-                if (Permissions.HasAccess(HttpContext.Current.Session["Department"].ToString(), "Manager", false, null, new List<string> {"bcarwright", "fparisi"}))
+                if (Permissions.HasAccess(HttpContext.Current.Session["Department"].ToString(), "Manager", false, new List<string> { "trujillo" }, new List<string> {"bcarwright", "fparisi"}))
                 {
                     <li class="treeview">
                         <a href="#">
@@ -195,12 +195,26 @@ desired effect
                                 <li>@Html.ActionLink("Income Statement", "IncomeStatement", "Financials", new { paramOne = "IS" }, null)</li>
                                 <li>@Html.ActionLink("Trial Balance", "TrialBalance", "Financials", new {paramOne = "TB"}, null)</li>
                                 <li>@Html.ActionLink("Y-T-D Income Statement", "YTD", "Financials", new { paramOne = "YTD" }, null)</li>
+                                if (Permissions.HasAccess(HttpContext.Current.Session["Department"].ToString(), "Manager", false, null, new List<string> { "lsilva" }))
+                                {   
+                                    <li class="treeview">
+                                        <a href="#">
+                                            <span>Bonnie's Reports</span>
+                                            <span class="pull-right-container">
+                                                <i class="fa fa-angle-left pull-right"></i>
+                                            </span>
+                                        </a>
+                                        <ul class="treeview-menu">
+                                            <li>@Html.ActionLink("Sapa Sales", "SapaSales", "Financials", new { paramOne = "ER" }, null)</li>
+                                        </ul>
+                                    </li>
+                                }
                             }
                         </ul>
                     </li>
-                }
-                if (Permissions.HasAccess(HttpContext.Current.Session["Department"].ToString(), "General", false, null, new List<string> {"lsilva"}))
-                {
+                                }
+                    if (Permissions.HasAccess(HttpContext.Current.Session["Department"].ToString(), "General", false, null, new List<string> {"lsilva", "trujillo" }))
+                    {
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-paperclip"></i> <span>Paperless System</span>
@@ -212,6 +226,12 @@ desired effect
                             <li>@Html.ActionLink("Daily Orders", "DailyOrders", "Paperless", new { paramOne = "DI" }, null)</li>
                             <li>@Html.ActionLink("Daily Invoicing", "DailyInvoicing", "Paperless", new { paramOne = "DI" }, null)</li>
                             <li>@Html.ActionLink("View Archive", "SearchArchive", "Paperless", new { paramOne = "SA" }, null)</li>
+                            @{
+                                if (Permissions.HasAccess(HttpContext.Current.Session["Department"].ToString(), "Manager", false, null, new List<string> {"lsilva"}))
+                                {
+                                    <li>@Html.ActionLink("Generate Audit Package", "AuditorView", "Paperless", new { paramOne = "SA" }, null)</li>
+                                }
+                            }
                         </ul>
                     </li>
                 }

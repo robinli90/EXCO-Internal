@@ -353,6 +353,7 @@ namespace MvcApplication1.Financial_Reports.Sales_Report
                 invoice.calendar = new ExcoCalendar(invoiceYear, invoiceMonth, false, plant);
                 invoiceMap.Add(invNum, invoice);
             }
+
             reader.Close();
             Console.WriteLine("Get Invoice Details Done");
             // get sales

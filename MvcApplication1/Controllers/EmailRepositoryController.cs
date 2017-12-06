@@ -49,7 +49,6 @@ namespace MvcApplication1.Controllers
         {
 
             string filePath = Global.messagesDirectoryPath + id + ".eml";
-            //string filePath = Global.messagesDirectoryPath + "log.txt";
             byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
             string fileName = "emailFile_" + string.Format("{0}_{1}_{2}.eml", DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Year);
             return File(fileBytes, "application/octet-stream", fileName);

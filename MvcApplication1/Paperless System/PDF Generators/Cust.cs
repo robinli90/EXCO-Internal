@@ -179,7 +179,8 @@ namespace MvcApplication1.Paperless_System.PDF_Generators
                 objConn.Open();
                 objCmd = objConn.CreateCommand();
                 objCmd.CommandText = String.Format(
-                    "select a.ordernumber,a.line,a.qty,a.description,a.steelcost,a.location,a.dienumber,a.note,a.price,a.baseprice,b.line as line2,b.chargename,b.chargeprice,b.qty as qty2,b.price as price2 from d_orderitem as a  "
+                    "select a.ordernumber,a.line,a.qty,a.description,a.steelcost,a.location,a.dienumber,a.note,a.price,a.baseprice,b.line as line2,b.chargename,b.chargeprice,b.qty " +
+                    "as qty2,b.price as price2 from d_orderitem as a  "
                     + " left join d_orderitemcharges as b on a.ordernumber=b.ordernumber and a.line=b.line where a.ordernumber='{0}' order by a.line, b.chargeline",
                     newSO.ordernumber);
 

@@ -8,6 +8,7 @@ using System.Web;
 using MvcApplication1.Models;
 using MvcApplication1.Paperless_System.PDF_Generators;
 using System.IO.Compression;
+using System.Text;
 using System.Threading.Tasks;
 using WebGrease.Css.Extensions;
 
@@ -23,7 +24,6 @@ namespace MvcApplication1.Paperless_System
         public static readonly string _drawingPath1 = @"\\10.0.0.8\sdrive\CADDRAWING\";
         public static readonly string _drawingPath2 = @"\\10.0.0.8\sdrive\CADDRAWINGBOL\";
         
-
         private static User archiveUser;
 
         public static List<ArchiveOrder> CurrentInvoiceOrders = new List<ArchiveOrder>();
@@ -153,6 +153,31 @@ namespace MvcApplication1.Paperless_System
             }
 
             return invoiceDate.Year > 2000;
+        }
+
+        public static string GetOrderNumber(string invoiceNumber)
+        {
+            SqlCommand objCmd = null;
+            using (SqlConnection objConn =
+                new SqlConnection(Global.ConnectionStr))
+            {
+                objConn.Open();
+                objCmd = objConn.CreateCommand();
+                objCmd.CommandText = String.Format("select ordernumber from d_order where invoicenumber = '{0}'",
+                    invoiceNumber);
+
+                using (SqlDataReader objReader = objCmd.ExecuteReader())
+                {
+                    if (objReader.HasRows)
+                    {
+                        while (objReader.Read())
+                        {
+                            return objReader["ordernumber"].ToString().Trim();
+                        }
+                    }
+                }
+            }
+            return "";
         }
         
         public static void PopulateOrdersByInvoiceDate(DateTime refDate = new DateTime())
@@ -393,106 +418,103 @@ namespace MvcApplication1.Paperless_System
             }
             return "";
         }
-    }
 
-    public class ArchiveOrder
-    {
-        public string _orderNo { get; }
-        public string _invoiceNo { get; }
-        public bool hasDieForm { get; }
-        public bool hasOrderForm { get; }
-        public bool hasInvoice { get; }
-
-        public bool hasDrawings;
-        public int miscScanItems;
-
-        public DateTime InvoiceDate;
-
-        public ArchiveOrder(string orderNo, string invoiceNo="")
+        public static string CreateAuditPackage(string archiveInformation)
         {
-            _orderNo = orderNo;
+            List<string> info = archiveInformation.Split(new string[] {"_"}, StringSplitOptions.None).ToList();
 
-            // Set invoice to given invoice number; if no invoice no provided, try to locate using invoice file
-            _invoiceNo = invoiceNo;
-            
-            if (_invoiceNo == "" && Directory.Exists(Path.Combine(ArchivesChecker._archivePath, orderNo)))
+            bool needsEmails = info[0].Equals("true");
+            bool needsInvoices = info[1].Equals("true");
+            bool needsOrders = info[2].Equals("true");
+
+            if (info.Count > 3)
             {
-                string[] fileName = Directory.GetFiles(Path.Combine(ArchivesChecker._archivePath, orderNo),
-                    "*.invoice");
+                int packageCount = 0;
+                
+                string folderName = String.Format("AuditPackage_{0}_{1}_{2}-{3}_{4}", DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Year, DateTime.Now.Hour,
+                                    DateTime.Now.Minute);
+                string rootPath = Path.Combine(_packagePath, folderName);
 
-                if (fileName.Length > 0)
+                // Create root directory
+                Directory.CreateDirectory(rootPath);
+
+                List<string> OrdersWithoutFiles = new List<string>() {"Invoices that are not found in the archive are listed below:"};
+
+                foreach (string invoiceNo in info.GetRange(3, info.Count - 3))
                 {
-                    _invoiceNo = Path.GetFileNameWithoutExtension(fileName[0]);
-                    string[] fileLines = File.ReadAllLines(fileName[0]);
+                    // Append to list for time being (if not removed later, has no file)
+                    if (invoiceNo.Length != 6) continue;
 
-                    if (fileLines.Length > 0)
-                        DateTime.TryParse(fileLines[0], out InvoiceDate);
-                }
-            }
+                    // Retrieve order number from invoice number
+                    string order = GetOrderNumber(invoiceNo);
 
-            // Validate files and toggle bool as per
-            hasDieForm = File.Exists(Path.Combine(ArchivesChecker._archivePath + _orderNo, _orderNo + "_DIEFORM.eml")) ||
-                            File.Exists(Path.Combine(ArchivesChecker._archivePath + _orderNo, _orderNo + "_DIEFORM.msg"));
-            hasOrderForm = File.Exists(Path.Combine(ArchivesChecker._archivePath + _orderNo, _orderNo + "_ORDER.pdf"));
-            hasInvoice = File.Exists(Path.Combine(ArchivesChecker._archivePath + _orderNo, _orderNo + "_INVOICE.pdf"));
+                    string archivePath = Path.Combine(_archivePath, order);
 
-            if (Directory.Exists(Path.Combine(ArchivesChecker._archivePath, orderNo)))
-            {
-                hasDrawings = Directory.GetFiles(Path.Combine(ArchivesChecker._archivePath, orderNo), "*.dwg").Length > 0;
-                miscScanItems = Directory.GetFiles(Path.Combine(ArchivesChecker._archivePath, orderNo))
-                                    .Where(name => !name.EndsWith(".invoice") && !name.EndsWith(".dwg")).ToList().Count -
-                                (hasDieForm ? 1 : 0) -
-                                (hasOrderForm ? 1 : 0) -
-                                (hasInvoice ? 1 : 0);
-            }
-        }
-    }
-
-    public class DieOrder
-    {
-        public string _orderNo { get; }
-        public string _custNo { get; }
-        public string _custName { get; }
-        public DateTime _orderDate { get; }
-        public bool _hasFolder { get; set; }
-        public List<string> _dieNumbers { get; set; }
-
-        public DieOrder(string orderNo, string custNo, string custName, DateTime orderDate)
-        {
-
-            _orderNo = orderNo;
-            _custNo = custNo;
-            _custName = custName;
-            _orderDate = orderDate;
-
-            _hasFolder = File.Exists(Path.Combine(ArchivesChecker._archivePath + orderNo, orderNo+ "_DIEFORM.msg"));
-
-            _dieNumbers = new List<string>();
-
-            // Query die numbers
-            SqlCommand objCmd = null;
-            using (SqlConnection objConn =
-                new SqlConnection(Global.ConnectionStr))
-            {
-                objConn.Open();
-                objCmd = objConn.CreateCommand();
-                objCmd.CommandText = String.Format("select dienumber from d_orderitem where ordernumber = '{0}'",
-                    orderNo);
-
-                using (SqlDataReader objReader = objCmd.ExecuteReader())
-                {
-                    if (objReader.HasRows)
+                    if (!Directory.Exists(archivePath) || order.Length != 6)
                     {
-                        while (objReader.Read())
+                        OrdersWithoutFiles.Add(invoiceNo);
+                        continue;
+                    }
+
+                    string packagePath = Path.Combine(Path.Combine(_packagePath, folderName), order);
+                    
+                    // Create sub directories in rootPath
+                    Directory.CreateDirectory(packagePath);
+
+                    List<string> files = Directory.GetFiles(archivePath)
+                        .Where(file => new string[] {".msg", ".pdf", ".eml"}
+                            .Contains(Path.GetExtension(file)))
+                        .ToList();
+
+                    foreach (var filePath in files)
+                    {
+                        if ((filePath.Contains(".msg") || filePath.Contains(".eml")) && !needsEmails) continue;
+                        if (filePath.Contains("_INVOICE.pdf") && !needsInvoices) continue;
+                        if (filePath.Contains("_ORDER.pdf") && !needsOrders) continue;
+
+                        var fileInfo = new FileInfo(filePath);
+                        // Copy non-hidden files
+                        if (!fileInfo.Attributes.HasFlag(FileAttributes.Hidden))
                         {
-                            _dieNumbers.Add(objReader["dienumber"].ToString().Trim());
+                            File.Copy(filePath, Path.Combine(packagePath, Path.GetFileName(filePath)));
+                            
+                            packageCount++;
                         }
                     }
                 }
+
+                // create file to show missing files
+                if (OrdersWithoutFiles.Count > 1)
+                {
+                    StringBuilder str = new StringBuilder();
+                    foreach (string orders in OrdersWithoutFiles)
+                    {
+                        str.Append(String.Format("{0}", orders +
+                                                        Environment.NewLine));
+                    }
+                    Saver.Save(str.ToString(), Path.Combine(rootPath, "missingFiles.txt"));
+                }
+
+                string zipPath = Path.Combine(_packagePath,
+                    String.Format("AuditPackage_{0}_{1}_{2}-{3}_{4}", DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Year, DateTime.Now.Hour,
+                        DateTime.Now.Minute) + ".zip");
+
+                // Delete existing zip packaged file
+                if (File.Exists(zipPath))
+                    File.Delete(zipPath);
+
+                // Zip the files if more than 0 files
+                if (packageCount > 0)
+                {
+                    ZipFile.CreateFromDirectory(rootPath, zipPath, CompressionLevel.Optimal, true);
+                    Log.Append(String.Format("Audit Package downloaded by {0}",
+                        HttpContext.Current.Session["Email"]));
+                }
+
+                return packageCount > 0 ? zipPath : "";
             }
 
-            // Remove duplicates
-            _dieNumbers = _dieNumbers.Distinct().ToList();
+            return "";
         }
     }
 }

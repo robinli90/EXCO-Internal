@@ -114,12 +114,6 @@ namespace MvcApplication1.Models
             Saver.Save(str.ToString(), _recipientFilePath);
 
         }
-
-        public static List<string> GetSortedOrderNumber()
-        {
-            var keys = Recipients.Keys.ToList();
-            keys.Sort();
-            return keys;
-        }
+        
     }
 }

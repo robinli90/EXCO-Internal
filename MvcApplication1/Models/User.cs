@@ -326,6 +326,7 @@ namespace MvcApplication1.Models
 
             Log.Append(String.Format("Getting new emails from archive..."));
 
+
             List<Email> newEmails = new List<Email>();
 
             int emailSyncCount = 0;

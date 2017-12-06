@@ -15,21 +15,23 @@ namespace MvcApplication1.Controllers
 
 
         #region Exchange Rates
+
         // GET: Financials
         [Route("Financials/ExchangeRates/{paramOne}")]
         public ActionResult ExchangeRates(string paramOne)
         {
             FinancialControls.CurrencyYearList = ExcoExRate.GetExchangeRatesList();
             return View();
-            
+
         }
 
         // GET: Financials
         [Route("Financials/AddExchange/{paramOne}")]
         public ActionResult AddExchange(string paramOne)
         {
-            string[] parameters = paramOne.Split(new[] { "," }, StringSplitOptions.None);
-            if (parameters.Length == 2 && !FinancialControls.CurrencyYearList.Any(x => x.Year.ToString() == parameters[0] && ExcoExRate.GetCurrency(parameters[1]) == x.CurrencyType))
+            string[] parameters = paramOne.Split(new[] {","}, StringSplitOptions.None);
+            if (parameters.Length == 2 && !FinancialControls.CurrencyYearList.Any(x =>
+                    x.Year.ToString() == parameters[0] && ExcoExRate.GetCurrency(parameters[1]) == x.CurrencyType))
             {
                 CurrencyYear newCY = new CurrencyYear(ExcoExRate.GetCurrency(parameters[1]),
                     Convert.ToInt32(parameters[0]));
@@ -43,7 +45,8 @@ namespace MvcApplication1.Controllers
                 FinancialControls.CurrencyYearList.Add(newCY);
 
                 // Order by currency -> year
-                FinancialControls.CurrencyYearList = FinancialControls.CurrencyYearList.OrderBy(x => x.CurrencyType).ThenBy(y => y.Year).ToList();
+                FinancialControls.CurrencyYearList = FinancialControls.CurrencyYearList.OrderBy(x => x.CurrencyType)
+                    .ThenBy(y => y.Year).ToList();
 
                 ExcoExRate.SaveExchangeRates(FinancialControls.CurrencyYearList);
             }
@@ -58,20 +61,21 @@ namespace MvcApplication1.Controllers
             FinancialControls.CurrencyYearList.RemoveAt(Convert.ToInt32(currYear));
 
             // Order by currency -> year
-            FinancialControls.CurrencyYearList = FinancialControls.CurrencyYearList.OrderBy(x => x.CurrencyType).ThenBy(y => y.Year).ToList();
+            FinancialControls.CurrencyYearList = FinancialControls.CurrencyYearList.OrderBy(x => x.CurrencyType)
+                .ThenBy(y => y.Year).ToList();
 
             ExcoExRate.SaveExchangeRates(FinancialControls.CurrencyYearList);
-            
+
             return RedirectToAction("ExchangeRates", new {paramOne = "ER"});
         }
-        
+
         [HttpPost]
         [Route("Financials/SaveExchange/{parameterStr}")]
         public ActionResult SaveExchange(string parameterStr)
         {
             parameterStr = parameterStr.Replace('x', '.');
             string[] parameters = parameterStr.Split(new[] {","}, StringSplitOptions.None);
-            
+
             if (parameters.Length > 1)
             {
                 try
@@ -83,7 +87,8 @@ namespace MvcApplication1.Controllers
                     // Update new rate
                     refCY.ExchangeRates[Convert.ToInt32(parameters[1])] = Convert.ToDouble(parameters[2]);
 
-                    Log.Append(String.Format("Rate updated ({0} - {1}) : orig={2}, new={3}, by {4}", refCY.CurrencyType, refCY.Year, originalRate, parameters[2], HttpContext.Session["Email"]));
+                    Log.Append(String.Format("Rate updated ({0} - {1}) : orig={2}, new={3}, by {4}", refCY.CurrencyType,
+                        refCY.Year, originalRate, parameters[2], HttpContext.Session["Email"]));
 
                     ExcoExRate.SaveExchangeRates(FinancialControls.CurrencyYearList);
                 }
@@ -93,8 +98,9 @@ namespace MvcApplication1.Controllers
                 }
             }
 
-            return RedirectToAction("ExchangeRates", new { parameterStr = "ER" });
+            return RedirectToAction("ExchangeRates", new {parameterStr = "ER"});
         }
+
         #endregion
 
         #region Income Statement
@@ -112,31 +118,35 @@ namespace MvcApplication1.Controllers
         [Route("Financials/GenerateIncomeStatement/{parameterStr}")]
         public ActionResult GenerateIncomeStatement(string parameterStr)
         {
-            string[] parameters = parameterStr.Split(new[] { "," }, StringSplitOptions.None);
-            
+            string[] parameters = parameterStr.Split(new[] {","}, StringSplitOptions.None);
+
             // First time 
-            string fileName = "Income Statement Report at " + parameters[1] + "-" + parameters[2] + " for " + parameters[3] + ".xlsx";
+            string fileName = "Income Statement Report at " + parameters[1] + "-" + parameters[2] + " for " +
+                              parameters[3] + ".xlsx";
             string path = @"\\10.0.0.8\EmailAPI\Financials\IS-Reports\" + fileName;
-            
+
             if (runCountIS % 2 == 0)
             {
 
-                MvcApplication1.Financial_Reports.Income_Statement.Process process = new MvcApplication1.Financial_Reports.Income_Statement.Process(Convert.ToInt32(parameters[1]), Convert.ToInt32(parameters[2]));
+                MvcApplication1.Financial_Reports.Income_Statement.Process process =
+                    new MvcApplication1.Financial_Reports.Income_Statement.Process(Convert.ToInt32(parameters[1]),
+                        Convert.ToInt32(parameters[2]));
                 // create excel object
                 //string path = @"\\10.0.0.8\EmailAPI\Financials\IS-Reports\Income Statement Report at " + process.fiscalMonth + "-" + process.fiscalYear + ".xlsx";
-    
-                ExcelWriter excelWriter = new ExcelWriter(process, FinancialPlantControls.GetFinancialPlant(parameters[3]));
+
+                ExcelWriter excelWriter =
+                    new ExcelWriter(process, FinancialPlantControls.GetFinancialPlant(parameters[3]));
 
                 excelWriter.FillSheets(FinancialPlantControls.GetFinancialPlant(parameters[3]));
                 System.IO.File.Delete(path);
                 excelWriter.OutputToFile(path);
-    
+
                 // Let file settle
                 Thread.Sleep(1000);
             }
 
             runCountIS++;
-            
+
             byte[] fileBytes = System.IO.File.ReadAllBytes(path);
             string fn = fileName;
             return File(fileBytes, "application/octet-stream", fn);
@@ -154,7 +164,7 @@ namespace MvcApplication1.Controllers
             return View();
 
         }
-        
+
         private static int runCountYTD;
 
         [HttpGet]
@@ -164,7 +174,7 @@ namespace MvcApplication1.Controllers
             Log.Append("Creating YTD Income Statement Excel spreadsheet...");
 
             string[] parameters = parameterStr.Split(new[] {","}, StringSplitOptions.None);
-            
+
             Updater upd = new Updater(parameters[1], parameters[2]);
 
             if (parameters.Length > 3 && parameters[3] == "true")
@@ -202,7 +212,7 @@ namespace MvcApplication1.Controllers
             Log.Append("Refreshing Data for YTD");
 
             string[] parameters = parameterStr.Split(new[] {","}, StringSplitOptions.None);
-            
+
             Updater upd = new Updater(parameters[1], parameters[2]);
 
             upd.RefreshData();
@@ -219,7 +229,7 @@ namespace MvcApplication1.Controllers
             Log.Append("Refreshing Data for YTD");
 
             string[] parameters = parameterStr.Split(new[] {","}, StringSplitOptions.None);
-            
+
             Updater upd = new Updater(parameters[1], parameters[2]);
             upd.RefreshDataAll();
 
@@ -231,6 +241,7 @@ namespace MvcApplication1.Controllers
         #endregion
 
         #region Sales Report
+
         // GET: Financials
         [Route("Financials/SalesReport/{paramOne}")]
         public ActionResult SalesReport(string paramOne)
@@ -248,14 +259,14 @@ namespace MvcApplication1.Controllers
             // First time 
             string fileName = "Sales Report at " + DateTime.Now.Year + "-" + DateTime.Now.Month + ".xlsx";
             string path = @"\\10.0.0.8\EmailAPI\Financials\Sales-Reports\" + fileName;
-            
+
             if (runCountSR % 2 == 0)
             {
                 Financial_Reports.Sales_Report.Process process = new Financial_Reports.Sales_Report.Process(path);
                 // create excel object
-    
+
                 process.Run(parameterStr == "true");
-                
+
                 // Let file settle
                 Thread.Sleep(1000);
             }
@@ -266,6 +277,7 @@ namespace MvcApplication1.Controllers
             string fn = fileName;
             return File(fileBytes, "application/octet-stream", fn);
         }
+
         #endregion
 
         #region Trial Balance
@@ -276,23 +288,25 @@ namespace MvcApplication1.Controllers
         {
             return View();
         }
-
+            
         private static int runCountTB = 0;
 
         [HttpGet]
         [Route("Financials/GenerateTrialBalance/{parameterStr}")]
         public ActionResult GenerateTrialBalance(string parameterStr)
         {
-            string[] parameters = parameterStr.Split(new[] { "," }, StringSplitOptions.None);
+            string[] parameters = parameterStr.Split(new[] {","}, StringSplitOptions.None);
 
             // First time 
-            string fileName = "Trial Balance at " + DateTime.Now.Year + "-" + DateTime.Now.Month + " (" + parameters[0] + ").xlsx";
+            string fileName = "Trial Balance at " + DateTime.Now.Year + "-" + DateTime.Now.Month + " (" +
+                              parameters[0] + ").xlsx";
             string path = @"\\10.0.0.8\EmailAPI\Financials\Trial-Balance\" + fileName;
 
             if (runCountTB % 2 == 0)
             {
-                Financial_Reports.Trial_Balance.Process process = new Financial_Reports.Trial_Balance.Process(path, parameters[0], 
-                    Convert.ToInt32(parameters[1]), 
+                Financial_Reports.Trial_Balance.Process process = new Financial_Reports.Trial_Balance.Process(path,
+                    parameters[0],
+                    Convert.ToInt32(parameters[1]),
                     Convert.ToInt32(parameters[2]));
 
                 // Let file settle
@@ -306,6 +320,57 @@ namespace MvcApplication1.Controllers
             return File(fileBytes, "application/octet-stream", fn);
         }
 
+        #endregion
+
+        #region Sapa Sales By Month
+
+        // GET: Financials
+        [Route("Financials/SapaSales/{paramOne}")]
+        public ActionResult SapaSales(string paramOne)
+        {
+            return View();
+        }
+
+        private static int runCountSS = 0;
+
+        [HttpGet]
+        [Route("Financials/GenerateTrialBalance/{parameterStr}")]
+        public ActionResult GenerateSapaSales(string parameterStr)
+        {
+            string[] parameters = parameterStr.Split(new[] { "," }, StringSplitOptions.None);
+
+            // First time 
+            string fileName = "Sapa Sales Report at " + parameters[0] + "-" + parameters[1] + " for " +
+                              parameters[3] + ".xlsx";
+            string path = @"\\10.0.0.8\EmailAPI\Financials\SapaSales\" + fileName;
+
+            if (runCountSS % 2 == 0)
+            {
+
+                MvcApplication1.Financial_Reports.Income_Statement.Process process =
+                    new MvcApplication1.Financial_Reports.Income_Statement.Process(Convert.ToInt32(parameters[1]),
+                        Convert.ToInt32(parameters[2]));
+                // create excel object
+                //string path = @"\\10.0.0.8\EmailAPI\Financials\IS-Reports\Income Statement Report at " + process.fiscalMonth + "-" + process.fiscalYear + ".xlsx";
+
+                ExcelWriter excelWriter =
+                    new ExcelWriter(process, FinancialPlantControls.GetFinancialPlant(parameters[3]));
+                
+
+                excelWriter.FillSheets(FinancialPlantControls.GetFinancialPlant(parameters[3]));
+                System.IO.File.Delete(path);
+                excelWriter.OutputToFile(path);
+
+                // Let file settle
+                Thread.Sleep(1000);
+            }
+
+            runCountSS++;
+
+            byte[] fileBytes = System.IO.File.ReadAllBytes(path);
+            string fn = fileName;
+            return File(fileBytes, "application/octet-stream", fn);
+        }
         #endregion
     }
 }

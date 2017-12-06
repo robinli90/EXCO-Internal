@@ -18,7 +18,7 @@ namespace MvcApplication1.Controllers
             tempAcc.CheckForRememberMeName();
             return View(tempAcc);
         }
-
+    
         [HttpPost]
         [Route("Account/Login/CheckCredentials")]
         public ActionResult CheckCredentials(Account model)
@@ -27,23 +27,27 @@ namespace MvcApplication1.Controllers
 
             if (ModelState.IsValid)
             {
+                if (Global.UserList.Any())
+
                 if (Global.UserList.Any(x => x.Email.ToLower() == model.Email.ToLower() &&
                                              x.LoginPassword == model.Password))
                 {
                     Log.Append("Login granted. Session for user created");
 
                     model.RemoveRememberMeCookie();
-
+                                  
                     if (model.RememberMe)
                     {
                         model.CreateRememberMeName(model.Email);
                         model.CreateRememberMe(true);
                     }
+                    
 
                     //TODO: AUTHENTICATE SESSION
                     HttpContext.Session["Email"] = model.Email.ToLower();
-                    HttpContext.Session["Department"] = Global.UserList.First(x => x.Email.ToLower() == model.Email.ToLower()).Department;
 
+                    HttpContext.Session["Department"] = Global.UserList.First(x => x.Email.ToLower() == model.Email.ToLower()).Department;
+                            
                     return Redirect("/");
                 }
             }

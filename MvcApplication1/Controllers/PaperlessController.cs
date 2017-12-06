@@ -159,7 +159,6 @@ namespace MvcApplication1.Controllers
         #endregion
 
         #region Archives
-        // GET: Paperless
         [Route("Paperless/SearchArchive/{paramOne}")]
         public ActionResult SearchArchive()
         {
@@ -261,6 +260,35 @@ namespace MvcApplication1.Controllers
             return RedirectToAction("SearchArchive");
         }
         #endregion
+
+        #region AuditorMode
+
+
+        // GET: Paperless
+        [Route("Paperless/AuditorView/{paramOne}")]
+        public ActionResult AuditorView()
+        {
+            return View();
+        }
+
+        // GET: Paperless
+        [HttpGet]
+        [Route("Paperless/AuditDownload/{paramOne}")]
+        public ActionResult AuditDownload(string paramOne)
+        {
+            string archivePackagePath = ArchivesChecker.CreateAuditPackage(paramOne);
+
+            if (archivePackagePath.Length == 0)
+                return RedirectToAction("AuditDownload");
+
+            byte[] fileBytes = System.IO.File.ReadAllBytes(archivePackagePath);
+            string fn = "AuditPackage.zip";
+            return File(fileBytes, "application/octet-stream", fn);
+
+        }
+
+        #endregion
+
     }
     
 }

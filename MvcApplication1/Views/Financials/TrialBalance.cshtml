@@ -116,14 +116,14 @@
                 dataType: "text",
                 success: function () {
                     var param = idx;
-                    var url = '@Url.Action("GenerateTrialBalance", "Financials", new {id = "__param__"})';
+                    var url = '@Url.Action("GenerateTrialBalance", "Financials", new { parameterStr = "__param__"})';
                     window.location.href = url.replace('__param__', encodeURIComponent(param));
                     jQuery.event.trigger("ajaxStop");
                 },
-                fail: function() {
+                fail: function () {
                     jQuery.event.trigger("ajaxStop");
                 },
-                error: function() {
+                error: function () {
                     jQuery.event.trigger("ajaxStop");
                 }
             });

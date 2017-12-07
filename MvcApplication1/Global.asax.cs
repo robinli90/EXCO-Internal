@@ -16,7 +16,6 @@ namespace MvcApplication1
 
     public class WebApiApplication : System.Web.HttpApplication
     {
-
         private BackgroundJobServer server;
 
         protected void Application_Start()

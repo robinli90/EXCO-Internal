@@ -557,10 +557,7 @@ namespace MvcApplication1.Financial_Reports.YTD
                     }
 
                     row++;
-
-                    if (i == 162)
-                        Log.Append("    ");
-
+                    
                     if (WORKSHEET_ARRAY[i, 1].Contains("Exchange Rate")) //style last row
                     {
                         StyleOfSummary(sheet, row - 1);

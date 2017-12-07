@@ -279,7 +279,7 @@ namespace MvcApplication1.Controllers
             string archivePackagePath = ArchivesChecker.CreateAuditPackage(paramOne);
 
             if (archivePackagePath.Length == 0)
-                return RedirectToAction("AuditDownload");
+                return RedirectToAction("AuditorView");
 
             byte[] fileBytes = System.IO.File.ReadAllBytes(archivePackagePath);
             string fn = "AuditPackage.zip";

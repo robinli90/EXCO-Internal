@@ -334,7 +334,7 @@ namespace MvcApplication1.Controllers
         private static int runCountSS = 0;
 
         [HttpGet]
-        [Route("Financials/GenerateTrialBalance/{parameterStr}")]
+        [Route("Financials/GenerateSapaSales/{parameterStr}")]
         public ActionResult GenerateSapaSales(string parameterStr)
         {
             string[] parameters = parameterStr.Split(new[] { "," }, StringSplitOptions.None);

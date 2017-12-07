@@ -47,7 +47,6 @@ namespace MvcApplication1.Controllers
         [Route("EmailRepository/OpenFileById/{id}")]
         public FileResult OpenFileById(string id)
         {
-
             string filePath = Global.messagesDirectoryPath + id + ".eml";
             byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
             string fileName = "emailFile_" + string.Format("{0}_{1}_{2}.eml", DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Year);

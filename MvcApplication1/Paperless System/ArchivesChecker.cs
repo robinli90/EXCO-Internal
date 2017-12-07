@@ -430,7 +430,7 @@ namespace MvcApplication1.Paperless_System
             if (info.Count > 3)
             {
                 int packageCount = 0;
-                
+
                 string folderName = String.Format("AuditPackage_{0}_{1}_{2}-{3}_{4}", DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Year, DateTime.Now.Hour,
                                     DateTime.Now.Minute);
                 string rootPath = Path.Combine(_packagePath, folderName);
@@ -440,6 +440,7 @@ namespace MvcApplication1.Paperless_System
 
                 List<string> OrdersWithoutFiles = new List<string>() {"Invoices that are not found in the archive are listed below:"};
 
+                // Get all the orders accordingly less the first 3 in list (because the first 3 is info)
                 foreach (string invoiceNo in info.GetRange(3, info.Count - 3))
                 {
                     // Append to list for time being (if not removed later, has no file)
@@ -477,7 +478,6 @@ namespace MvcApplication1.Paperless_System
                         if (!fileInfo.Attributes.HasFlag(FileAttributes.Hidden))
                         {
                             File.Copy(filePath, Path.Combine(packagePath, Path.GetFileName(filePath)));
-                            
                             packageCount++;
                         }
                     }
@@ -490,7 +490,7 @@ namespace MvcApplication1.Paperless_System
                     foreach (string orders in OrdersWithoutFiles)
                     {
                         str.Append(String.Format("{0}", orders +
-                                                        Environment.NewLine));
+                                                        Environment.NewLine));  
                     }
                     Saver.Save(str.ToString(), Path.Combine(rootPath, "missingFiles.txt"));
                 }
@@ -502,7 +502,7 @@ namespace MvcApplication1.Paperless_System
                 // Delete existing zip packaged file
                 if (File.Exists(zipPath))
                     File.Delete(zipPath);
-
+                
                 // Zip the files if more than 0 files
                 if (packageCount > 0)
                 {

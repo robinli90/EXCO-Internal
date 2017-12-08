@@ -407,6 +407,7 @@
     <Compile Include="Financial Reports\Sales Report\Invoice.cs" />
     <Compile Include="Financial Reports\Sales Report\Plant.cs" />
     <Compile Include="Financial Reports\Sales Report\Process.cs" />
+    <Compile Include="Financial Reports\Sapa Sales By Month\Invoice.cs" />
     <Compile Include="Financial Reports\Sapa Sales By Month\SapaSales.cs" />
     <Compile Include="Financial Reports\Trial Balance\Account.cs" />
     <Compile Include="Financial Reports\Trial Balance\Process.cs" />

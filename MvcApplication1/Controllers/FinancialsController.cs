@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -12,7 +13,7 @@ namespace MvcApplication1.Controllers
 {
     public class FinancialsController : Controller
     {
-
+            
 
         #region Exchange Rates
 
@@ -133,6 +134,7 @@ namespace MvcApplication1.Controllers
                         Convert.ToInt32(parameters[2]));
                 // create excel object
                 //string path = @"\\10.0.0.8\EmailAPI\Financials\IS-Reports\Income Statement Report at " + process.fiscalMonth + "-" + process.fiscalYear + ".xlsx";
+                
 
                 ExcelWriter excelWriter =
                     new ExcelWriter(process, FinancialPlantControls.GetFinancialPlant(parameters[3]));
@@ -331,45 +333,33 @@ namespace MvcApplication1.Controllers
             return View();
         }
 
+        // GET: Financials
+        [Route("Financials/SapaSalesProxy/{paramOne}")]
+        public ActionResult SapaSalesProxy(string paramOne)
+        {
+            SapaSalesAmounts = new Dictionary<string, double>();
+            SapaSalesTitle = "";
+
+            return RedirectToAction("SapaSales");
+        }
+
         private static int runCountSS = 0;
 
+        public static Dictionary<string, double> SapaSalesAmounts = new Dictionary<string, double>();
+        public static string SapaSalesTitle;
+            
         [HttpGet]
         [Route("Financials/GenerateSapaSales/{parameterStr}")]
         public ActionResult GenerateSapaSales(string parameterStr)
         {
             string[] parameters = parameterStr.Split(new[] { "," }, StringSplitOptions.None);
 
-            // First time 
-            string fileName = "Sapa Sales Report at " + parameters[0] + "-" + parameters[1] + " for " +
-                              parameters[3] + ".xlsx";
-            string path = @"\\10.0.0.8\EmailAPI\Financials\SapaSales\" + fileName;
+            SapaSalesTitle = String.Format("Sapa Sales for {0}-{1}", parameters[1], parameters[0]);
 
-            if (runCountSS % 2 == 0)
-            {
+            SapaSalesAmounts = Financial_Reports.Sapa_Sales_By_Month.SapaSales.GetSapaSalesDictionary(
+                Int32.Parse(parameters[0]), Int32.Parse(parameters[1]));
 
-                MvcApplication1.Financial_Reports.Income_Statement.Process process =
-                    new MvcApplication1.Financial_Reports.Income_Statement.Process(Convert.ToInt32(parameters[1]),
-                        Convert.ToInt32(parameters[2]));
-                // create excel object
-                //string path = @"\\10.0.0.8\EmailAPI\Financials\IS-Reports\Income Statement Report at " + process.fiscalMonth + "-" + process.fiscalYear + ".xlsx";
-
-                ExcelWriter excelWriter =
-                    new ExcelWriter(process, FinancialPlantControls.GetFinancialPlant(parameters[3]));
-                
-
-                excelWriter.FillSheets(FinancialPlantControls.GetFinancialPlant(parameters[3]));
-                System.IO.File.Delete(path);
-                excelWriter.OutputToFile(path);
-
-                // Let file settle
-                Thread.Sleep(1000);
-            }
-
-            runCountSS++;
-
-            byte[] fileBytes = System.IO.File.ReadAllBytes(path);
-            string fn = fileName;
-            return File(fileBytes, "application/octet-stream", fn);
+            return RedirectToAction("SapaSales", new { paramOne = "refresh"});
         }
         #endregion
     }

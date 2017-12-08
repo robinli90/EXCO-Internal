@@ -1,4 +1,5 @@
-﻿
+﻿@using MvcApplication1.Controllers
+
 @{
     ViewBag.Title = "Sapa Sales By Month";
 }
@@ -54,10 +55,52 @@
             </div>
             <!-- /.box-body -->
             <div class="box-footer">
-                <button id="generateIncomeStatement" class="btn btn-default">Generate</button>
+                <button id="generateSapaSales" class="btn btn-default">Generate</button>
             </div>
             <!-- /.box-footer -->
         </div>
+
+        <!-- /.box-header -->
+        @{
+            if (FinancialsController.SapaSalesTitle.Length > 0)
+            {
+                <div class="box-body col-xs-4">
+                    <label>@FinancialsController.SapaSalesTitle</label>
+                    <table id="example2" class="table table-condensed table-bordered">
+                        <thead>
+                        <tr>
+                            <th>Location</th>
+                            <th>Total</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @{
+                            foreach (KeyValuePair<string, double> pair in FinancialsController.SapaSalesAmounts)
+                            {
+                                <tr>
+                                    <td>@pair.Key</td>
+                                    <td>@String.Format("${0:N}", pair.Value)</td>
+                                </tr>
+                            }
+                            if (FinancialsController.SapaSalesAmounts.Count > 0)
+                            {
+                                <tr>
+                                    <th>Total</th>
+                                    <th>@String.Format("${0:N}", FinancialsController.SapaSalesAmounts.Sum(x => x.Value))</th>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr>
+                                    <th colspan="2" style="text-align: center">No records found</th>
+                                </tr>
+                            }
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        }
     </div>
 </div>
 
@@ -66,7 +109,7 @@
 @section Scripts
 {
     <script type="text/javascript">
-
+        
         $body = $("body");
 
         $(document).on({
@@ -76,18 +119,21 @@
         });
 
         $(document).on('click',
-            '#generateIncomeStatement',
+            '#generateSapaSales',
             function () {
 
                 jQuery.event.trigger("ajaxStart");
                 
                 var year = document.getElementById("year");
                 var period = document.getElementById("period");
-                var queryStr = ("nil" +
-                    ',' +
+                var queryStr = (
                     year.options[year.selectedIndex].value +
                     ',' +
                     period.options[period.selectedIndex].value);
+                
+                
+                //var url = '@Url.Action("GenerateSapaSales", "Financials", new {id = "__param__"})';
+                //window.location.href = url.replace('__param__', encodeURIComponent(queryStr));
                 generateIS(queryStr);
                 //var url = 'Url.Action("GenerateIncomeStatement", "Financials", new {id = "__param__"})';
                 //window.location.href = url.replace('__param__', encodeURIComponent(queryStr));
@@ -96,14 +142,12 @@
         function generateIS(idx) {
             return $.ajax({
                 type: "GET",
-                url: "/Financials/GenerateIncomeStatement/" + idx,
+                url: "/Financials/GenerateSapaSales/" + idx,
                 contentType: "application/json; charset=utf-8",
                 dataType: "text",
                 success: function () {
-                    var param = idx;
-                    var url = '@Url.Action("GenerateSapaSales", "Financials", new {id = "__param__"})';
-                    window.location.href = url.replace('__param__', encodeURIComponent(param));
                     jQuery.event.trigger("ajaxStop");
+                    window.location.href = window.location.href;
                 },
                 fail: function() {
                     jQuery.event.trigger("ajaxStop");

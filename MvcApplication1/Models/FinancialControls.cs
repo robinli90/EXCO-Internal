@@ -51,7 +51,6 @@ namespace MvcApplication1.Models
                     return FinancialPlant.Colombia;
                 }
             }
-            
         }
     }
 
@@ -76,6 +75,4 @@ namespace MvcApplication1.Models
             return false;
         }
     }
-
-
 }

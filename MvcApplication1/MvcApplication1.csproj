@@ -437,7 +437,9 @@
     <Compile Include="Paperless System\PDF Generators\SO.cs" />
     <Compile Include="Paperless System\PDF Generators\SOitem.cs" />
     <Compile Include="Paperless System\PDF Generators\SOitemcharge.cs" />
+    <Compile Include="Parser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Saver.cs" />
     <Compile Include="Services\EmailRepository.cs" />
     <Compile Include="Services\SearchAlgorithm.cs" />
     <Compile Include="Services\SessionAuthorizeAttribute.cs" />

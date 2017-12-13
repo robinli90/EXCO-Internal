@@ -17,6 +17,7 @@ namespace MvcApplication1.Paperless_System
     public static class ArchivesChecker
     {
         public static readonly string _archivePath = @"\\10.0.0.8\EmailAPI\Paperless\Archive\";
+        public static readonly string _cachePath = @"\\10.0.0.8\Cache\";
         public static readonly string _errorPath = @"\\10.0.0.8\EmailAPI\Paperless\Archive_Email_Errors\";
         public static readonly string _pendingPath = @"\\10.0.0.8\EmailAPI\Paperless\Pending\";
         public static readonly string _packagePath = @"\\10.0.0.8\EmailAPI\Paperless\Packaged\";
@@ -178,6 +179,44 @@ namespace MvcApplication1.Paperless_System
                 }
             }
             return "";
+        }
+
+        public static void ProcessCacheFiles()
+        {
+            foreach (string directoryPath in Directory.GetDirectories(_cachePath))
+            {
+
+                // Path should not be null
+                if (directoryPath == null) continue;
+
+                string orderNumber = Path.GetFileName(directoryPath);
+                string archivePath = Path.Combine(_archivePath, orderNumber);
+
+                Log.Append(String.Format("Transferring cache folder {0} to archive...", orderNumber));
+
+                if (!Directory.Exists(archivePath))
+                    Directory.CreateDirectory(archivePath);
+
+                foreach (var filePath in Directory.GetFiles(directoryPath))
+                {
+                    File.Copy(filePath, Path.Combine(archivePath, Path.GetFileName(filePath)), true);
+                }
+
+                try
+                {
+                    // Delete all cache files
+                    Directory.GetFiles(directoryPath).ForEach(x => File.Delete(x));
+
+                    // Delete cache directory
+                    Directory.Delete(directoryPath);
+
+                    Log.Append(String.Format("Complete transfer to archive for {0}...", orderNumber));
+                }
+                catch (Exception e)
+                {
+                    Log.Append("Error: Cannot delete cache folder");
+                }
+            }
         }
         
         public static void PopulateOrdersByInvoiceDate(DateTime refDate = new DateTime())

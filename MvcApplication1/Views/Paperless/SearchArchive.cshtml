@@ -47,6 +47,7 @@
                                     <td style='text-align: center'>@archiveOrder.miscScanItems</td>
                                     <td style='text-align: center'>
                                         <a href="#" id=@("MO_" + archiveOrder._orderNo) data-toggle="modal" data-target="#modal-info"><i class="fa fa-eye" title="Preview Archive"></i></a>
+                                        <a href="#" id=@("VI_" + archiveOrder._orderNo) data-toggle="modal" data-target="#modal-info"><i class="fa fc-agenda-view" title="View Archive"></i></a>
                                         <a href="@Url.Action("DownloadArchive", "Paperless", new {paramOne = @archiveOrder._orderNo}, null)"><i class="fa fa-download" title="Download Archive"></i></a>
                                         <input type="file" name="attach" id="attach-input" multiple="" style="display: none"/>
                                         <a href="#" type='submit' name=@("FU_" + archiveOrder._orderNo) id="attach-button"><i class="fa fa-upload" title="Upload to Archive"></i></a>
@@ -129,6 +130,12 @@
             getUIContent(orderNum);
         });
 
+        $('[id^="VI_"]').click(function () {
+            // do something
+            var orderNum = $(this).attr("id").substring(3);
+            getVIContent(orderNum);
+        });
+
 
         $(document).ready(function () {
             $('[id^="File_"]').trigger("click");
@@ -141,6 +148,20 @@
             alert($(this).attr("id"));
         });
 
+
+        function getVIContent(id) {
+            return $.ajax({
+                type: "GET",
+                url: "/Paperless/ViewArchive/" + id,
+                contentType: "application/json; charset=utf-8",
+                async: false,
+                dataType: "text",
+                success: function (data) {
+
+                    document.getElementById('fileList').innerHTML = data;
+                }
+            });
+        }
 
         function getUIContent(id) {
             return $.ajax({

@@ -86,6 +86,12 @@ namespace MvcApplication1.Models
                 ArchivesChecker.ProcessEmailsForArchive();
                 ArchivesChecker.CheckPendingOrders();
             }
+            
+            // Archive check every 5 minutes
+            if (DateTime.Now.Minute % 5 == 0)
+            {
+                ArchivesChecker.ProcessCacheFiles();
+            }
         }
     }
 }

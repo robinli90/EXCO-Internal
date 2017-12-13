@@ -28,7 +28,7 @@ namespace MvcApplication1.Controllers
             // if UserManagement
             if (paramOne.ToLower() == "tasks")
                 return View("~/Views/User/UserTasks.cshtml");
-            //return View("~/Views/User/UserTasks.cshtml", new User() {InternalID = 99999999});
+
 
             return View();
         }

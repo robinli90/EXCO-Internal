@@ -16,6 +16,7 @@ namespace MvcApplication1.Controllers
 {
     public class PaperlessController : Controller
     {
+        
         #region Invoicing
         // GET: Paperless
         [Route("Paperless/DailyInvoicing/{paramOne}")]
@@ -93,8 +94,7 @@ namespace MvcApplication1.Controllers
         {
             return View();
         }
-
-
+        
         // GET: Paperless
         [HttpGet]
         [Route("Paperless/DailyOrderRefresh/{paramOne}")]

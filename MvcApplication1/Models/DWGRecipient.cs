@@ -116,5 +116,11 @@ namespace MvcApplication1.Models
 
         }
         
+        public static List<string> GetSortedOrderNumber()
+        {
+            var keys = Recipients.Keys.ToList();
+            keys.Sort();
+            return keys;
+        }
     }
 }

@@ -70,8 +70,7 @@ namespace MvcApplication1.Paperless_System
                 Directory.CreateDirectory(directoryPath);
             }
 
-            if (!File.Exists(_pendingPath + orderNumber))
-                File.CreateText(_pendingPath + orderNumber);
+            CreatePendingFile(orderNumber);
 
             return directoryPath;
         }
@@ -245,9 +244,13 @@ namespace MvcApplication1.Paperless_System
                     {
                         while (objReader.Read())
                         {
+                            string orderNumber = objReader["ordernumber"].ToString().Trim();
+
                             CurrentInvoiceOrders.Add(
-                                new ArchiveOrder(objReader["ordernumber"].ToString().Trim(),
+                                new ArchiveOrder(orderNumber,
                                     objReader["invoicenumber"].ToString().Trim()));
+
+                            CreatePendingFile(orderNumber);
                         }
                     }
                 }
@@ -286,6 +289,21 @@ namespace MvcApplication1.Paperless_System
             }
 
             Log.Append("Complete");
+        }
+
+        public static void CreatePendingFile(string orderNumber)
+        {
+            string directoryPath = Path.Combine(_archivePath, orderNumber);
+            if (!Directory.Exists(directoryPath) || !File.Exists(
+                    Path.Combine(directoryPath,
+                        String.Format("{0}_INVOICE.pdf", orderNumber)))
+            )
+            {
+                Log.Append(String.Format("    Invoice pending file created for {0}", orderNumber));
+                if (!File.Exists(_pendingPath + orderNumber))
+
+                    File.CreateText(_pendingPath + orderNumber).Close();
+            }
         }
         
         public static void PopulateOrdersByOrderDate(DateTime refDate = new DateTime())
@@ -373,14 +391,19 @@ namespace MvcApplication1.Paperless_System
         /// </summary>
         public static void GetEntireArchive()
         {
-            List<string> orderNumbers = Directory.GetDirectories(_archivePath).Select(x => x.Substring(x.Length - 6)).ToList();
-
-            Archives = new List<ArchiveOrder>();
-
-            foreach (string orderNumber in orderNumbers)
+            // Threaded archival pull
+            Task.Run(() =>
             {
-                Archives.Add(new ArchiveOrder(orderNumber));
-            }
+                List<string> orderNumbers = Directory.GetDirectories(_archivePath)
+                    .Select(x => x.Substring(x.Length - 6)).ToList();
+
+                Archives = new List<ArchiveOrder>();
+
+                foreach (string orderNumber in orderNumbers)
+                {
+                    Archives.Add(new ArchiveOrder(orderNumber));
+                }
+            });
         }
 
         public static List<string> GetFilesForOrder(string archiveOrderNo)

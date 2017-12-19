@@ -47,7 +47,6 @@ namespace MvcApplication1.Models
             return false;
         }
 
-
         public static void TerminationCheck()
         {
             if (File.Exists(TerminationBlockerFilePath))
@@ -60,7 +59,6 @@ namespace MvcApplication1.Models
                 Terminate = false;
             }
         }
-        
 
         private static bool _SyncReady = true;
         public static int _SyncHour = 1; // Sync at 1am?
@@ -80,10 +78,14 @@ namespace MvcApplication1.Models
                 _SyncReady = true;
             }
             
-            // Archive check every 59 minutes
+            // Archive check every 30 minutes
             if (Environment.MachineName.Contains("EXCOTRACK3") && DateTime.Now.Minute % 30 == 0)
             {
+                Log.Append("Checking Pending Invoices to generate");
+
+                // Pull archival data from emails
                 ArchivesChecker.ProcessEmailsForArchive();
+                // Update orders pending
                 ArchivesChecker.CheckPendingOrders();
             }
             
@@ -91,6 +93,13 @@ namespace MvcApplication1.Models
             if (DateTime.Now.Minute % 5 == 0)
             {
                 ArchivesChecker.ProcessCacheFiles();
+            }
+
+            // Refresh archives every 10 minutes on a separate thread
+            if (DateTime.Now.Minute % 10 == 0)
+            {
+                // Refresh archives
+                ArchivesChecker.GetEntireArchive();
             }
         }
     }

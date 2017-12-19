@@ -37,8 +37,8 @@ namespace MvcApplication1.Controllers
                     CultureInfo.InvariantCulture);
 
             ArchivesChecker.ProcessEmailsForArchive();
-            ArchivesChecker.CheckPendingOrders();
             ArchivesChecker.PopulateOrdersByInvoiceDate(refDate);
+            ArchivesChecker.CheckPendingOrders();
             return RedirectToAction("DailyInvoicing");
         }
 

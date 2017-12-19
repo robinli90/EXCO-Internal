@@ -7994,7 +7994,9 @@
     <Content Include="Paperless System\PDF Generators\PdfSharp.Charting.dll" />
     <Content Include="Paperless System\PDF Generators\PdfSharp.Charting.xml" />
     <Content Include="Paperless System\PDF Generators\PdfSharp.dll" />
-    <Content Include="Paperless System\PDF Generators\PdfSharp.xml" />
+    <Content Include="Paperless System\PDF Generators\PdfSharp.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="plugins\input-mask\phone-codes\phone-be.json" />
     <Content Include="plugins\input-mask\phone-codes\phone-codes.json" />
     <Content Include="Content\plugins\input-mask\phone-codes\phone-be.json" />
@@ -8327,6 +8329,7 @@
     <Folder Include="bin\zh-Hans\" />
     <Folder Include="bin\zh-Hant\" />
     <Folder Include="bin\zh\" />
+    <Folder Include="Views\Log\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
